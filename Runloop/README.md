@@ -387,8 +387,8 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 >Runloop中自动释放池的创建和释放
 
 >+ 第一次创建:启动runloop
-+ 最后一次销毁:runloop退出的时候
-+ 其他时候的创建和销毁:当runloop即将睡眠的时候销毁之前的释放池,重新创建一个新的
+>+ 最后一次销毁:runloop退出的时候
+>+ 其他时候的创建和销毁:当runloop即将睡眠的时候销毁之前的释放池,重新创建一个新的
 
 
 
