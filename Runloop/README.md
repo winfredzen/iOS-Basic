@@ -1,6 +1,8 @@
 # RunLoop
 
-RunLoop从字面上理解就是运行循环，其基本作用是：
+RunLoop从字面上理解就是运行循环，其实它内部就是do-while循环，在这个循环内部不断地处理各种任务（比如Source、Timer、Observer）
+
+其基本作用是：
 
 + 保存程序的持续运行
 + 处理App中的各种事件（如触摸事件、定时器事件、Selector事件）
@@ -309,7 +311,7 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 
 利用Observer，可以在RunLoop进入休眠状态时，分配一些任务给它，将其唤醒
 
-##RunLoop处理逻辑
+## RunLoop处理逻辑
 
 ![官方图](https://github.com/winfredzen/iOS-Basic/blob/master/Runloop/images/2.png)
 
@@ -317,11 +319,17 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 每次运行run loop，你线程的run loop都会自动处理之前未处理的消息，并通知相关的观察者。具体的顺序如下：
 
 1.通知观察者run loop已经启动
+
 2.通知观察者任何即将要开始的定时器
+
 3.通知观察者任何即将启动的非基于端口的源
+
 4.启动任何准备好的非基于端口的源
+
 5.如果基于端口的源准备好并处于等待状态，立即启动，并进入步骤9
+
 6.通知观察者线程进入休眠
+
 7.将线程置于休眠直到任一下面的事件发生：
 
 + 某一事件到达基于端口的源
@@ -331,7 +339,8 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 
 
 8.通知观察者线程将被唤醒
-8.处理未处理的事件
+
+9.处理未处理的事件
 
 + 如果用户定义的定时器启动，处理定时器事件并重启run loop，进入步骤2
 + 如果输入源启动，传递相应的消息
@@ -344,9 +353,42 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 
 
 
+## RunLoop应用
 
+### 线程常驻
+
+```
+- (IBAction)createBtnClick:(id)sender {
+  //1.创建线程
+  self.thread = [[NSThread alloc]initWithTarget:self selector:@selector(task1) object:nil];
+  [self.thread start];
+}
+
+-(void)task1
+{
+  NSLog(@"task1---%@",[NSThread currentThread]);
+  //解决方法:开runloop
+  //1.获得子线程对应的runloop
+  NSRunLoop *runloop = [NSRunLoop currentRunLoop];
+  //2.向runloop中添加timer或者source，不让runloop退出
+  //NSTimer *timer = [NSTimer timerWithTimeInterval:2.0 target:self selector:@selector(run) userInfo:nil repeats:YES];
+  //[runloop addTimer:timer forMode:NSDefaultRunLoopMode];
+  [runloop addPort:[NSPort port] forMode:NSDefaultRunLoopMode];
+  //3.启动（默认是没有启动的）
+  [runloop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+  //[runloop run];
+  NSLog(@"---end----");
+}
+
+```
 	
+### RunLoop与自动释放池
 
+>Runloop中自动释放池的创建和释放
+
+>+ 第一次创建:启动runloop
++ 最后一次销毁:runloop退出的时候
++ 其他时候的创建和销毁:当runloop即将睡眠的时候销毁之前的释放池,重新创建一个新的
 
 
 
