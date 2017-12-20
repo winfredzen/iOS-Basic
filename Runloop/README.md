@@ -183,6 +183,25 @@ NSTimer定时器是会受到RunLoop运行模式影响的，而GCD定时器则不
 }
 ```
 
+## CFRunLoopSourceRef
+
+CFRunLoopSourceRef是事件源（输入源），其分类是：
+
+1.原来的分法
+
++ Port-Based Sources基于端口
++ Custom Input Sources基于自定义的
++ Cocoa Perform Selector Sources
+
+2.现在的分法
+
++ Source0：非基于Port的（可以理解为用户主动触发的事件，例如按钮点击事件）
++ Source1：基于Port的（可以理解为系统内部的消息事件）
+
+
+
+
+
 
 	
 
