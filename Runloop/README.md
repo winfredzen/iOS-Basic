@@ -198,7 +198,116 @@ CFRunLoopSourceRef是事件源（输入源），其分类是：
 + Source0：非基于Port的（可以理解为用户主动触发的事件，例如按钮点击事件）
 + Source1：基于Port的（可以理解为系统内部的消息事件）
 
+## CFRunloopObserver
 
+`CFRunLoopObserverRef`是观察者，能够监听RunLoop的状态改变
+
+可以监听的时间点有以下几个：
+
+```
+typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
+    kCFRunLoopEntry         = (1UL << 0), // 即将进入Loop
+    kCFRunLoopBeforeTimers  = (1UL << 1), // 即将处理 Timer
+    kCFRunLoopBeforeSources = (1UL << 2), // 即将处理 Source
+    kCFRunLoopBeforeWaiting = (1UL << 5), // 即将进入休眠
+    kCFRunLoopAfterWaiting  = (1UL << 6), // 刚从休眠中唤醒
+    kCFRunLoopExit          = (1UL << 7), // 即将退出Loop
+};
+```
+
+如下的例子，创建观察者，添加一个timer，观察调用情况
+
+```
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+  [self observer];
+  [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(task) userInfo:nil repeats:YES];
+}
+
+.....
+
+-(void)task
+{
+  NSLog(@"%s",__func__);
+  
+  //    [NSRunLoop currentRunLoop] runUntilDate:[];
+}
+
+-(void)observer
+{
+  //1.创建监听者
+  /*
+   第一个参数:怎么分配存储空间
+   第二个参数:要监听的状态 kCFRunLoopAllActivities 所有的状态
+   第三个参数:时候持续监听
+   第四个参数:优先级 总是传0
+   第五个参数:当状态改变时候的回调
+   */
+  CFRunLoopObserverRef observer = CFRunLoopObserverCreateWithHandler(CFAllocatorGetDefault(), kCFRunLoopAllActivities, YES, 0, ^(CFRunLoopObserverRef observer, CFRunLoopActivity activity) {
+    
+    /*
+     kCFRunLoopEntry = (1UL << 0),        即将进入runloop
+     kCFRunLoopBeforeTimers = (1UL << 1), 即将处理timer事件
+     kCFRunLoopBeforeSources = (1UL << 2),即将处理source事件
+     kCFRunLoopBeforeWaiting = (1UL << 5),即将进入睡眠
+     kCFRunLoopAfterWaiting = (1UL << 6), 被唤醒
+     kCFRunLoopExit = (1UL << 7),         runloop退出
+     kCFRunLoopAllActivities = 0x0FFFFFFFU
+     */
+    switch (activity) {
+      case kCFRunLoopEntry:
+        NSLog(@"即将进入runloop");
+        break;
+      case kCFRunLoopBeforeTimers:
+        NSLog(@"即将处理timer事件");
+        break;
+      case kCFRunLoopBeforeSources:
+        NSLog(@"即将处理source事件");
+        break;
+      case kCFRunLoopBeforeWaiting:
+        NSLog(@"即将进入睡眠");
+        break;
+      case kCFRunLoopAfterWaiting:
+        NSLog(@"被唤醒");
+        break;
+      case kCFRunLoopExit:
+        NSLog(@"runloop退出");
+        break;
+        
+      default:
+        break;
+    }
+  });
+  
+  //添加Observer
+  /*
+   第一个参数:要监听哪个runloop
+   第二个参数:观察者
+   第三个参数:运行模式
+   */
+  CFRunLoopAddObserver(CFRunLoopGetCurrent(),observer, kCFRunLoopDefaultMode);
+  
+  //NSDefaultRunLoopMode == kCFRunLoopDefaultMode
+  //NSRunLoopCommonModes == kCFRunLoopCommonModes
+}
+
+```
+点击屏幕，控制台输出如下：
+
+```
+2017-12-20 11:43:08.076589+0800 RunLoop[16614:2570242] 被唤醒
+2017-12-20 11:43:08.076832+0800 RunLoop[16614:2570242] -[ViewController task]
+2017-12-20 11:43:08.077277+0800 RunLoop[16614:2570242] 即将处理timer事件
+2017-12-20 11:43:08.077399+0800 RunLoop[16614:2570242] 即将处理source事件
+2017-12-20 11:43:08.077535+0800 RunLoop[16614:2570242] 即将进入睡眠
+2017-12-20 11:43:10.076849+0800 RunLoop[16614:2570242] 被唤醒
+2017-12-20 11:43:10.077035+0800 RunLoop[16614:2570242] -[ViewController task]
+2017-12-20 11:43:10.077199+0800 RunLoop[16614:2570242] 即将处理timer事件
+2017-12-20 11:43:10.077321+0800 RunLoop[16614:2570242] 即将处理source事件
+2017-12-20 11:43:10.077462+0800 RunLoop[16614:2570242] 即将进入睡眠
+```
+
+利用Observer，可以在RunLoop进入休眠状态时，分配一些任务给它，将其唤醒
 
 
 
