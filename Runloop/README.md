@@ -309,6 +309,39 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 
 利用Observer，可以在RunLoop进入休眠状态时，分配一些任务给它，将其唤醒
 
+##RunLoop处理逻辑
+
+![官方图](https://github.com/winfredzen/iOS-Basic/blob/master/Runloop/images/2.png)
+
+**RunLoop事件队列**
+每次运行run loop，你线程的run loop都会自动处理之前未处理的消息，并通知相关的观察者。具体的顺序如下：
+
+1.通知观察者run loop已经启动
+2.通知观察者任何即将要开始的定时器
+3.通知观察者任何即将启动的非基于端口的源
+4.启动任何准备好的非基于端口的源
+5.如果基于端口的源准备好并处于等待状态，立即启动，并进入步骤9
+6.通知观察者线程进入休眠
+7.将线程置于休眠直到任一下面的事件发生：
+
++ 某一事件到达基于端口的源
++ 定时器启动
++ run loop设置的事件已经超时
++ run loop被显示唤醒
+
+
+8.通知观察者线程将被唤醒
+8.处理未处理的事件
+
++ 如果用户定义的定时器启动，处理定时器事件并重启run loop，进入步骤2
++ 如果输入源启动，传递相应的消息
++ 如果run loop被显式唤醒而且时间还没超时，重启run loop，进入步骤2
+
+10.通知观察者run loop结束
+
+
+![非官方图](https://github.com/winfredzen/iOS-Basic/blob/master/Runloop/images/3.png)
+
 
 
 
