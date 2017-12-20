@@ -10,6 +10,8 @@
 
 @interface ViewController ()
 
+@property (nonatomic, strong) dispatch_source_t timer;
+
 @end
 
 @implementation ViewController
@@ -43,6 +45,8 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
   //[NSThread detachNewThreadSelector:@selector(timerInThread) toTarget:self withObject:nil];
+  
+  [self GCDTimer];
 }
 
 - (void)timerInThread{
@@ -54,12 +58,30 @@
 
 //GCD定时器
 - (void)GCDTimer{
-  dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, <#dispatchQueue#>);
-  dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, <#intervalInSeconds#> * NSEC_PER_SEC, <#leewayInSeconds#> * NSEC_PER_SEC);
+  //1.创建GCD中的定时器
+  /**
+   *第一个参数：source的类型，DISPATCH_SOURCE_TYPE_TIMER表示定时器
+   *第二个参数：描述信息，线程ID
+   *第三个参数：更详细描述信息
+   *第四个参数：队列，决定GCD定时器中的任务在哪个线程中执行的
+   */
+  dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
+  //2.设置定时器（起始时间，间隔时间，精准度）
+  /**
+   *第一个参数：定时器对象
+   *第二个参数：起始时间，DISPATCH_TIME_NOW表示从现在开始计时
+   *第三个参数：间隔时间，GCD中时间是以纳秒为单位的
+   *第四个参数：精准度，如果想绝对精准，传0
+   */
+  dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+  //3.设置定时器任务
   dispatch_source_set_event_handler(timer, ^{
-    <#code to be executed when timer fires#>
+    NSLog(@"CurrentThread: %@", [NSThread currentThread]);
   });
+  //4.启动执行
   dispatch_resume(timer);
+  
+  self.timer = timer;
 }
 
 - (void)run{

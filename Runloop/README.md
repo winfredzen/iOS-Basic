@@ -142,8 +142,46 @@ CFRunLoopTimerRef是基于时间的触发器，基本上说的就是NSTimer
 
 ### GCD定时器
 
-NSTimer定时器是会受到RunLoop运行模式影响的，而GCD定时器则不回受到RunLoop的影响
+NSTimer定时器是会受到RunLoop运行模式影响的，而GCD定时器则不回受到RunLoop的影响，而且GCD定时器是绝对精准的
 
+在Xcode中可直接使用代码库来调出GCD定时器，不用一个一个的写
+
+![GCD定时器](https://github.com/winfredzen/iOS-Basic/blob/master/Runloop/images/1.png)
+
+使用时要注意的一点就是：要放置创建的timer被释放掉，需要强引用它，如下的例子：
+
+```
+@property (nonatomic, strong) dispatch_source_t timer;
+……
+
+//GCD定时器
+- (void)GCDTimer{
+  //1.创建GCD中的定时器
+  /**
+   *第一个参数：source的类型，DISPATCH_SOURCE_TYPE_TIMER表示定时器
+   *第二个参数：描述信息，线程ID
+   *第三个参数：更详细描述信息
+   *第四个参数：队列，决定GCD定时器中的任务在哪个线程中执行的
+   */
+  dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_global_queue(0, 0));
+  //2.设置定时器（起始时间，间隔时间，精准度）
+  /**
+   *第一个参数：定时器对象
+   *第二个参数：起始时间，DISPATCH_TIME_NOW表示从现在开始计时
+   *第三个参数：间隔时间，GCD中时间是以纳秒为单位的
+   *第四个参数：精准度，如果想绝对精准，传0
+   */
+  dispatch_source_set_timer(timer, DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC, 0 * NSEC_PER_SEC);
+  //3.设置定时器任务
+  dispatch_source_set_event_handler(timer, ^{
+    NSLog(@"CurrentThread: %@", [NSThread currentThread]);
+  });
+  //4.启动执行
+  dispatch_resume(timer);
+  
+  self.timer = timer;
+}
+```
 
 
 	
