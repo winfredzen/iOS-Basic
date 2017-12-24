@@ -13,4 +13,63 @@
 + 程序代码区 (方法区)：存放函数的二进制代码
 
 
+## 属性
+
+属性用于封装对象中的数据。`@property`声明属性的语法，其意思是说：编译器会自动编写访问这些属性所需的方法，此过程叫做“自动合成”。这个过程是由编译器在编译期完成的，所以编辑器里看不到这些“自动合成”的源代码。除了生成方法代码之外，编译器还要自动向类中添加适当类型的实例变量，并且在属性名前加下划线，依次作为实例变量的名字。
+
+属性中attribute默认值，参考[Default property attributes with ARC](https://useyourloaf.com/blog/default-property-attributes-with-arc/)
+
+```
+@property NSArray *name;
+@property (strong, atomic, readwrite) NSArray *name;
+```
+
+`@synthesize`指令告诉编译器在编译期间产生`getter/setter`方法，也可用来指定实例变量的名字
+
+`@dynamic`阻止编译器自动合成存取方法，它告诉编译器：不要自动创建实现属性所用的实例变量，也不要为其创建存取方法。而且，在编译访问属性的代码时，即使编译器发现没有定义存取方法，也不会报错，它相信这些方法能在运行期找到。
+
+
+**atomic与nonatomic的区别？**
+
+具备atomic特性的获取方法会通过锁定机制来确保其操作的原子性。也就是说，如果两个线程读写同一个属性，那么不论何时，总能看到有效的属性值。如果不加锁的话(使用nonatomic)，当其中一个线程正在改写某属性值时，另一个线程可能会把尚未修改好的属性读取出来，此时线程读到的属性值可能是不对的。
+
+
+在iOS中一般都是使用nonatomic，原因是：在iOS中使用同步锁的开销较大，会带来性能问题。一般情况下，并不要求属性必须是原子性的，因为这样并不能保证线程安全，若要实现线程安全操作，还需采用更为深层的锁定机制才行
+
+**内存管理**
+
+为什么要使用内存管理attribute？
+
+在使用setter方法设置一个新值时，是要retain这个值呢？还是只将其赋值给底层实例变量呢？编译器在合成存取方法时，要根据此attribute来决定所生成的代码
+
++ **assign**-只针对scalar Type，例如CGFloat或者NSInteger，进行简单的赋值操作
++ **strong**-表示一种拥有关系(owning relationship)，为这种属性设置新值时，设置方法会先保留新值，并释放旧值，然后再将新值设置上去
++ **weak**-表示一种非拥有关系(nonowning relationship)，为这种属性设置新值时，设置方法既不保留新值，也不释放旧值。同assign类似，但是该属性所指的对象遭到摧毁时，属性值会清空(nil out)
++ **unsafe_unretained**-和assign相同，但它适用于对象类型(object type)，该attribute表达一种非拥有关系("不保留"，unretained)，当目标对象遭到摧毁时，属性值不会自动清空(unsafe)，与weak有区别
++ **copy**-与strong类似。设置方法并不保留新值，而是将其拷贝。当属性类型为`NSString *`时，经常使用此特质来保护其封装性。因为传递给设置方法的新值有肯可能指向一个`NSMutableString`类的实例
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
