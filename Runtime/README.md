@@ -95,6 +95,8 @@ objc_msgSend(p1, @selector(speak:), @"hello");
 objc_msgSend([Person class], @selector(eat));
 ```
 
+`objc_msgSend`的详细用法，请参见[runtime objc_msgSend使用](https://yaoqi-github.github.io/20160417/runtim-objc_msgSend%E4%BD%BF%E7%94%A8/)
+
 **那系统是怎么去调用`eat`或者`speak:`方法的呢？** 
 
 对象方法是保存在该对象的类的方法列表中，而类方法是保存在**元类**中方法列表中
@@ -116,7 +118,67 @@ objc_msgSend([Person class], @selector(eat));
 + 可以调用私有方法
 
 
+## 交换方法
 
+例如系统的加载图片的方法，加载的图片可能为nil，我们在使用的时候要做如下的判断：
+
+```
+    UIImage *image = [UIImage imageNamed:@"1"];
+    if (image == nil) {
+        NSLog(@"image加载失败");
+    }else{
+        NSLog(@"image加载成功");
+    }
+```
+这样每次写都要做判断，还是比较麻烦的，可以怎么来简化呢？
+
+1.自定义一个`WZImage`，继承自`UIImage`，重写`imageNamed:`方法
+
+```
++ (UIImage *)imageNamed:(NSString *)name
+{
+    UIImage *image = [super imageNamed:name];
+    if (image) {
+        NSLog(@"图片加载成功");
+    } else {
+        NSLog(@"图片加载失败");
+    }
+    return image;
+}
+```
+
+但是这种方式使用起来，有如下的弊端：
+
++ 必须导入`"WZImage.h"`头文件
++ 必须使用`[WZImage imageNamed:@"1"]`方法
++ 如果原来的项目中大量的使用了`[UIImage imageNamed:@"1"]`方法，则修改起来很麻烦
+
+2.使用分类，交换方法实现
+
+如下在分类中创建一个`+ (UIImage *)wz_imageNamed:(NSString *)name;`方法，在`load`方法中，交换方法
+
+```
++ (void)load
+{
+    Method imageNamedMethod = class_getClassMethod(self, @selector(imageNamed:));
+    // 获取wz_imageNamed
+    Method wz_imageNamedMethod = class_getClassMethod(self, @selector(wz_imageNamed:));
+
+    method_exchangeImplementations(imageNamedMethod, wz_imageNamedMethod);
+
+}
+
++ (UIImage *)wz_imageNamed:(NSString *)name
+{
+   UIImage *image = [UIImage wz_imageNamed:name];
+    if (image) {
+        NSLog(@"图片加载成功");
+    } else {
+        NSLog(@"图片加载失败");
+    }
+    return image;
+}
+```
 
 
 
