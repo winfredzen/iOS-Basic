@@ -14,6 +14,7 @@ Objective-C是C的"超集"。C语言内存模型(memory modal)，参考[C语言�
 
 ![C语言内存模型示意图](https://github.com/winfredzen/iOS-Basic/blob/master/Objective-C/images/2.png)
 
+也可以参考[内存 5 大区](https://hacpai.com/article/1496287519844?m=0)
 
 
 ## 属性
