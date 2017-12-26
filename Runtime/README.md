@@ -283,11 +283,97 @@ static const char *key = "name";
 @end
 ```
 
+## 字典转模型
 
+**`class_copyPropertyList`与`class_copyIvarList`区别**
 
+参考[class_copyPropertyList与class_copyIvarList区别](http://blog.csdn.net/east5683/article/details/45875713)
 
+>`class_copyPropertyList`返回的仅仅是对象类的属性(`@property`申明的属性)，而`class_copyIvarList`返回类的所有属性和变量(包括在`@interface`大括号中声明的变量)
 
+字典转模型基本原理是，利用runtime，查找出所有的属性，然后去字典中取出对应的value，赋值给对应的属性
 
+1.简单的形式
+
+```
++ (instancetype)modelWithDict:(NSDictionary *)dict
+{
+    id objc = [[self alloc] init];
+    
+    unsigned int count = 0;
+    // 获取成员变量数组
+    Ivar *ivarList = class_copyIvarList(self, &count);
+    
+    // 遍历所有成员变量
+    for (int i = 0; i < count; i++) {
+        // 获取成员变量
+        Ivar ivar = ivarList[i];
+        
+        // 获取成员变量名字
+        NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+        
+        // 获取key(_source => source)
+        NSString *key = [ivarName substringFromIndex:1];
+        
+        // 去字典中查找对应value
+        id value = dict[key];
+        
+        // 给模型中属性赋值
+        if (value) {
+            [objc setValue:value forKey:key];
+        }
+    }
+        
+    return objc;
+}
+```
+
+2.模型中又有模型
+
+```
++ (instancetype)modelWithDict:(NSDictionary *)dict
+{
+    id objc = [[self alloc] init];
+    
+    unsigned int count = 0;
+    // 获取成员变量数组
+    Ivar *ivarList = class_copyIvarList(self, &count);
+    
+    // 遍历所有成员变量
+    for (int i = 0; i < count; i++) {
+        // 获取成员变量
+        Ivar ivar = ivarList[i];
+        
+        // 获取成员变量名字
+        NSString *ivarName = [NSString stringWithUTF8String:ivar_getName(ivar)];
+        // 获取成员变量类型
+        NSString *ivarType = [NSString stringWithUTF8String:ivar_getTypeEncoding(ivar)];
+        // @\"User\" -> User
+        ivarType = [ivarType stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+        ivarType = [ivarType stringByReplacingOccurrencesOfString:@"@" withString:@""];
+        // 获取key
+        NSString *key = [ivarName substringFromIndex:1];
+        
+        id value = dict[key];
+        
+        // 判断下value是否是字典,如果是,字典转换层对应的模型
+        // 并且是自定义对象才需要转换
+        if ([value isKindOfClass:[NSDictionary class]] && ![ivarType hasPrefix:@"NS"]) {
+            // 字典转换成模型 userDict => User模型
+            // 获取类
+            Class modelClass = NSClassFromString(ivarType);
+            value = [modelClass modelWithDict:value];
+        }
+        
+        // 给模型中属性赋值
+        if (value) {
+            [objc setValue:value forKey:key];
+        }
+    }
+        
+    return objc;
+}
+```
 
 
 
