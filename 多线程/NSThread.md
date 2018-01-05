@@ -42,6 +42,38 @@ thread.threadPriority = 1.0;
 [self performSelectorInBackground:@selector(run:) withObject:@"abc"];
 ```
 
+4.也可以继承`NSThread`，重写`main`方法，把要执行的任务放在`main`方法里
+
+```
+//WZThread.h
+@interface WZThread : NSThread
+
+@end
+//WZThread.m
+@implementation WZThread
+
+-(void)main
+{
+    NSLog(@"%@---main方法---",[NSThread currentThread]);
+}
+@end
+```
+
+使用时，创建线程的方式如下：
+
+```
+    //创建线程
+    WZThread *thread = [[WZThread alloc]init];
+    //启动线程
+    [thread start];
+```
+
+输出结果为：
+
+```
+{number = 5, name = (null)}---main方法---
+```
+
 **主线程相关方法**
 
 ```
