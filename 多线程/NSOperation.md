@@ -284,6 +284,66 @@ SimpleOperation---<NSThread: 0x600000071380>{number = 3, name = (null)}
 SimpleOperation---<NSThread: 0x60800006da00>{number = 4, name = (null)}
 ```
 
+## 调用顺序
+
+如下的`XMGOperation`继承自`NSBlockOperation`，重写了`start`和`main`方法
+
+```
+//XMGOperation.h
+@interface XMGOperation : NSBlockOperation
+
+@end
+//XMGOperation.m
+
+@implementation XMGOperation
+
+-(void)start
+{
+    NSLog(@"start---start");
+    [super start];
+    NSLog(@"start----end");
+}
+
+-(void)main
+{
+    NSLog(@"main---start");
+    [super main];
+    NSLog(@"main---end");
+}
+@end
+
+```
+
+如下创建一个操作，添加到操作队列中：
+
+```
+    //1.创建队列
+    NSOperationQueue *queue = [[NSOperationQueue alloc]init];
+    
+    //2.封装操作
+    XMGOperation *op1 = [XMGOperation blockOperationWithBlock:^{
+        NSLog(@"1---%@",[NSThread currentThread]);
+    }];
+    
+    //3.添加
+    [queue addOperation:op1];   //[op1 start]---->main
+```
+
+其输出如下：
+
+```
+start---start
+main---start
+1---<NSThread: 0x608000264e00>{number = 5, name = (null)}
+main---end
+start----end
+```
+
+**可见，是`start`方法调用了`main`方法，且任务是在`main`方法中执行的**
+
+
+
+
 ## NSOperation线程间通信
 
 1.下载图片，显示图片
