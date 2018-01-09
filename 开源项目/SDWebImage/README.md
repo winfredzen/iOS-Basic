@@ -197,9 +197,53 @@ SDWebImage是对URL的绝对路径，进行MD5加密后得到的字符串作为�
 
 **5.缓存**
 
-使用`NSCache`来处理缓存，介绍可参考[NSCache](http://nshipster.cn/nscache/)
+使用[NSCache](https://developer.apple.com/documentation/foundation/nscache)来处理缓存，介绍可参考[NSCache](http://nshipster.cn/nscache/)
 
+>`NSCache`与可变集合的不同:
 
+>1.`NSCache`类结合了各种自动删除策略，以确保不会占用过多的系统内存。如果其它应用需要内存时，系统自动执行这些策略。当调用这些策略时，会从缓存中删除一些对象，以最大限度减少内存的占用
+>
+>2.`NSCache`是线程安全的，我们可以在不同的线程中添加、删除和查询缓存中的对象，而不需要锁定缓存区域。
+>
+>3.不像`NSMutableDictionary`对象，一个缓存对象不会拷贝key对象。
+>
+
+属性介绍：
+
++ name - 缓存的名称
++ delegate - 缓存的带来
++ countLimit - 能够缓存的对象的最大数量，默认为0，表示没有限制。不严格
++ totalCostLimit - 来限定缓存能维持的最大内存，默认为0，表示没有限制。不严格
+
+常用方法：
+
+1.存数据
+
+```
+- (void)setObject:(ObjectType)obj forKey:(KeyType)key; // 0 cost
+- (void)setObject:(ObjectType)obj forKey:(KeyType)key cost:(NSUInteger)g;
+```
+
+2.取数据
+
+```
+- (nullable ObjectType)objectForKey:(KeyType)key;
+```
+
+3.移除数据
+
+```
+- (void)removeObjectForKey:(KeyType)key;
+```
+
+4.代理方法
+
+```
+@protocol NSCacheDelegate <NSObject>
+@optional
+- (void)cache:(NSCache *)cache willEvictObject:(id)obj;
+@end
+```
 
 
 
