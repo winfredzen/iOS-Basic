@@ -29,5 +29,50 @@
 | 可见性 | 数据在 URL 中对所有人都是可见的 | 数据不会显示在 URL 中 | 
 
 
+## JSON和XML
+
+### JSON
+
+JSON是一种轻量级的数据格式，一般用于数据交互
+
+标准JSON格式的注意点：key必须用双引号
+
+```
+{"names" : ["jack", "rose", "jim"]}
+```
+
+**JSON与OC转换**
+
+| JSON | OC |
+| --------- | -------- |
+| 大括号 { } | NSDictionary |
+| 中括号 [ ] | NSArray |
+| 双引号 " " | NSString |
+| 数字 | NSNumber |
+
+**JSON解析**
+
+iOS自带`NSJSONSerialization`
+
+1.JSON转OC对象
+
+```
++ (id)JSONObjectWithData:(NSData *)data options:(NSJSONReadingOptions)opt error:(NSError **)error;
+```
+
+`NSJSONReadingOptions`有三个值：
+
++ `NSJSONReadingMutableContainers`返回的数组和字典都是`NSMutableArray`和`NSMutableDictionay`类型
++ `NSJSONReadingMutableLeaves`返回的的字符串是`NSMutableSting`类型
++ `NSJSONReadingAllowFragments`意思是需要格式化的json字符串最外层可以不是数组和字典，只要是正确的json格式就行
+
+2.OC转JSON对象
+
+```
++ (NSData *)dataWithJSONObject:(id)obj options:(NSJSONWritingOptions)opt error:(NSError **)error;
+```
+
+
+
 
 
