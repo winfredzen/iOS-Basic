@@ -96,7 +96,7 @@ XML的解析方式有2种:
 
 参考[Xcode 控制台输出中文](http://rendashu.me/2017/03/01/Xcode-%E6%8E%A7%E5%88%B6%E5%8F%B0%E8%BE%93%E5%87%BA%E4%B8%AD%E6%96%87/)
 
->重写 NSArray、NSSet、NSDictionary 的输出方法，在Xcode实现中文（Unicode）字符在控制台的输出
+>Xcode 控制台中在输出 NSArray、NSSet、NSDictionary 时，其中的中文字符会变成Unicode编码 如"\U67cf\U8367".
 
 其原理是为NSArray、NSSet、NSDictionary添加分类，重写`-(NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level`方法，其调用过程是：
 
