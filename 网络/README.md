@@ -73,6 +73,61 @@ iOS自带`NSJSONSerialization`
 ```
 
 
+### XML
+
+XML文档一般有以下部分组成
+
++ 文档声明-`<?xml version="1.0" encoding="UTF-8" ?>`
++ 元素(Element)
+
+	+ 拥有内容的元素-`<error>错误</error>`
+ 	+ 没有内容的元素-`<error></error>`
+ 	+ 没有内容的元素的简写-`<error/>`
+ 	 
++ 属性(Attribute)
+
+
+XML的解析方式有2种:
+
++ DOM：一次性将整个XML文档加载进内存，比较适合解析小文件
++ SAX：从根元素开始，按顺序一个元素一个元素往下解析，比较适合解析大文件
+
+## 控制台输出中文
+
+参考[Xcode 控制台输出中文](http://rendashu.me/2017/03/01/Xcode-%E6%8E%A7%E5%88%B6%E5%8F%B0%E8%BE%93%E5%87%BA%E4%B8%AD%E6%96%87/)
+
+>重写 NSArray、NSSet、NSDictionary 的输出方法，在Xcode实现中文（Unicode）字符在控制台的输出
+
+其原理是为NSArray、NSSet、NSDictionary添加分类，重写`-(NSString *)descriptionWithLocale:(id)locale indent:(NSUInteger)level`方法，其调用过程是：
+
++ If the element is an `NSString` object, it is used as is.
++ If the element responds to `descriptionWithLocale:indent:`, that method is invoked to obtain the element’s string representation.
++ If the element responds to `descriptionWithLocale:`, that method is invoked to obtain the element’s string representation.
++ If none of the above conditions is met, the element’s string representation is obtained by invoking its `description` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
