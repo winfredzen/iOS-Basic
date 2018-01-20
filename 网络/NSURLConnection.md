@@ -214,6 +214,205 @@ urlStr =  [urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding
 
 POST请求并不需要转码
 
+## 文件下载
+
+### 小文件下载
+
+使用以下的下载方式会导致内存的暴增
+
+1.使用`NSURLConnection`的`sendAsynchronousRequest`方法，异步下载。
+
+如下下载一个视频文件，写入到沙盒
+
+```
+    NSURL *url = [NSURL URLWithString:@"xxxxx.mp4"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    //发送请求
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
+        //数据到沙盒中
+        NSString *fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]stringByAppendingPathComponent:@"video.mp4"];
+        [data writeToFile:fullPath atomically:YES];
+    }];
+```
+
+使用上面的方法，不能监控下载的进度
+
+
+2.使用代理，可以计算下载的进度
+
+```
+-(void)download
+{
+    NSURL *url = [NSURL URLWithString:@"xxxx.mp4"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [[NSURLConnection alloc]initWithRequest:request delegate:self];
+}
+
+#pragma mark NSURLConnectionDataDelegate
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    //文件大小
+    self.totalSize = response.expectedContentLength;
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+   //拼接数据
+    [self.fileData appendData:data];
+    //计算下载进度
+    NSLog(@"%f",1.0 * self.fileData.length /self.totalSize);
+}
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+}
+
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    //写入到沙盒
+    NSString *fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]stringByAppendingPathComponent:@"xxxx.mp4"];
+    [self.fileData writeToFile:fullPath atomically:YES];
+}
+```
+
+### 大文件下载
+
+为防止下载时内存的暴增
+
+1. 在接收到响应时创建文件
+2. 在接收到数据时，在文件后面拼接数据，并计算下载进度
+
+如下：
+
+```
+-(void)download
+{
+    NSURL *url = [NSURL URLWithString:@"http:xxxxx/xxxx.mp4"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [[NSURLConnection alloc]initWithRequest:request delegate:self];
+}
+
+#pragma mark NSURLConnectionDataDelegate
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    
+    self.totalSize = response.expectedContentLength;
+	 //路径
+    self.fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]stringByAppendingPathComponent:@"xxxx.mp4"];
+    
+    //创建一个空的文件
+    [[NSFileManager defaultManager] createFileAtPath:self.fullPath contents:nil attributes:nil];
+    
+    //创建文件句柄(指针)
+    self.handle = [NSFileHandle fileHandleForWritingAtPath:self.fullPath];
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    //移动文件句柄到数据的末尾
+    [self.handle seekToEndOfFile];
+    //写数据
+    [self.handle writeData:data];
+    //获得进度
+    self.currentSize += data.length;
+    //进度=已经下载/文件的总大小
+    NSLog(@"%f",1.0 *  self.currentSize/self.totalSize);
+    self.progressView.progress = 1.0 *  self.currentSize/self.totalSize;
+}
+
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+}
+
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    //关闭文件句柄
+    [self.handle closeFile];
+    self.handle = nil;
+}
+```
+
+#### 大文件断点下载
+
+断点下载设置请求头中的`Range`信息
+
+>Range: bytes=5001-10000
+>
+>对于只需获取部分资源的范围请求，包含首部字段Range即可告知服务器资源的指定范围。上面的实例表示请求获取从5001字节到第10000字节的资源
+>
+>接收到附带Range首部的字段请求的服务器，会在处理请求之后返回状态码206 Partial Content的响应。无法处理该范围请求时，则会返回状态码200 OK的响应及全部资源
+>
+
+
+```
+-(void)download
+{
+    NSURL *url = [NSURL URLWithString:@"http:xxxxx.jpg"];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    //设置请求头信息,告诉服务器值请求一部分数据range
+    NSString *range = [NSString stringWithFormat:@"bytes=%zd-",self.currentSize];
+    [request setValue:range forHTTPHeaderField:@"Range"];
+    
+    //发送请求
+    NSURLConnection *connect = [[NSURLConnection alloc]initWithRequest:request delegate:self];
+    self.connect = connect;
+}
+
+#pragma mark NSURLConnectionDataDelegate
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+
+	 //之前已经下载过，直接返回
+    if (self.currentSize >0) {
+        return;
+    }
+    
+    //注意位置
+    self.totalSize = response.expectedContentLength;
+    
+    //写数据到沙盒
+    self.fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]stringByAppendingPathComponent:@"xxx.jpg"];
+    
+    NSLog(@"%@",self.fullPath);
+    
+    //创建一个空的文件
+    [[NSFileManager defaultManager] createFileAtPath:self.fullPath contents:nil attributes:nil];
+    
+    //创建文件句柄(指针)
+    self.handle = [NSFileHandle fileHandleForWritingAtPath:self.fullPath];
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    //移动文件句柄到数据的末尾
+    [self.handle seekToEndOfFile];
+    //写数据
+    [self.handle writeData:data];
+    //获得进度
+    self.currentSize += data.length;
+    //进度=已经下载/文件的总大小
+    NSLog(@"%f",1.0 *  self.currentSize/self.totalSize);
+    self.progressView.progress = 1.0 *  self.currentSize/self.totalSize;
+}
+
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+}
+
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    //关闭文件句柄
+    [self.handle closeFile];
+    self.handle = nil;
+}
+```
+
+
+
+
+
+
 
 
 
