@@ -363,7 +363,7 @@ POST请求并不需要转码
 -(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
 
-	 //之前已经下载过，直接返回
+	//之前已经下载过，直接返回
     if (self.currentSize >0) {
         return;
     }
@@ -408,8 +408,222 @@ POST请求并不需要转码
 }
 ```
 
+### 输出流
+
+输出流`NSOutputStream`
+
+>A stream that provides write-only stream functionality.
+>
+>NSOutputStream is “toll-free bridged” with its Core Foundation counterpart(副本), CFWriteStreamRef. For more information on toll-free bridging, see Toll-Free Bridging.
+>
+
+一般使用的初始化方法：
+
+```
+- (nullable instancetype)initWithURL:(NSURL *)url append:(BOOL)shouldAppend
+```
+
++ url-文件的路径
++ shouldAppend-为YES表示追加，否则即为NO
+
+注意:如果该输出流指向的地址没有文件,那么会自动创建一个空的文件
 
 
+如下使用输出流来写入下载的文件：
+
+```
+-(void)download
+{   
+    NSURL *url = [NSURL URLWithString:@"xxxxx"];
+
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    NSString *range = [NSString stringWithFormat:@"bytes=%zd-",self.currentSize];
+    [request setValue:range forHTTPHeaderField:@"Range"];
+    
+    //发送请求
+    NSURLConnection *connect = [[NSURLConnection alloc]initWithRequest:request delegate:self];
+    self.connect = connect;
+}
+
+#pragma mark NSURLConnectionDataDelegate
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    
+    if (self.currentSize >0) {
+        return;
+    }
+    
+    self.totalSize = response.expectedContentLength;
+    
+    self.fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]stringByAppendingPathComponent:@"xxx.jpg"];
+    
+    NSOutputStream *stream = [[NSOutputStream alloc]initToFileAtPath:self.fullPath append:YES];
+    
+    //打开输出流
+    [stream open];
+    self.stream = stream;
+}
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    //写数据
+    [self.stream write:data.bytes maxLength:data.length];
+    
+    //获得进度
+    self.currentSize += data.length;
+ 
+    //进度=已经下载/文件的总大小
+    NSLog(@"%f",1.0 *  self.currentSize/self.totalSize);
+    self.progressView.progress = 1.0 *  self.currentSize/self.totalSize;
+}
+
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+}
+
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    
+    //关闭流
+    [self.stream close];
+    self.stream = nil;
+}
+```
+
+## 文件上传
+
+文件上传步骤：
+
+1.设置请求头`Content-Type`
+
+```
+Content-Type:multipart/form-data; boundary=----WebKitFormBoundaryjv0UfA04ED44AhWx
+```
+
+2.按照固定的格式拼接请求体数据
+
+```
+ ------WebKitFormBoundaryjv0UfA04ED44AhWx
+ Content-Disposition: form-data; name="file"; filename="Snip20160225_341.png"
+ Content-Type: image/png
+ 
+ 
+ ------WebKitFormBoundaryjv0UfA04ED44AhWx
+ Content-Disposition: form-data; name="username"
+ 
+ 123456
+ ------WebKitFormBoundaryjv0UfA04ED44AhWx--
+```
+
++ 第一部分表示上传的图片(文件参数)
++ 第一部分表示表单的参数(非文件参数)
++ 最后一部分`------WebKitFormBoundaryjv0UfA04ED44AhWx--`表示结尾标示
+
+
+拼接请求体的数据格式如下：
+
+```
+ 拼接请求体
+ 分隔符:----WebKitFormBoundaryjv0UfA04ED44AhWx
+ 1)文件参数
+     --分隔符
+     Content-Disposition: form-data; name="file"; filename="Snip20160225_341.png"
+     Content-Type: image/png(MIMEType:大类型/小类型)
+     空行
+     文件参数
+ 2)非文件参数
+     --分隔符
+     Content-Disposition: form-data; name="username"
+     空行
+     123456
+ 3)结尾标识
+    --分隔符--
+```
+
+如下的文件上传的例子：
+
+```
+#define Kboundary @"----WebKitFormBoundaryjv0UfA04ED44AhWx"
+#define KNewLine [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding]
+
+
+-(void)upload
+{
+    //1.确定请求路径
+    NSURL *url = [NSURL URLWithString:@"xxxx"];
+    
+    //2.创建可变的请求对象
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    
+    //3.设置请求方法
+    request.HTTPMethod = @"POST";
+    
+    //4.设置请求头信息
+    //Content-Type:multipart/form-data; boundary=----WebKitFormBoundaryjv0UfA04ED44AhWx
+    [request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",Kboundary] forHTTPHeaderField:@"Content-Type"];
+    
+    //5.拼接请求体数据
+    NSMutableData *fileData = [NSMutableData data];
+    //5.1 文件参数
+    /*
+     --分隔符
+     Content-Disposition: form-data; name="file"; filename="Snip20160225_341.png"
+     Content-Type: image/png(MIMEType:大类型/小类型)
+     空行
+     文件参数
+     */
+    [fileData appendData:[[NSString stringWithFormat:@"--%@",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    
+    //name:file 服务器规定的参数
+    //filename:Snip20160225_341.png 文件保存到服务器上面的名称
+    //Content-Type:文件的类型
+    [fileData appendData:[@"Content-Disposition: form-data; name=\"file\"; filename=\"Snip20160225_341.png\"" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:[@"Content-Type: image/png" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:KNewLine];
+    
+    UIImage *image = [UIImage imageNamed:@"Snip20160225_341"];
+    //UIImage --->NSData
+    NSData *imageData = UIImagePNGRepresentation(image);
+    [fileData appendData:imageData];
+    [fileData appendData:KNewLine];
+    
+    //5.2 非文件参数
+    /*
+     --分隔符
+     Content-Disposition: form-data; name="username"
+     空行
+     123456
+     */
+    [fileData appendData:[[NSString stringWithFormat:@"--%@",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:[@"Content-Disposition: form-data; name=\"username\"" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    [fileData appendData:KNewLine];
+    [fileData appendData:[@"123456" dataUsingEncoding:NSUTF8StringEncoding]];
+    [fileData appendData:KNewLine];
+    
+    //5.3 结尾标识
+    /*
+     --分隔符--
+     */
+    [fileData appendData:[[NSString stringWithFormat:@"--%@--",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //6.设置请求体
+    request.HTTPBody = fileData;
+    
+    //7.发送请求
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
+       
+        //8.解析数据
+        NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+    }];
+}
+
+```
 
 
 
