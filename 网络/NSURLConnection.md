@@ -625,14 +625,217 @@ Content-Type:multipart/form-data; boundary=----WebKitFormBoundaryjv0UfA04ED44AhW
 
 ```
 
+## MIME
+
+MIME类型，可参考[MIME 类型](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
+
+1.通过响应获取MIME类型
+
+```
+    NSURL *url = [NSURL fileURLWithPath:@"xxxxx"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse * _Nullable response, NSData * _Nullable data, NSError * _Nullable connectionError) {
+        NSLog(@"%@",response.MIMEType);
+    }];
+```
+
+2.C语言API获取MIME类型
+
+```
+- (NSString *)mimeTypeForFileAtPath:(NSString *)path
+{
+    if (![[[NSFileManager alloc] init] fileExistsAtPath:path]) {
+        return nil;
+    }
+    
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (__bridge CFStringRef)[path pathExtension], NULL);
+    CFStringRef MIMEType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType);
+    CFRelease(UTI);
+    if (!MIMEType) {
+        return @"application/octet-stream";
+    }
+    return (__bridge NSString *)(MIMEType);
+}
+```
+
+## 多线程下载文件
+
+要注意的地方：
+
+1.每个线程下载一部分数据，参考断点下载，设置Range
+2.下载后，写入到文件，使用`NSFileHandle`
 
 
 
+## 文件的压缩和解压缩
+
+可使用弟三方开源软件[ZipArchive/ZipArchive](https://github.com/ZipArchive/ZipArchive)
+
+使用方法如下：
+
+```
+// Create
+[SSZipArchive createZipFileAtPath:zipPath withContentsOfDirectory:sampleDataPath];
+
+// Unzip
+[SSZipArchive unzipFileAtPath:zipPath toDestination:unzipPath];
+```
+
+## NSURLConnection与线程
+
+`+ connectionWithRequest: delegate:`创建的`NSURLConnection`其代理是在主线程中调用的，并且是异步的，如下：
+
+```
+-(void)delegate
+{
+	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"xxxxx"]];
+	NSURLConnection *connect = [NSURLConnection connectionWithRequest:request delegate:self];
+	NSLog(@"-------");
+}
+
+......
+
+#pragma mark NSURLConnectionDataDelegate
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    NSLog(@"didReceiveResponse---%@",[NSThread currentThread]);
+}
+
+```
+
+输出结果如下，为主线程：
+
+```
+-------
+didReceiveResponse---<NSThread: 0x60400006e180>{number = 1, name = main}
+```
+
+也可以设置代理方法在哪个线程中调用，如下：
+
+```
+-(void)delegate
+{
+	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"xxxxx"]];
+	NSURLConnection *connect = [NSURLConnection connectionWithRequest:request delegate:self];
+	[connect setDelegateQueue:[[NSOperationQueue alloc]init]];
+	NSLog(@"-------");
+}
+```
+
+输出结果为：
+
+```
+-------
+didReceiveResponse---<NSThread: 0x6000002732c0>{number = 4, name = (null)}
+
+```
+
+要注意的是设置为主队列不会起作用
+
+还有另一种方式也可达到同样的效果，如下：
+
+```
+-(void)delegate
+{
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"xxxxx"]];
+    
+    //设置代理
+    NSURLConnection *connect = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+
+    [connect setDelegateQueue:[[NSOperationQueue alloc]init]];
+    
+    //开始发送请求
+    [connect start];
+    NSLog(@"-------");
+}
+```
 
 
+### 在子线程中发送请求
 
+如下使用GCD：
 
+```
+-(void)newThreadDelegate1
+{
+   dispatch_async(dispatch_get_global_queue(0, 0), ^{
+      
+       NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"xxxxx"]];
+       
+       NSURLConnection *connect = [NSURLConnection connectionWithRequest:request delegate:self];
+  
+      	//设置代理方法在哪个线程中调用
+      [connect setDelegateQueue:[[NSOperationQueue alloc]init]];
+  
+       NSLog(@"---%@----",[NSThread currentThread]);
+   });
+  
+}
+```
 
+**调用时，请求的代理并没有调用**。为什么呢？`connectionWithRequest: delegate:`方法内部其实会将connect对象作为一个source添加到当前的runloop中,指定运行模式为默认
+
+>The delegate object for the connection. The connection calls methods on this delegate as the load progresses. Delegate methods are called on the same thread that called this method. For the connection to work correctly, the calling thread’s run loop must be operating in the default run loop mode.
+>
+
+当前子线程的RunLoop没有开启，所以需要开启RunLoop
+
+```
+  dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"xxxxx"]];
+    
+    NSURLConnection *connect = [NSURLConnection connectionWithRequest:request delegate:self];
+    
+    //设置代理方法在哪个线程中调用
+    [connect setDelegateQueue:[[NSOperationQueue alloc]init]];
+    
+    [[NSRunLoop currentRunLoop] runMode:UITrackingRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:1000]];
+    [[NSRunLoop currentRunLoop]run];
+    
+    NSLog(@"---%@----",[NSThread currentThread]);
+  });
+```
+
+输出结果为：
+
+```
+didReceiveResponse---<NSThread: 0x600000469d80>{number = 5, name = (null)}
+---<NSThread: 0x6000004681c0>{number = 4, name = (null)}----
+```
+
+但如果使用`NSURLConnection *connect = [[NSURLConnection alloc]initWithRequest:request delegate:self startImmediately:NO];`来创建connect，是不需要开启RunLoop的，如下：
+
+```
+  dispatch_async(dispatch_get_global_queue(0, 0), ^{
+  
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"xxxxx"]];
+    
+   NSURLConnection *connect = [[NSURLConnection alloc]initWithRequest:request delegate:self startImmediately:NO];
+    
+    [connect setDelegateQueue:[[NSOperationQueue alloc]init]];
+
+    [connect start];
+    NSLog(@"---%@----",[NSThread currentThread]);
+  });
+```
+
+输出为：
+
+```
+---<NSThread: 0x600000273880>{number = 3, name = (null)}----
+
+didReceiveResponse---<NSThread: 0x604000479bc0>{number = 4, name = (null)}
+```
+
+原因在于connect的start方法：
+
+>Causes the connection to begin loading data, if it has not already.
+Calling this method is necessary only if you create a connection with the `initWithRequest:delegate:startImmediately: `method and provide `NO` for the startImmediately parameter. **If you don’t schedule the connection in a run loop or an operation queue before calling this method, the connection is scheduled in the current run loop in the default mode**.
+>
+>如如果connect对象没有添加到runloop中,那么该方法内部会自动的添加到runloop
+>
+>注意:如果当前的runloop没有开启,那么该方法内部会自动获得当前线程对应的runloop对象并且开启
 
 
 
