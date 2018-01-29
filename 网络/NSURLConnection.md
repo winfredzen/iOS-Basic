@@ -663,6 +663,7 @@ MIME类型，可参考[MIME 类型](https://developer.mozilla.org/zh-CN/docs/Web
 要注意的地方：
 
 1.每个线程下载一部分数据，参考断点下载，设置Range
+
 2.下载后，写入到文件，使用`NSFileHandle`
 
 
