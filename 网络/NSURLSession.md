@@ -23,6 +23,113 @@ Task的类型如下，NSURLSessionTask为抽象类，使用时使用其子类：
 + (NSURLSession *)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id <NSURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue;
 ```
 
++ configuration-配置信息，可使用`[NSURLSessionConfiguration defaultSessionConfiguration]`
++ delegate-代理
++ queue-设置代理方法在哪个线程中调用
+
+
+
+### 代理相关
+
+`NSURLSession`相关的代理包括：
+
++ [NSURLSessionDelegate](https://developer.apple.com/documentation/foundation/nsurlsessiondelegate)
++ [NSURLSessionTaskDelegate](https://developer.apple.com/documentation/foundation/nsurlsessiontaskdelegate)
++ [NSURLSessionDataDelegate](https://developer.apple.com/documentation/foundation/nsurlsessiondatadelegate?language=objc)
++ [NSURLSessionDownloadDelegate](https://developer.apple.com/documentation/foundation/nsurlsessiondownloaddelegate?language=objc)
++ [NSURLSessionStreamDelegate](https://developer.apple.com/documentation/foundation/nsurlsessionstreamdelegate)
+
+
+#### NSURLSessionTaskDelegate
+
+```
+//请求结束或者是失败的时候调用
+URLSession:task:didCompleteWithError:
+```
+
+#### NSURLSessionDataDelegate
+
+```
+//接收到服务器的响应
+URLSession:dataTask:didReceiveResponse:completionHandler:
+
+//接收到服务器返回的数据
+URLSession:dataTask:didReceiveData:
+
+
+```
+
+`URLSession:dataTask:didReceiveResponse:completionHandler:`方法说明：
+
++ session-会话对象
++ dataTask-请求任务
++ response-响应头信息
++ completionHandler- 回调，是需要传给系统的
+
+`NSURLSessionResponseDisposition`有四个类型的值：
+
++ NSURLSessionResponseCancel-取消请求，是默认情况
++ NSURLSessionResponseAllow-接收数据
++ NSURLSessionResponseBecomeDownload-变成下载任务
++ NSURLSessionResponseBecomeStream-变成流
+
+使用例子如下：
+
+```
+  NSURL *url = [NSURL URLWithString:@"xxxxx"];
+  
+  //创建请求对象
+  NSURLRequest *request = [NSURLRequest requestWithURL:url];
+  
+  //创建会话对象,设置代理
+  NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+  
+  //创建Task
+  NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request];
+  
+  //执行Task
+  [dataTask resume];
+  
+#pragma mark ----------------------
+#pragma mark NSURLSessionDataDelegate
+
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completionHandler
+{
+  NSLog(@"%s",__func__);
+  
+  completionHandler(NSURLSessionResponseAllow);
+}
+
+
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
+{
+  NSLog(@"%s",__func__);
+  
+  //拼接数据
+  [self.fileData appendData:data];
+}
+
+
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+  NSLog(@"%s",__func__);
+  
+  //解析数据
+  NSLog(@"%@",[[NSString alloc]initWithData:self.fileData encoding:NSUTF8StringEncoding]);
+}
+  
+```
+
+输出调用过程如下：
+
+```
+-[ViewController URLSession:dataTask:didReceiveResponse:completionHandler:]
+-[ViewController URLSession:dataTask:didReceiveData:]
+-[ViewController URLSession:task:didCompleteWithError:]
+```
+
+
+
 ### GET请求
 
 1.使用`dataTaskWithRequest:completionHandler:`
