@@ -453,7 +453,7 @@ URLSession:dataTask:didReceiveData:
 
 ```
 
-但上面的方法还有一个问题是，如果当前用户kill程序，当用户再次使用下载时，此时又会从头开始下载。此时使用`NSURLSessionDownloadTask`操作起来，有些麻烦，可考虑使用`NSURLSessionDataTask`
+但上面的方法还有一个问题是，如果当前用户kill程序，当用户再次使用下载时，此时又会从头开始下载。这种方式非常不适合，我们需要的是此时可以在原来的基础上继续下载。此时使用`NSURLSessionDownloadTask`操作起来，有些麻烦，可考虑使用`NSURLSessionDataTask`
 
 
 
