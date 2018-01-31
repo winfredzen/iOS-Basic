@@ -28,6 +28,29 @@ Task的类型如下，NSURLSessionTask为抽象类，使用时使用其子类：
 + queue-设置代理方法在哪个线程中调用
 
 
+### NSURLSessionConfiguration
+
+[NSURLSessionConfiguration](https://developer.apple.com/documentation/foundation/nsurlsessionconfiguration)对象用于初始化`NSURLSession`
+
+>An NSURLSessionConfiguration object defines the behavior and policies to use when uploading and downloading data using an NSURLSession object. When uploading or downloading data, creating a configuration object is always the first step you must take. You use this object to configure the timeout values, caching policies, connection requirements, and other types of information that you intend to use with your NSURLSession object.
+
+>It is important to configure your NSURLSessionConfiguration object appropriately before using it to initialize a session object. Session objects make a copy of the configuration settings you provide and use those settings to configure the session. Once configured, the session object ignores any changes you make to the NSURLSessionConfiguration object. If you need to modify your transfer policies, you must update the session configuration object and use it to create a new NSURLSession object.
+
+使用该对象可配置超时时间、缓存策略等
+
+创建`NSURLSessionConfiguration`有三种方式：
+
++ `defaultSessionConfiguration`返回标准配置，这实际上与NSURLConnection的网络协议栈是一样的，具有相同的共享NSHTTPCookieStorage，共享NSURLCache和共享NSURLCredentialStorage。
++ `ephemeralSessionConfiguration`返回一个预设配置，没有持久性存储的缓存，Cookie或证书。这对于实现像"秘密浏览"功能的功能来说，是很理想的。
++ `backgroundSessionConfiguration`：独特之处在于，它会创建一个后台会话。后台会话不同于常规的，普通的会话，它甚至可以在应用程序挂起，退出，崩溃的情况下运行上传和下载任务。初始化时指定的标识符，被用于向任何可能在进程外恢复后台传输的守护进程提供上下文。
+
+重要的属性：
+
+1.`HTTPAdditionalHeaders`指定了一组默认的请求的数据头。这对于跨会话共享信息，如内容类型，语言，用户代理，身份认证，是很有用的
+2.`networkServiceType`网络服务类型，对标准的网络流量，网络电话，语音，视频，以及由一个后台进程使用的流量进行了区分。大多数应用程序都不需要设置这个
+3.`allowsCellularAccess`允许蜂窝访问
+4.`timeoutIntervalForRequest`请求超时时间
+
 
 ### 代理相关
 
@@ -569,7 +592,7 @@ URLSession:dataTask:didReceiveData:
 -(NSURLSessionDataTask *)dataTask
 {
     if (_dataTask == nil) {
-        NSURL *url = [NSURL URLWithString:@"xxxxx"];
+        NSURL *url = [NSURL URLWithString:@"https://dldir1.qq.com/qqfile/QQforMac/QQ_V6.2.1.dmg"];
         
         //创建请求对象
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
@@ -669,12 +692,133 @@ URLSession:dataTask:didReceiveData:
 
 ```
 
+注意session的释放，使用`invalidateAndCancel`方法
 
 
+## 文件上传
+
+使用`NSURLSessionUploadTask`来进行文件的上传
+
+```
+- (NSURLSessionUploadTask *)uploadTaskWithRequest:(NSURLRequest *)request fromData:(nullable NSData *)bodyData completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+```
+
++ request-请求对象
++ bodyData-传递是要上传的数据(请求体)
++ completionHandler-回调
 
 
+如果要监控上传的进度，要设置代理，遵守`NSURLSessionDataDelegate`协议，要实现如下的方法：
 
+```
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+```
 
++ bytesSent-本次发送的数据
++ totalBytesSent-上传完成的数据大小
++ totalBytesExpectedToSend-文件的总大小
+
+如下的示例：
+
+```
+-(NSURLSession *)session
+{
+  if (_session == nil) {
+    NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
+    
+    //是否运行蜂窝访问
+    config.allowsCellularAccess = YES;
+    config.timeoutIntervalForRequest = 15;
+    
+    _session = [NSURLSession sessionWithConfiguration:config delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+  }
+  return _session;
+}
+
+//上传
+-(void)upload
+{
+  NSURL *url = [NSURL URLWithString:@"xxxx"];
+  
+  //创建请求对象
+  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+  
+  //设置请求方法
+  request.HTTPMethod = @"POST";
+  
+  //设请求头信息
+  [request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@",Kboundary] forHTTPHeaderField:@"Content-Type"];
+  
+  NSURLSessionUploadTask *uploadTask = [self.session uploadTaskWithRequest:request fromData:[self getBodyData] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+
+    NSLog(@"%@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
+  }];
+  
+  //执行Task
+  [uploadTask resume];
+}
+
+//请求体数据
+-(NSData *)getBodyData
+{
+  NSMutableData *fileData = [NSMutableData data];
+  //文件参数
+  /*
+   --分隔符
+   Content-Disposition: form-data; name="file"; filename="Snip20160225_341.png"
+   Content-Type: image/png(MIMEType:大类型/小类型)
+   空行
+   文件参数
+   */
+  [fileData appendData:[[NSString stringWithFormat:@"--%@",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+  [fileData appendData:KNewLine];
+  
+  //name:file 服务器规定的参数
+  //filename:Snip20160225_341.png 文件保存到服务器上面的名称
+  //Content-Type:文件的类型
+  [fileData appendData:[@"Content-Disposition: form-data; name=\"file\"; filename=\"Sss.png\"" dataUsingEncoding:NSUTF8StringEncoding]];
+  [fileData appendData:KNewLine];
+  [fileData appendData:[@"Content-Type: image/png" dataUsingEncoding:NSUTF8StringEncoding]];
+  [fileData appendData:KNewLine];
+  [fileData appendData:KNewLine];
+  
+  UIImage *image = [UIImage imageNamed:@"Snip20160226_90"];
+  //UIImage --->NSData
+  NSData *imageData = UIImagePNGRepresentation(image);
+  [fileData appendData:imageData];
+  [fileData appendData:KNewLine];
+  
+  //非文件参数
+  /*
+   --分隔符
+   Content-Disposition: form-data; name="username"
+   空行
+   123456
+   */
+  [fileData appendData:[[NSString stringWithFormat:@"--%@",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+  [fileData appendData:KNewLine];
+  [fileData appendData:[@"Content-Disposition: form-data; name=\"username\"" dataUsingEncoding:NSUTF8StringEncoding]];
+  [fileData appendData:KNewLine];
+  [fileData appendData:KNewLine];
+  [fileData appendData:[@"123456" dataUsingEncoding:NSUTF8StringEncoding]];
+  [fileData appendData:KNewLine];
+  
+  //结尾标识
+  /*
+   --分隔符--
+   */
+  [fileData appendData:[[NSString stringWithFormat:@"--%@--",Kboundary] dataUsingEncoding:NSUTF8StringEncoding]];
+  return fileData;
+}
+
+#pragma mark NSURLSessionDataDelegate
+
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
+{
+  NSLog(@"%f",1.0 *totalBytesSent / totalBytesExpectedToSend);
+}
+
+```
 
 
 
