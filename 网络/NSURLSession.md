@@ -455,8 +455,219 @@ URLSession:dataTask:didReceiveData:
 
 但上面的方法还有一个问题是，如果当前用户kill程序，当用户再次使用下载时，此时又会从头开始下载。这种方式非常不适合，我们需要的是此时可以在原来的基础上继续下载。此时使用`NSURLSessionDownloadTask`操作起来，有些麻烦，可考虑使用`NSURLSessionDataTask`
 
+### NSURLSessionDataTask实现大文件下载
+
+#### 普通使用方式
+
+在接收到响应后，创建一个空的文件，使用`NSFileHandle`文件句柄，写入下载的数据
+
+```
+- (void)download {
+  NSURL *url = [NSURL URLWithString:@"xxxxx"];
+  NSURLRequest *request = [NSURLRequest requestWithURL:url];
+  
+  //创建会话对象,设置代理
+  NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+  
+  //创建Task
+  NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request];
+  
+  //执行Task
+  [dataTask resume];
+}
+
+#pragma mark NSURLSessionDataDelegate
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completionHandler
+{
+  //获得文件的总大小
+  self.totalSize = response.expectedContentLength;
+  
+  //获得文件全路径
+  self.fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:response.suggestedFilename];
+  
+  //创建空的文件
+  [[NSFileManager defaultManager]createFileAtPath:self.fullPath contents:nil attributes:nil];
+  
+  //创建文件句柄
+  self.handle = [NSFileHandle fileHandleForWritingAtPath:self.fullPath];
+  
+  [self.handle seekToEndOfFile];
+  
+  completionHandler(NSURLSessionResponseAllow);
+}
 
 
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
+{
+  
+  //写入数据到文件
+  [self.handle writeData:data];
+  
+  //计算文件的下载进度
+  self.currentSize += data.length;
+  NSLog(@"%f",1.0 * self.currentSize / self.totalSize);
+  
+  self.proessView.progress = 1.0 * self.currentSize / self.totalSize;
+}
+
+
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+  NSLog(@"%@",self.fullPath);
+  
+  //关闭文件句柄
+  [self.handle closeFile];
+  self.handle = nil;
+}
+
+```
+
+#### `NSURLSessionDataTask`离线断点下载
+
+要实现在原来已下载的基础上，重行下载
+
+1. 获取已保存的文件总大小的数据
+2. 获得当前已经下载的数据的大小
+3. 计算得到进度信息
+
+
+如下的例子：
+
+```
+//保存文件的路径
+-(NSString *)fullPath
+{
+    if (_fullPath == nil) {
+        _fullPath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:FileName];
+    }
+    return _fullPath;
+}
+
+//获取已下载文件的大小
+-(NSInteger)getFileSize
+{
+    //获得指定文件路径对应文件的数据大小
+    NSDictionary *fileInfoDict = [[NSFileManager defaultManager]attributesOfItemAtPath:self.fullPath error:nil];
+    NSLog(@"%@",fileInfoDict);
+    NSInteger currentSize = [fileInfoDict[@"NSFileSize"] integerValue];
+    
+    return currentSize;
+}
+
+//创建的session
+-(NSURLSession *)session
+{
+    if (_session == nil) {
+        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+    }
+    return _session;
+}
+
+
+
+//创建dataTask
+-(NSURLSessionDataTask *)dataTask
+{
+    if (_dataTask == nil) {
+        NSURL *url = [NSURL URLWithString:@"xxxxx"];
+        
+        //创建请求对象
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+        
+        //设置请求头信息,告诉服务器请求那一部分数据
+        self.currentSize = [self getFileSize];
+        NSString *range = [NSString stringWithFormat:@"bytes=%zd-",self.currentSize];
+        [request setValue:range forHTTPHeaderField:@"Range"];
+        
+        //创建Task
+        _dataTask = [self.session dataTaskWithRequest:request];
+    }
+    return _dataTask;
+}
+
+//开始下载
+- (IBAction)startBtnClick:(id)sender
+{
+    [self.dataTask resume];
+}
+
+//暂停下载
+- (IBAction)suspendBtnClick:(id)sender
+{
+    NSLog(@"暂停下载");
+    [self.dataTask suspend];
+}
+
+//取消下载
+- (IBAction)cancelBtnClick:(id)sender
+{
+    NSLog(@"取消下载");
+    [self.dataTask cancel];
+    self.dataTask = nil;
+}
+
+//继续下载
+- (IBAction)goOnBtnClick:(id)sender
+{
+    NSLog(@"继续下载");
+    [self.dataTask resume];
+}
+
+
+#pragma mark NSURLSessionDataDelegate
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completionHandler
+{
+    //获得文件的总大小
+    //expectedContentLength 本次请求的数据大小
+    self.totalSize = response.expectedContentLength + self.currentSize;
+    
+    if (self.currentSize == 0) {
+        //创建空的文件
+        [[NSFileManager defaultManager]createFileAtPath:self.fullPath contents:nil attributes:nil];
+        
+    }
+    //创建文件句柄
+    self.handle = [NSFileHandle fileHandleForWritingAtPath:self.fullPath];
+    
+    //移动指针
+    [self.handle seekToEndOfFile];
+    
+    completionHandler(NSURLSessionResponseAllow);
+}
+
+
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
+{
+    
+    //写入数据到文件
+    [self.handle writeData:data];
+    
+    //计算文件的下载进度
+    self.currentSize += data.length;
+    NSLog(@"%f",1.0 * self.currentSize / self.totalSize);
+    
+    self.proessView.progress = 1.0 * self.currentSize / self.totalSize;
+}
+
+
+-(void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+    NSLog(@"%@",self.fullPath);
+    
+    //关闭文件句柄
+    [self.handle closeFile];
+    self.handle = nil;
+}
+
+-(void)dealloc
+{
+    //清理工作
+    //finishTasksAndInvalidate
+    [self.session invalidateAndCancel];
+}
+
+
+```
 
 
 
