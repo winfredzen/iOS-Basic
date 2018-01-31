@@ -47,8 +47,11 @@ Task的类型如下，NSURLSessionTask为抽象类，使用时使用其子类：
 重要的属性：
 
 1.`HTTPAdditionalHeaders`指定了一组默认的请求的数据头。这对于跨会话共享信息，如内容类型，语言，用户代理，身份认证，是很有用的
+
 2.`networkServiceType`网络服务类型，对标准的网络流量，网络电话，语音，视频，以及由一个后台进程使用的流量进行了区分。大多数应用程序都不需要设置这个
+
 3.`allowsCellularAccess`允许蜂窝访问
+
 4.`timeoutIntervalForRequest`请求超时时间
 
 
