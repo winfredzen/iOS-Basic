@@ -317,18 +317,158 @@ POST请求使用如下的方法：
 也可参考[Creating an Upload Task for a Multi-Part Request, with Progress][2]例子
 
 
+### 序列化
+
+如果请求返回的是JSON数据，则不需要修改manager的`responseSerializer`。`AFHTTPSessionManager`默认的序列化为：
+
+```
+    self.requestSerializer = [AFHTTPRequestSerializer serializer];
+    self.responseSerializer = [AFJSONResponseSerializer serializer];
+```
+
+如果请求返回的是XML数据，则需要修改
+
+```
+manager.responseSerializer = [AFXMLParserResponseSerializer serializer];
+```
+
+如下的XML响应：
+
+```
+-(void)xml
+{
+    //创建会话管理者
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer = [AFXMLParserResponseSerializer serializer];
+    
+    NSDictionary *paramDict = @{
+                                @"type":@"XML"
+                                };
+    //发送GET请求
+    [manager GET:@"http://xxxx" parameters:paramDict progress:nil success:^(NSURLSessionDataTask * _Nonnull task,NSXMLParser *parser) {
+        
+        //NSLog(@"%@---%@",[responseObject class],responseObject);
+        //NSXMLParser *parser =(NSXMLParser *)responseObject;
+        
+        //设置代理
+        parser.delegate = self;
+        
+        //开始解析
+        [parser parse];
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"请求失败--%@",error);
+    }];
+}
+```
+
+如果返回的数据既不是JOSN也不是XML，例如一张图片，需使用`AFHTTPResponseSerializer`，表示二进制数据，如下的例子：
+
+```
+-(void)httpData
+{
+    //创建会话管理者
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    //发送GET请求
+    [manager GET:@"http://xxxxx/images/minion_01.png" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task,id  _Nullable responseObject) {
+        NSLog(@"%@-",[responseObject class]);
+        
+        //UIImage *image = [UIImage imageWithData:responseObject];
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"请求失败--%@",error);
+    }];
+}
+```
+
+还有一种情况是，发送一个请求给服务器，返回的数据为网页，需修改`manager.responseSerializer.acceptableContentTypes`
+
+`AFURLResponseSerialization`中的`acceptableContentTypes`属性，其默认支持的类型包括：
+
+```
+self.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript", nil];
+```
+
+如下的例子：
+
+```
+-(void)httpData
+{
+    //创建会话管理者
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    //发送GET请求
+    [manager GET:@"http://www.baidu.com" parameters:nil progress:nil success:^(NSURLSessionDataTask * _Nonnull task,id  _Nullable responseObject) {
+        NSLog(@"%@-%@",[responseObject class],[[NSString alloc]initWithData:responseObject encoding:NSUTF8StringEncoding]);
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        NSLog(@"请求失败--%@",error);
+    }];
+}
+
+```
 
 
+如果不添加如下的代码：
+
+```
+manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+```
+
+则会提示错误：
+
+```
+Error Domain=com.alamofire.error.serialization.response Code=-1016 "Request failed: unacceptable content-type: text/html" UserInfo={NSLocalizedDescription=Request failed: unacceptable content-type: text/html
+```
 
 
+### 网络状态监测
 
+网络状态检查可使用`AFNetworkReachabilityManager`类
 
+使用例子如下：
 
-
-
-
-
-
+```
+    //获得一个网络状态检测管理者
+    AFNetworkReachabilityManager *manager = [AFNetworkReachabilityManager sharedManager];
+    
+    //监听状态的改变
+    /*
+     AFNetworkReachabilityStatusUnknown          = -1, 未知
+     AFNetworkReachabilityStatusNotReachable     = 0,  没有网络
+     AFNetworkReachabilityStatusReachableViaWWAN = 1,  蜂窝网络
+     AFNetworkReachabilityStatusReachableViaWiFi = 2   Wifi
+     */
+    [manager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        switch (status) {
+            case AFNetworkReachabilityStatusReachableViaWWAN:
+                NSLog(@"蜂窝网络");
+                break;
+            case AFNetworkReachabilityStatusReachableViaWiFi:
+                NSLog(@"WIFI");
+                break;
+            case AFNetworkReachabilityStatusNotReachable:
+                NSLog(@"没有网络");
+                break;
+            case AFNetworkReachabilityStatusUnknown:
+                NSLog(@"未知");
+                break;
+            default:
+                break;
+        }
+    }];
+    
+    //开始监听
+    [manager startMonitoring];
+```
 
 
 
