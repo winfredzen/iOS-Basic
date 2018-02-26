@@ -99,6 +99,29 @@
 
 
 
+## WKWebView
+
+WKWebView有2个代理：
+
++ [WKUIDelegate][2]
++ [WKNavigationDelegate][3]
+
+参考如下的详细介绍：
+
++ [IOS进阶之WKWebView](https://www.jianshu.com/p/4fa8c4eb1316)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -106,3 +129,5 @@
 
 
 [1]: https://developer.apple.com/documentation/uikit/uiwebview "UIWebView"
+[2]: https://developer.apple.com/documentation/webkit/wkuidelegate "WKUIDelegate"
+[3]: https://developer.apple.com/documentation/webkit/wknavigationdelegate "WKNavigationDelegate"
