@@ -53,6 +53,18 @@ Objective-C是C的"超集"。C语言内存模型(memory modal)，参考[C语言�
 + **copy**-与strong类似。设置方法并不保留新值，而是将其拷贝。当属性类型为`NSString *`时，经常使用此特质来保护其封装性。因为传递给设置方法的新值有肯可能指向一个`NSMutableString`类的实例
 
 
+**属性声明的属性与所有权修饰符的对应关系**
+
+| 属性声明的属性 | 所有权限修饰符 |
+| -------- | --------- |
+| assign | `__unsafe_unretained`修饰符 |
+| copy | `__strong`修饰符 |
+| retain | `__strong`修饰符 |
+| strong | `__strong`修饰符 |
+| unsafe_unretained | `__unsafe_unretained`修饰符 |
+| weak | `__weak`修饰符 |
+
+
 ## 内存管理
 
 内存管理的思考方式(内容来自《Objective-C高级编程》)：
