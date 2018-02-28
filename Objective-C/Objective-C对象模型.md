@@ -59,10 +59,14 @@ struct objc_class {
 
 元类也是一个对象，所有元类的`isa`指针，指向一个根元类（root metaclass）。根元类的`isa`指针指向自己，形成一个闭环
 
+![isa指针](https://github.com/winfredzen/iOS-Basic/blob/master/Objective-C/images/3.png)
 
 
+-----
 
+对象在内存中的排布可以看成一个结构体，该结构体的大小并不能动态变化，所以无法再运行时动态给对象添加成员变量（可通过其它的方式实现，但并不是真正的改变了对象的内存结构）
 
+上面的`objc_class`定义中，方法的定义列表名为`methodLists`，指针的指针。通过修改该指针指向的值，可以动态的为某一个类增加成员方法，这就是`Category`实现的原理。同时也说明了为什么`Category`只可为对象增加成员方法，却不能增加成员变量
 
 
 
