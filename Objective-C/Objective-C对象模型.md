@@ -69,10 +69,57 @@ struct objc_class {
 上面的`objc_class`定义中，方法的定义列表名为`methodLists`，指针的指针。通过修改该指针指向的值，可以动态的为某一个类增加成员方法，这就是`Category`实现的原理。同时也说明了为什么`Category`只可为对象增加成员方法，却不能增加成员变量
 
 
+-----
 
+## 应用
 
+### 动态创建对象
 
+如下的例子：
 
+```
 
+    //创建UIView的子类CustomView
+    Class newClass = objc_allocateClassPair([UIView class], "CustomView", 0);
+    //为类增加一个report方法
+    class_addMethod(newClass, @selector(report), (IMP)ReportFunction, "v@:");
+    //注册该类
+    objc_registerClassPair(newClass);
+    
+    //创建一个CustomView的实例
+    id instanceOfNewClass = [[newClass alloc] init];
+    //调用report方法
+    [instanceOfNewClass performSelector:@selector(report)];
+    
+    
+    void ReportFunction(id self, SEL _cmd)
+	{
+	    NSLog(@"This object is %p ", self);
+	    NSLog(@"Class is %@, and super is %@", [self class], [self superclass]);
+	}
 
+```
+
+输出结果为：
+
+```
+This object is 0x7fe54af058d0
+Class is CustomView, and super is UIView
+```
+
+### isa swizzling
+
+KVO的实现，利用了动态修改isa指针的值的技术，参考[Key-Value Observing Implementation Details](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html#//apple_ref/doc/uid/20002307-BAJEAIEE)
+
+>Automatic key-value observing is implemented using a technique called isa-swizzling.
+>
+>The isa pointer, as the name suggests, points to the object's class which maintains a dispatch table. This dispatch table essentially contains pointers to the methods the class implements, among other data.
+>
+>When an observer is registered for an attribute of an object the isa pointer of the observed object is modified, pointing to an intermediate class rather than at the true class. As a result the value of the isa pointer does not necessarily reflect the actual class of the instance.
+>
+>You should never rely on the isa pointer to determine class membership. Instead, you should use the class method to determine the class of an object instance.
+
+### Method Swizzling
+
+Method Swizzling网络上有很多介绍
 
