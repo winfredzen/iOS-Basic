@@ -62,12 +62,14 @@ iOS中有2套API来访问和使用RunLoop
 
 + `Core Foundation`中的`CFRunLoopRef` 是在 `CoreFoundation` 框架内的，它提供了纯 C 函数的 API，所有这些 API 都是线程安全的
 
+
 	```
 	  NSLog(@"%p", CFRunLoopGetMain());//获得主线程的RunLoop对象
  0x6040001f1300
 	  NSLog(@"%p", CFRunLoopGetCurrent());//获得当前线程的RunLoop对象
  0x6040001f1300
 	  NSLog(@"%p", mainRunLoop.getCFRunLoop);//0x6040001f1300
+	  
 	```
 
 **RunLoop与线程的关系**
