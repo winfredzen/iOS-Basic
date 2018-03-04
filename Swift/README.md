@@ -459,6 +459,172 @@ var optionalInt: Int? = 10
 var mustHaveResult = optionalInt ?? 0
 ```
 
+## 集合
+
+### 数组
+
+数组的形式`Array<Element>`或者`[Element]`
+
+```
+let evenNumbers = [2, 4, 6, 8]
+
+let evenNumbers2: Array<Int> = [2, 4, 6, 8]
+```
+
+创建空数组
+
+```
+var someInts = [Int]()
+
+someInts.append(3)
+// someInts 现在包含一个 Int 值
+someInts = []
+// someInts 现在是空数组，但是仍然是 [Int] 类型的。
+```
+
+在数组后面添加新的数据项可以使用`append(_:)`方法或者`+=`
+
+```
+var evenNumbers = [2, 4, 6, 8]
+
+evenNumbers.append(10)
+evenNumbers += [12, 14, 16]
+```
+
+`isEmpty`来判断数组`count`属性是否为`0`
+
+```
+print(evenNumbers.isEmpty)
+```
+
+只读属性`count`来获取数组中的数据项数量
+
+```
+print(evenNumbers.count) //8
+```
+
+如果`print(evenNumbers.first)`，输出结果为`Optional(2)`。因为数组可能为空，所以为可选类型
+
+```
+if let first = evenNumbers.first {
+    print(first) //2
+} else {
+    print("Empty array")
+}
+```
+
+`min()`获取最小值，如下：
+
+```
+if let min = evenNumbers.min() {
+    print(min)
+}
+```
+
+获取一些列的值，如下：
+
+```
+let firstThree = evenNumbers[0...2]
+//[2, 4, 6]
+```
+
+是否包含，如下：
+
+```
+evenNumbers.contains(3) // false
+```
+
+插入值`insert(_:at:)`方法
+
+```
+evenNumbers.insert(0, at: 0)
+```
+
+移除值`remove(at:)`方法
+
+```
+var removedElement = evenNumbers.removeLast() //16
+var removedZero = evenNumbers.remove(at: 0) //0
+```
+
+
+
+修改值，如下：
+
+```
+evenNumbers[0] = -2
+
+evenNumbers[0...2] = [-2, 0, 2]
+```
+
+交换2个值，如下：
+
+```
+print(evenNumbers) //[-2, 0, 2, 8, 10, 12, 14]
+evenNumbers.swapAt(1, 2)
+print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
+```
+
+数组的遍历，如下的两种方式：
+
+```
+for evenNumber in evenNumbers {
+    print(evenNumber)
+}
+
+for (index, evenNumber) in evenNumbers.enumerated() {
+    print("\(index) : \(evenNumber)")
+}
+```
+
+`dropFirst()`方法，表示移除前`n`个元素后的数组
+
+```
+print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
+let firstThreeRemoved = evenNumbers.dropFirst(3)
+print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
+print(firstThreeRemoved) //[8, 10, 12, 14]
+```
+
+`dropLast()`方法也类似
+
+```
+let lastRemoved = evenNumbers.dropLast()
+print(lastRemoved) //[-2, 2, 0, 8, 10, 12]
+```
+
+`prefix()`方法和`suffix()`方法，获取前多少个和后多少个元素
+
+```
+let firstThree2 = evenNumbers.prefix(3)  //[-2, 2, 0]
+let lastOne = evenNumbers.suffix(1) //[14]
+```
+
+`index(of:)`方法返回元素对应的索引值
+
+```
+var students = ["Ben", "Ivy", "Jordell", "Maxime"]
+if let i = students.index(of: "Maxime") {
+    students[i] = "Max"
+}
+print(students)
+// Prints "["Ben", "Ivy", "Jordell", "Max"]"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
