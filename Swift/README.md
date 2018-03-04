@@ -383,16 +383,81 @@ func stepBackward(_ input: Int) -> Int {
 typealias operation = (Int, Int) -> (Int)
 ```
 
+## 可选类型
+
+>C 和 Objective-C 中并没有可选类型这个概念。最接近的是 Objective-C 中的一个特性，一个方法要不返回一个对象要不返回`nil`，`nil`表示“缺少一个合法的对象”。然而，这只对对象起作用——对于结构体，基本的 C 类型或者枚举类型不起作用。对于这些类型，Objective-C 方法一般会返回一个特殊值（比如`NSNotFound`）来暗示值缺失。这种方法假设方法的调用者知道并记得对特殊值进行判断。然而，Swift 的可选类型可以让你暗示任意类型的值缺失，并不需要一个特殊值。
+
+如果你声明一个可选常量或者变量但是没有赋值，它们会自动被设置为 `nil`：
+
+```
+var surveyAnswer: String?
+// surveyAnswer 被自动设置为 nil
+```
+
+### 可选绑定
+
+```
+var autherName: String? = "Author"
+
+if let autherName = autherName {
+    print("Author is \(autherName)")
+} else {
+    print("No author")
+}
+```
+
+可以包含多个可选绑定或多个布尔条件在一个` if `语句中，用逗号隔开。也可以嵌套
+
+```
+if let firstNumber = Int("4"), let secondNumber = Int("42"), firstNumber < secondNumber && secondNumber < 100 {
+    print("\(firstNumber) < \(secondNumber) < 100")
+}
+// 输出 "4 < 42 < 100"
+
+if let firstNumber = Int("4") {
+    if let secondNumber = Int("42") {
+        if firstNumber < secondNumber && secondNumber < 100 {
+            print("\(firstNumber) < \(secondNumber) < 100")
+        }
+    }
+}
+// 输出 "4 < 42 < 100"
+```
+
+也可以使用`guard`来实现相同的效果
+
+```
+func greet(person: [String: String]) {
+    guard let name = person["name"] else {
+        return
+    }
+    print("Hello \(name)")
+    guard let location = person["location"] else {
+        print("I hope the weather is nice near you.")
+        return
+    }
+    print("I hope the weather is nice in \(location).")
+}
+greet(["name": "John"])
+// 输出 "Hello John!"
+// 输出 "I hope the weather is nice near you."
+greet(["name": "Jane", "location": "Cupertino"])
+// 输出 "Hello Jane!"
+// 输出 "I hope the weather is nice in Cupertino."
+```
+
+### Nil Coalescing Operator
+
+空合运算符`a ?? b`将对可选类型 `a` 进行空判断，如果 `a` 包含一个值就进行解封，否则就返回一个默认值 `b`
+
++ 表达式 `a` 必须是 `Optional` 类型
++ `b` 的类型必须要和 `a` 存储值的类型保持一致
 
 
-
-
-
-
-
-
-
-
+```
+var optionalInt: Int? = 10
+var mustHaveResult = optionalInt ?? 0
+```
 
 
 
