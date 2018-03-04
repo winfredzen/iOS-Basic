@@ -611,9 +611,113 @@ print(students)
 // Prints "["Ben", "Ivy", "Jordell", "Max"]"
 ```
 
+### 字典
+
+使用`Dictionary<Key, Value>`或者`[Key: Value]`创建字典类型
+
+```
+var namesAndScore: [String: Int] = ["Anna": 2, "Brian": 2, "Craig": 8, "Donna": 6]
+
+var namesAndScore2: Dictionary<String, Int> = ["Anna": 2, "Brian": 2, "Craig": 8, "Donna": 6]
+```
+
++ `count`获取某个字典的数据项数量
++ `isEmpty`检查`count`属性是否为`0`
++ `keys`获取键
++ `values`获取值
+
+字典遍历如下：
+
+```
+for (player, score) in namesAndScore {
+    print("\(player) has a score of \(score)")
+}
+
+for player in namesAndScore.keys {
+    print("\(player)")
+}
+```
+
+### Set
+
+创建`Set`使用`Set<Element>`形式，与数组和字典相比，没有简写形式
+
+```
+var someSet: Set<Int> = [1, 2, 3, 4]
+```
+
+`Set`是否包含某个元素
+
+```
+someSet.contains(99)
+```
+
+向`Set`中插入某个元素
+
+```
+someSet.insert(5)
+```
+
+## 闭包
+
+如下的闭包：
+
+```
+var multiplyClosure: (Int, Int) -> Int
+
+multiplyClosure = { (a: Int, b: Int) -> Int in
+    return a * b
+}
+
+let result = multiplyClosure(4, 2)
+```
+
+可以对其进行简写，去掉类型，甚至去掉括号
+
+```
+multiplyClosure = { (a, b)  in
+    return a * b
+}
+```
 
 
+闭包可以在其被定义的上下文中捕获常量或变量。即使定义这些常量和变量的原作用域已经不存在，闭包仍然可以在闭包函数体内引用和修改这些值。如下的例子：
 
+```
+var counter = 0
+let incrementCounter = {
+    counter += 1
+}
+
+incrementCounter()
+incrementCounter()
+incrementCounter()
+
+counter // 3
+```
+
+如下的计数：
+
+```
+func countingClosure() -> () -> Int {
+    var counter = 0
+    let incrementingCounter: () -> Int = {
+        counter += 1
+        return counter
+    }
+    return incrementingCounter
+}
+
+let counter1 = countingClosure()
+let counter2 = countingClosure()
+
+counter1() //1
+counter1() //2
+counter1() //3
+counter2() //1
+counter2() //2
+counter2() //3
+```
 
 
 
