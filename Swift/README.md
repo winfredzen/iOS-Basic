@@ -719,13 +719,70 @@ counter2() //2
 counter2() //3
 ```
 
+### 闭包与集合
+
+#### sorted方法
+
+`sorted`方法用来排序，如下的例子：
+
+```
+let names = ["Zeplin", "Banford", "Apple", "Cutford"]
+names.sorted() //["Apple", "Banford", "Cutford", "Zeplin"]
+```
+
+默认是从小到大排序，如果想从大到小，可使用`sorted(by:)` 方法，如下：
+
+```
+names.sorted(by: {a , b in
+    a > b
+})
+//["Zeplin", "Cutford", "Banford", "Apple"]
+```
 
 
+#### filter方法
 
+`filter`方法用于过滤，如下的例子：
 
+```
+var prices = [1.50, 10.00, 4.99, 2.30, 8.19]
+let largePrices = prices.filter({ price -> Bool in
+    return price > 5
+})
+largePrices //[10, 8.19]
+```
 
+#### map方法
 
+`map`用于将每个数组元素通过某个方法进行转换，如下的例子：
 
+```
+let salePrices = prices.map { (price) -> Double in
+    return price * 0.9
+}
+salePrices
+```
+
+#### reduce方法
+
+`reduce`方法把数组元素组合计算为一个值，如下的例子：
+
+```
+let sum = prices.reduce(0) { (result, price) -> Double in
+    return result + price
+}
+sum
+```
+
+对字典的操作，如下的例子：
+
+```
+var stock = [2.0 : 2, 3.0 : 3 ,5.0 : 5]
+let stockSum = stock.reduce(0) { result, pair -> Double in
+    return result + (pair.key * Double(pair.value))
+}
+stockSum //38
+```
 
 
 
