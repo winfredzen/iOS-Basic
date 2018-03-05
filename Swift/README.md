@@ -784,6 +784,102 @@ let stockSum = stock.reduce(0) { result, pair -> Double in
 stockSum //38
 ```
 
+## 字符串
+
+### 多行字符串
+
+```
+var message = """
+    This
+    is
+    a
+    long
+    message
+"""
+```
+
+关闭引号(`"""`)之前的空白字符串告诉Swift编译器其他各行多少空白字符串需要忽略
+
+
+### 使用字符串
+
+遍历字符串字符
+
+```
+var name = "Anna"
+for char in name {
+    print(char)
+}
+```
+
+如下的例子，注意区别
+
+```
+let cafeNormal = "café"
+let cafeCombining = "cafe\u{0301}"
+
+cafeNormal.count //4
+cafeCombining.count //4
+
+cafeNormal.unicodeScalars.count //4
+cafeCombining.unicodeScalars.count //5
+```
+
+`unicodeScalars`表示Unicode标量
+
+#### 字符串索引
+
+每一个`String`值都有一个关联的索引(index)类型，`String.Index`，它对应着字符串中的每一个`Character`的位置
+
+**Swift 的字符串不能用整数(integer)做索引**
+
++ `startIndex`-获取一个`String`的第一个`Character`的索引
++ `endIndex`-获取最后一个`Character`的后一个位置的索引，不能作为一个字符串的有效下标
++ 如果`String`是空串，`startIndex`和`endIndex`是相等的
++ `index(before:)` 或 `index(after:)` 方法，可以立即得到前面或后面的一个索引
++ `index(_:offsetBy:)` 方法来获取对应偏移量的索引
+
+如下获取特定索引的 `Character`：
+
+```
+let firstIndex = cafeCombining.startIndex
+let firstChar = cafeCombining[firstIndex] //c
+
+let lastIndex = cafeCombining.index(before: cafeCombining.endIndex)
+let lastChar = cafeCombining[lastIndex] //é
+
+let thirdIndex = cafeCombining.index(cafeCombining.startIndex, offsetBy: 2)
+let thirdChar = cafeCombining[thirdIndex] //f
+```
+
+-----
+
+字符串/字符可以用等于操作符(`==)`和不等于操作符(`!=`)
+
+
+
+#### 子字符串
+
+```
+let fullName = "Ray Wenderlich"
+let spaceIndex = fullName.index(of: " ")
+if let spaceIndex = spaceIndex {
+    let firstName = fullName[fullName.startIndex..<spaceIndex]
+    let lastName = fullName[fullName.index(after: spaceIndex)...]
+    let forced = String(lastName) 
+}
+
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
