@@ -875,6 +875,25 @@ if let spaceIndex = spaceIndex {
 
 结构体是值类型
 
+### 结构体初始化
+
+如果一些存储型变量有默认值，可以不用管
+
+如果有可选类型，初始化化时，可选的存储类型，其值默认初始化为`nil`，但对常量不适用
+
+```
+struct RocketConfiguration {
+    let name: String = "Athena 9 Heavy"
+    let numberOfFirstStageCores: Int = 9
+    let numberOfSecondStageCores: Int = 1
+    var numberOfStageReuseLandingLegs: Int?
+}
+
+let athena9Heavy = RocketConfiguration()
+athena9Heavy.numberOfStageReuseLandingLegs // nil
+```
+
+但如果，把`numberOfStageReuseLandingLegs`修改为常量，则会报错：
 
 
 
