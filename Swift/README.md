@@ -1081,7 +1081,7 @@ error: StructInitTest.playground:60:30: error: 'self' used before self.init call
 
 如下图所示：
 
-![Two-Phase Initialization](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/2.png)
+![Two-Phase Initialization](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/3.png)
 
 
 >Phase 1 starts at the beginning of initialization and ends once all stored properties have been assigned a value. The remaining initialization execution is phase 2. You cannot use the instance you are initializing during phase 1, but you can use the instance during phase 2. If you have a chain of delegating initializers, phase 1 spans the call stack up to the non-delegating initializer. Phase 2 spans the return trip from the call stack.
