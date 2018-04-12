@@ -877,9 +877,32 @@ if let spaceIndex = spaceIndex {
 
 ### 结构体初始化
 
-如果一些存储型变量有默认值，可以不用管
+如下的结构体：
 
-如果有可选类型，初始化化时，可选的存储类型，其值默认初始化为`nil`，但对常量不适用
+```
+struct RocketConfiguration {
+
+}
+```
+
+可以使用默认的初始化器`let athena9Heavy = RocketConfiguration()`来实例化一个常量
+
+当结构体中没有存储属性或者所有的存储属性都有默认值时，你可以使用默认的初始化器(**default initializer**)
+
+如：
+
+```
+struct RocketConfiguration {
+    let name: String = "Athena 9 Heavy"
+    let numberOfFirstStageCores: Int = 3
+    let numberOfSecondStageCores: Int = 1
+}
+
+let athena9Heavy = RocketConfiguration()
+```
+
+如果有可选类型，初始化化时，可选的存储类型，其值默认初始化为`nil`
+
 
 ```
 struct RocketConfiguration {
@@ -895,27 +918,283 @@ athena9Heavy.numberOfStageReuseLandingLegs // nil
 
 但如果，把`numberOfStageReuseLandingLegs`修改为常量，则会报错：
 
+![报错](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/1.png)
 
 
+#### Memberwise Initializer
+
+Swift的结构体会自动生成逐一成员构造器，如下：
+
+```
+struct RocketStageConfiguration {
+    let propellantMass: Double
+    let liquidOxygenMass: Double
+    let nominalBurnTime: Int
+}
+
+let stageOneConfiguration = RocketStageConfiguration(propellantMass: 119.1,
+                                                     liquidOxygenMass: 276.0, nominalBurnTime: 180)
+```
+
+但如果你调整了属性的顺序，原来的初始化方法会报错
+
+如果给某一个属性有默认值，原来的初始化方法也会报错
+
+![报错](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/2.png)
 
 
+>Compilation fails because memberwise initializers only provide parameters for stored properties without default values. 
+>逐一成员初始化器只对没有默认值的存储属性提供参数
 
 
+如果添加了自定义的初始化方法，默认的逐一成员初始化器就没有了
 
 
+```
+struct RocketStageConfiguration {
+    let propellantMass: Double
+    let liquidOxygenMass: Double
+    let nominalBurnTime: Int
+    
+    init(propellantMass: Double, liquidOxygenMass: Double) {
+        self.propellantMass = propellantMass
+        self.liquidOxygenMass = liquidOxygenMass
+        self.nominalBurnTime = 180
+    }
+}
+
+let stageOneConfiguration = RocketStageConfiguration(propellantMass: 119.1,
+                                                     liquidOxygenMass: 276.0, nominalBurnTime: 180)//错误
+```
+
+但如果你想要保留原来的逐一成员初始化器，该怎么办呢？
+
+可以把自定义的初始化方法移到`extension`中
+
+```
+struct RocketStageConfiguration {
+    let propellantMass: Double
+    let liquidOxygenMass: Double
+    let nominalBurnTime: Int
+}
+
+extension RocketStageConfiguration {
+    init(propellantMass: Double, liquidOxygenMass: Double) {
+        self.propellantMass = propellantMass
+        self.liquidOxygenMass = liquidOxygenMass
+        self.nominalBurnTime = 180
+    }
+}
+// 正常
+let stageOneConfiguration = RocketStageConfiguration(propellantMass: 119.1,
+                                                     liquidOxygenMass: 276.0, nominalBurnTime: 180)
+```
 
 
+#### 自定义初始化器
 
 
+自定义初始化器的参数可以有默认值，如下，当有默认值时，可以使用无参数的初始化器
 
 
+```
+struct Weather {
+    let temperatureCelsius: Double
+    let windSpeedKilometersPerHour: Double
+    
+    init(temperatureFahrenheit: Double = 72, windSpeedMilesPerHour: Double = 5) {
+        self.temperatureCelsius = (temperatureFahrenheit - 32) / 1.8
+        self.windSpeedKilometersPerHour = windSpeedMilesPerHour * 1.609344
+    }
+}
+
+let currentWeather = Weather()
+currentWeather.temperatureCelsius // 22.22222222222222
+currentWeather.windSpeedKilometersPerHour // 8.046720000000001
+```
+
+>An initializer must assign a value to every single stored property that does not have a default value, or else you’ll get a compiler error. Remember that optional variables automatically have a default value of nil.
+>
+>初始化器必须给每一个没有默认值的存储属性指定一个value，否则会编译报错。可选变量的默认值为nil
 
 
+#### 值类型的初始化器委托
+
+>初始化器可以调用其他初始化器来执行部分实例的初始化。这个过程，就是所谓的初始化器委托，避免了多个初始化器里冗余代码。
+>
+>对于值类型，当你写自己自定义的初始化器时可以使用 `self.init` 从相同的值类型里引用其他初始化器。你只能从初始化器里调用 `self.init` 
+>
 
 
+如下的例子：
+
+```
+struct GuidanceSensorStatus {
+    var currentZAngularVelocityRadiansPerMinute: Double
+    let initialZAngularVelocityRadiansPerMinute: Double
+    var needsCorrection: Bool
+    
+    init(zAngularVelocityDegreesPerMinute: Double, needsCorrection: Bool) {
+        let radiansPerMinute = zAngularVelocityDegreesPerMinute * 0.01745329251994
+        self.currentZAngularVelocityRadiansPerMinute = radiansPerMinute
+        self.initialZAngularVelocityRadiansPerMinute = radiansPerMinute
+        self.needsCorrection = needsCorrection
+    }
+    
+    init(zAngularVelocityDegreesPerMinute: Double, needsCorrection: Int) {
+        self.init(zAngularVelocityDegreesPerMinute: zAngularVelocityDegreesPerMinute,
+                  needsCorrection: (needsCorrection > 0))
+    }
+}
 
 
+let guidanceStatus = GuidanceSensorStatus(zAngularVelocityDegreesPerMinute: 2.2, needsCorrection: 0)
+guidanceStatus.currentZAngularVelocityRadiansPerMinute // 0.038
+guidanceStatus.needsCorrection // false
+```
 
+如果，在上面的例子中再添加一个如下的自定义初始化器，使用初始化器委托：
+
+```
+    init(zAngularVelocityDegreesPerMinute: Double) {
+        self.needsCorrection = false
+        self.init(zAngularVelocityDegreesPerMinute: zAngularVelocityDegreesPerMinute,
+                  needsCorrection: self.needsCorrection)
+    }
+```
+
+编译器会提示错误：
+
+```
+error: StructInitTest.playground:60:30: error: 'self' used before self.init call
+        self.needsCorrection = false
+                             ^
+```
+
+
+>Compilation fails because delegating initializers cannot actually initialize any properties. There’s a good reason for this: the initializer you are delegating to could very well override the value you’ve set, and that’s not safe. The only thing a delegating initializer can do is manipulate values that are passed into another initializer.
+>
+>编译错误是因为初始化器委托不能初始化任何的属性。这样做的理由是：你调用的其他初始化器可能会修改你设置的值，这样做并不安全
+>
+
+**Two-Phase Initialization**
+
+如下图所示：
+
+![Two-Phase Initialization](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/2.png)
+
+
+>Phase 1 starts at the beginning of initialization and ends once all stored properties have been assigned a value. The remaining initialization execution is phase 2. You cannot use the instance you are initializing during phase 1, but you can use the instance during phase 2. If you have a chain of delegating initializers, phase 1 spans the call stack up to the non-delegating initializer. Phase 2 spans the return trip from the call stack.
+>
+>第一阶段在初始化开始时启动，在所有的存储属性都被指定一个value后结束。剩下的初始化执行就是第二阶段了。在第一阶段你不能使用正在初始化的实例，在第二阶段你可以使用这个实例。
+>
+
+如下的例子：
+
+```
+struct CombustionChamberStatus {
+    var temperatureKelvin: Double
+    var pressureKiloPascals: Double
+    
+    init(temperatureKelvin: Double, pressureKiloPascals: Double) {
+        print("Phase 1 init")
+        self.temperatureKelvin = temperatureKelvin
+        self.pressureKiloPascals = pressureKiloPascals
+        print("CombustionChamberStatus fully initialized")
+        print("Phase 2 init")
+    }
+    
+    init(temperatureCelsius: Double, pressureAtmospheric: Double) {
+        print("Phase 1 delegating init")
+        let temperatureKelvin = temperatureCelsius + 273.15
+        let pressureKiloPascals = pressureAtmospheric * 101.325
+        self.init(temperatureKelvin: temperatureKelvin, pressureKiloPascals: pressureKiloPascals)
+        print("Phase 2 delegating init")
+    }
+}
+
+CombustionChamberStatus(temperatureCelsius: 32, pressureAtmospheric: 0.96)
+```
+
+控制台输出顺序如下：
+
+```
+Phase 1 delegating init
+Phase 1 init
+CombustionChamberStatus fully initialized
+Phase 2 init
+Phase 2 delegating init
+```
+
+#### 初始化失败
+
+初始化失败通常有2中处理方式：使用可失败初始化器，初始化抛出Error
+
+**可失败初始化器**
+
+如下的例子：
+
+```
+struct TankStatus {
+    var currentVolume: Double
+    var currentLiquidType: String?
+    
+    init?(currentVolume: Double, currentLiquidType: String?) {
+        if currentVolume < 0 {
+            return nil
+        }
+        if currentVolume > 0 && currentLiquidType == nil {
+            return nil
+        }
+        self.currentVolume = currentVolume
+        self.currentLiquidType = currentLiquidType
+    }
+}
+
+let tankStatus = TankStatus(currentVolume: 0.0, currentLiquidType: nil)
+
+if let tankStatus = TankStatus(currentVolume: 0.0, currentLiquidType: nil) {
+    print("Nice, tank status created.")
+} else {
+    print("Oh no, an initialization failure occurred.") // Printed!
+}
+```
+
+**抛出Error**
+
+如下的例子：
+
+
+```
+struct Astronaut {
+    let name: String
+    let age: Int
+    
+    init(name: String, age: Int) throws {
+        if name.isEmpty {
+            throw InvalidAstronautDataError.EmptyName
+        }
+        if age < 18 || age > 70 {
+            throw InvalidAstronautDataError.InvalidAge
+        }
+        self.name = name
+        self.age = age
+    }
+}
+
+enum InvalidAstronautDataError: Error {
+    case EmptyName
+    case InvalidAge
+}
+
+let johnny = try? Astronaut(name: "Johnny Cosmoseed", age: 17) // nil
+```
+
+**使用可失败构造器还是抛出错误呢？**
+
++ 可失败构造器可能表达成功或者失败，而抛出错误还可以表示失败的具体原因，另一个好处是可以传播初始化器引发的任何错误
++ 可失败构造器更简单，不用使用额外的`try?`关键字
++ 为什么swift有可失败构造器？原因是swift的第一个版本不包括`throwing`功能
 
 
 
