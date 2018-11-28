@@ -55,6 +55,21 @@ class DownloadService {
     if download.isDownloading {
       download.task?.cancel(byProducingResumeData: { data in
         download.resumeData = data
+        
+        //测试data结构
+        let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        print("\(documentsPath)")
+        do {
+          
+          let url = documentsPath.appendingPathComponent("test")
+          print(url.absoluteString)
+          try data?.write(to: url)
+          
+          
+        } catch {
+          print(error)
+        }
+        
       })
       download.isDownloading = false
     }

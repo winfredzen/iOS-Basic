@@ -82,6 +82,42 @@ extension SearchViewController: URLSessionDelegate {
     
   }
   
+  func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+  
+    if let error = error {
+      
+      let userInfo = (error as NSError).userInfo
+      
+      if let reason = userInfo["NSURLErrorBackgroundTaskCancelledReasonKey"] as? Int {
+        
+        if reason == 0 {
+          
+          if let data = userInfo["NSURLSessionDownloadTaskResumeData"] as? NSData {
+           
+            let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("data.plist")
+            
+            do {
+              
+              try data.write(to: documentsPath)
+              
+            } catch {
+              print(error)
+            }
+
+            
+          }
+          
+          
+        }
+
+
+        
+      }
+      
+    }
+    
+  }
+  
 }
 
 
