@@ -76,6 +76,77 @@ func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: S
 
 ![Alert效果](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/7.png)
 
+其它的形式可参考：
+
++ [iOS与JS交互之WKWebView-WKUIDelegate协议](https://www.jianshu.com/p/7a1fceae5880)
+
+
+
+## WKNavigationDelegate
+
+[WKNavigationDelegate](https://developer.apple.com/documentation/webkit/wknavigationdelegate)的介绍如下：
+
+> The methods of the `WKNavigationDelegate` protocol help you implement custom behaviors that are triggered during a web view's process of accepting, loading, and completing a navigation request.
+>
+> 用于处理网页接受、加载和导航请求等自定义的行为
+
+例如，是否允许加载某个navigation
+
+实现如下的方法：
+
+```swift
+extension ViewController: WKNavigationDelegate {
+    
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
+        print("\(String(describing: navigationAction.request.url?.host))")
+        
+        if let host = navigationAction.request.url?.host {
+            
+            if host == "localhost" {
+                decisionHandler(.allow)
+                return
+            }
+            
+            if host == "www.apple.com" {
+                UIApplication.shared.open(navigationAction.request.url!)
+                decisionHandler(.cancel)
+                return
+            }
+            
+        }
+        
+        decisionHandler(.cancel)
+        
+        
+    }
+    
+}
+```
+
+其它方法的说明参考：
+
++ [WKWebView代理方法解析](https://www.cnblogs.com/zhanggui/p/6626483.html)
+
+
+
+## 监测页面的加载进度
+
+使用KVO
+
+```swift
+webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+
+
+override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    if keyPath == "estimatedProgress" {
+        progressView.progress = Float(webView.estimatedProgress)
+    }
+}
+```
+
+
+
 
 
 ## JavaScript
@@ -131,11 +202,41 @@ func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: S
 
 
 
+### 使用脚本
+
+[WKUserScript](https://developer.apple.com/documentation/webkit/wkuserscript)对象，可以添加到userContentController中，允许开发者将JavaScript注入到网页中
+
+如下的例子，改变web page的背景颜色
+
+```swift
+let contentController = WKUserContentController()
+let scriptSource = "document.body.style.backgroundColor = `red`;"
+let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+contentController.addUserScript(script)
+
+let config = WKWebViewConfiguration()
+config.userContentController = contentController
+
+let webView = WKWebView(frame: .zero, configuration: config)
+```
+
+参数说明：
+
++ source - 字符串，JavaScript源代码
+
++ injectionTime - 表示document是在start或者end时加载JavaScript
+
+  > If you pass in [WKUserInjectionTime.atDocumentStart](https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime/1537575-atdocumentstart), your script will run right after the document element has been created but before any of the document has been parsed. If you pass in [WKUserInjectionTime.atDocumentEnd](https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime/1537798-atdocumentend), then your script will run after the document is finished parsing but before any subresources (e.g., images) have loaded. This corresponds with when the DOMContentLoaded event is fired.
+
++ forMainFrameOnly - Specify whether your script runs in all frames or just in the main frame.
+
+
+
 ### App调用js的方法
 
 如隐藏`#demo`标签：
 
-```
+```swift
     @objc func hideText(_ sender: Any) {
         
         let js = "hideText()"
@@ -183,27 +284,14 @@ contentController.add(self, name: "jsHandler")
 
 
 
+## 其它
 
+文章：
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
++ [The Ultimate Guide to WKWebView](https://www.hackingwithswift.com/articles/112/the-ultimate-guide-to-wkwebview)
++ [iOS下JS与OC互相调用（二）--WKWebView 拦截URL](https://www.jianshu.com/p/99c3af6894f4)
++ [iOS下JS与OC互相调用（三）--MessageHandler](https://www.jianshu.com/p/433e59c5a9eb)
++ [iOS与JS交互之WKWebView-协议拦截](https://www.jianshu.com/p/e23aa25d7514)
 
 
 
