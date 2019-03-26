@@ -9,7 +9,7 @@
 
 可参考的文章：
 
-+ [ARC and Memory Management in Swif](https://www.raywenderlich.com/966538-arc-and-memory-management-in-swift)
++ [ARC and Memory Management in Swift](https://www.raywenderlich.com/966538-arc-and-memory-management-in-swift)
 
 ## 循环引用
 
