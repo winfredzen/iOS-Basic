@@ -7,6 +7,10 @@
 + ARC，自动引用计数 - 可参考[自动引用计数](https://www.cnswift.org/automatic-reference-counting)
 + 闭包 - 可参考[闭包](https://www.cnswift.org/closures)
 
+可参考的文章：
+
++ [ARC and Memory Management in Swif](https://www.raywenderlich.com/966538-arc-and-memory-management-in-swift)
+
 ## 循环引用
 
 如何解决循环引用？
