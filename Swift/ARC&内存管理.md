@@ -171,6 +171,70 @@ myFunction { [unowned self] in print(self.title) }  // unowned capture
 myFunction { [weak parent = self.parent] in print(parent!.title) }
 ```
 
+#### 要注意的地方
+
+> If you are sure that a referenced object from a closure will never deallocate, you can use `unowned`. However, if it does deallocate, you are in trouble.
+>
+> 如果你能保证闭包中引用的对象绝不会销毁，就可以使用 `unowned`.否则，如果销毁了，就会很麻烦
+
+如下的例子：
+
+```swift
+class WWDCGreeting {
+  let who: String
+  
+  init(who: String) {
+    self.who = who
+  }
+
+  lazy var greetingMaker: () -> String = { [unowned self] in
+    return "Hello \(self.who)."
+  }
+}
+```
+
+在 `runScenario()`方法中添加如下的方法：
+
+```swift
+let greetingMaker: () -> String
+
+do {
+  let mermaid = WWDCGreeting(who: "caffeinated mermaid")
+  greetingMaker = mermaid.greetingMaker
+}
+
+print(greetingMaker()) // TRAP! 
+```
+
+此时打印会提示对象已被销毁
+
+但如果使用`weak`，则会打印*Hello nil.*
+
+```swift
+lazy var greetingMaker: () -> String = { [weak self] in
+  return "Hello \(self?.who)."
+}
+```
+
+也可以在再优化下：
+
+```swift
+lazy var greetingMaker: () -> String = { [weak self] in
+  guard let self = self else {
+    return "No greeting available."
+  }
+  return "Hello \(self.who)."
+}
+```
+
+## Xcode10查找循环引用
+
+使用*Debug Memory Graph*
+
+![图片13](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/13.png)
+
+
+
 ## 其它
 
 在[ARC and Memory Management in Swift](https://www.raywenderlich.com/959-arc-and-memory-management-in-swift)一文中，还讲到了如下的内容
@@ -237,6 +301,10 @@ do {
 }
 ```
 
+> This is an example of a mixture of value types and reference types that form a reference cycle.
+>
+> 上面的例子就是混合使用值类型和引用类型导致的一个循环引用
+>
 > `ernie` and `bert` stay alive by keeping a reference to each other in their `friends`array, although the array itself is a value type. Make the array `unowned`; Xcode will show an error: `unowned` only applies to class types.
 >
 > 在friends数组中，`ernie`与`bert`相互引用。虽然array是值类型，但如果使array为`unowned`，Xcode会报错：`unowned`只能用于类类型
@@ -274,17 +342,13 @@ do {
 
 此时`ernie` 和 `bert` 就可以销毁了
 
+> The `friends` array isn’t a collection of `Person` objects anymore, but instead a collection of `Unowned` objects that serve as wrappers for the `Person` instances.
 
+获取`Unowned`中的`Person`对象
 
-
-
-
-
-
-
-
-
-
+```swift
+let firstFriend = bert.friends.first?.value // get ernie 
+```
 
 
 
