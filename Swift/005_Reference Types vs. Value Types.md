@@ -249,3 +249,96 @@ struct Bill {
 
 `isKnownUniquelyReferenced(_:)`检查是否有其它的对象引用传入的参数对象
 
+
+
+## Advanced Swift: Values and References
+
+Swift中Type的分类，可参考:[Types](<https://docs.swift.org/swift-book/ReferenceManual/Types.html>)
+
++ named types
+  + class
+  + struct
+  + enum
+  + protocol
++ compound types
+  + tuple
+  + function
+
+struct enum tuple 是值类型，class function是引用类型
+
+
+
+### mutating
+
+值类型属性不能被自身的实例方法修改，要使用`mutating`关键字
+
+
+
+### inout
+
+inout可以定义一个输入输出形式参数。
+
+> 输入输出形式参数有一个能*输入*给函数的值，函数能对其进行修改，还能*输出*到函数外边替换原来的值
+
+
+
+如下的例子，运行结果显示只有一次读和一次写
+
+```swift
+struct Tracked<Value>: CustomDebugStringConvertible {
+  
+  private var _value: Value
+  private(set) var readCount = 0
+  private(set) var writeCount = 0
+  
+  init(_ value: Value) {
+    self._value = value
+  }
+  
+  var value: Value {
+    mutating get {
+      readCount += 1
+      return _value
+    }
+    set {
+      writeCount += 1
+      _value = newValue
+    }
+  }
+  
+  mutating func resetCounts() {
+    readCount = 0
+    writeCount = 0
+  }
+  
+  var debugDescription: String {
+    return "\(_value) Reads: \(readCount) Writes: \(writeCount)"
+  }
+}
+
+func computeNothing(input: inout Int) {
+}
+
+func compute100Times(input: inout Int) {
+  for _ in 1...100 {
+    input += 1
+  }
+}
+
+var tracked = Tracked(42)
+computeNothing(input: &tracked.value)
+print("computeNothing", tracked)  // 1 Read and 1 Write for nothing
+
+tracked.resetCounts()
+
+compute100Times(input: &tracked.value)
+print("compute100Times", tracked)  // Still only 1 Read and 1 Write
+```
+
+控制台输出结果
+
+```xml
+computeNothing 42 Reads: 1 Writes: 1
+compute100Times 142 Reads: 1 Writes: 1
+```
+
