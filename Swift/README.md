@@ -8,7 +8,7 @@
 
 1.通过下标
 
-```
+```swift
 let coordinates = (2, 3)
 
 let x = coordinates.0
@@ -17,7 +17,7 @@ let y = coordinates.1
 
 2.也可以在定义元祖的时候给元素命名
 
-```
+```swift
 let coordinatesNamed = (x: 2, y: 3)
 
 let x2 = coordinatesNamed.x
@@ -26,7 +26,7 @@ let y2 = coordinatesNamed.y
 
 3.将元组的内容分解成单独的常量和变量
 
-```
+```swift
 let http404Error = (404, "Not Found")
 let (statusCode, statusMessage) = http404Error
 statusCode // 404
@@ -35,7 +35,7 @@ statusMessage //"Not Found"
 
 分解的时候可以把要忽略的部分用下划线`_`标记
 
-```
+```swift
 let (justTheStatusCode, _) = http404Error
 ```
 
@@ -47,7 +47,7 @@ let (justTheStatusCode, _) = http404Error
 
 **While**
 
-```
+```swift
 var i = 1
 while i < 10 {
     print(i)
@@ -59,7 +59,7 @@ while i < 10 {
 
 Repeat-While会至少执行一次
 
-```
+```swift
 i = 1
 repeat {
     print(i)
@@ -69,7 +69,7 @@ repeat {
 
 #### For-In循环
 
-```
+```swift
 let count = 10
 
 for i in 1...count {
@@ -85,7 +85,7 @@ for i in 1..<count {
 
 半开区间，可使用`stride(from:to:by:)`函数跳过不需要的标记
 
-```
+```swift
 let minutes = 60
 let minuteInterval = 5
 for tickMark in stride(from: 0, to: minutes, by: minuteInterval) {
@@ -95,7 +95,7 @@ for tickMark in stride(from: 0, to: minutes, by: minuteInterval) {
 
 闭区间则使用`stride(from:through:by:)`
 
-```
+```swift
 let hours = 12
 let hourInterval = 3
 for tickMark in stride(from: 3, through: hours, by: hourInterval) {
@@ -105,7 +105,7 @@ for tickMark in stride(from: 3, through: hours, by: hourInterval) {
 
 在For-In循环也可以使用`where`来做条件判断，如下：
 
-```
+```swift
 for i in 1...count where i % 2 == 1 {
     print("\(i) is an odd number.")
 }
@@ -122,7 +122,7 @@ for i in 1...count where i % 2 == 1 {
 
 `switch`适用于条件较复杂、有更多排列组合的时候
 
-```
+```swift
 let anotherCharacter: Character = "a"
 switch anotherCharacter {
 case "a", "A":
@@ -136,7 +136,7 @@ default:
 
 `case`分支的模式可以使用`where`语句来判断额外的条件
 
-```
+```swift
 let number = 10
 switch number {
 case _ where number % 2 == 0:
@@ -149,7 +149,7 @@ default:
 
 可以使用元组在同一个`switch`语句中测试多个值。元组中的元素可以是值，也可以是区间。另外，使用下划线`_`来匹配所有可能的值
 
-```
+```swift
 let coordinates = (x: 3, y: 2, z: 5)
 switch coordinates {
 case (0, 0, 0):
@@ -167,7 +167,7 @@ default:
 
 **值绑定**:`case`分支允许将匹配的值声明为临时常量或变量，并且在`case`分支体内使用
 
-```
+```swift
 let anotherPoint = (2, 0)
 switch anotherPoint {
 case (let x, 0):
@@ -181,7 +181,7 @@ case let (x, y):
 
 **区间匹配**
 
-```
+```swift
 let myAge = 37
 switch myAge {
 case 0...2:
@@ -199,7 +199,7 @@ case _ where myAge >= 61:
 default:
     print("Invalid age")
 }
-```
+```swift
 
 
 ## 函数
@@ -213,7 +213,7 @@ default:
 
 如下的函数：
 
-```
+```swift
 func someFunction(firstParameterName: Int, secondParameterName: Int) {
 
 }
@@ -223,7 +223,7 @@ func someFunction(firstParameterName: Int, secondParameterName: Int) {
 
 可以在参数名称前指定它的参数标签
 
-```
+```swift
 func greet(person: String, from hometown: String) -> String {
     return "Hello \(person)!  Glad you could visit from \(hometown)."
 }
@@ -236,7 +236,7 @@ print(greet(person: "Bill", from: "Cupertino"))
 
 函数调用时可以忽略默认参数
 
-```
+```swift
 func printMultipleOf(_ multiplier: Int, and value: Int = 1) {
     print("\(multiplier) * \(value) = \(multiplier * value)")
 }
@@ -247,7 +247,7 @@ print(4)
 
 可变参数可以接受零个或多个值。在变量类型名后面加入（`...`）的方式来定义可变参数
 
-```
+```swift
 func arithmeticMean(_ numbers: Double...) -> Double {
     var total: Double = 0
     for number in numbers {
@@ -265,7 +265,7 @@ arithmeticMean(3, 8.25, 18.75)
 
 如下的可选元组返回类型
 
-```
+```swift
 func minMax(array: [Int]) -> (min: Int, max: Int)? {
     if array.isEmpty { return nil }
     var currentMin = array[0]
@@ -285,7 +285,7 @@ func minMax(array: [Int]) -> (min: Int, max: Int)? {
 
 函数参数默认是常量。试图在函数体中更改参数值将会导致编译错误(compile-time error)。如下：
 
-```
+```swift
 func incrementAndPrint(_ value: Int) {
     value += 1
     print(value)
@@ -301,7 +301,7 @@ func incrementAndPrint(_ value: Int) {
 
 修改后的例子，如下：
 
-```
+```swift
 func incrementAndPrint(_ value: inout Int) {
     value += 1
     print(value)
@@ -315,7 +315,7 @@ incrementAndPrint(&value) //value为6
 
 每个函数都有种特定的函数类型，函数的类型由函数的参数类型和返回类型组成
 
-```
+```swift
 func addTwoInts(_ a: Int, _ b: Int) -> Int {
     return a + b
 }
@@ -326,7 +326,7 @@ func multiplyTwoInts(_ a: Int, _ b: Int) -> Int {
 
 如上的函数，其函数类型都是`(Int, Int) -> Int`
 
-```
+```swift
 func printHelloWorld() {
     print("hello, world")
 }
@@ -336,7 +336,7 @@ func printHelloWorld() {
 
 如同使用其它类型一样，可以使用函数类型，如下的例子：
 
-```
+```swift
 func add(_ a: Int, _ b: Int) -> Int {
     return a + b
 }
@@ -354,7 +354,7 @@ function(4, 2) //2
 
 函数类型作为参数，如下：
 
-```
+```swift
 func printResult(_ function: (Int, Int) -> (Int), _ a: Int, _ b: Int) {
     let result = function(a, b)
     print(result)
@@ -365,21 +365,21 @@ printResult(subtract, 4, 2)
 
 函数类型作为返回值，如下：
 
-```
+```swift
 func stepForward(_ input: Int) -> Int {
     return input + 1
 }
 func stepBackward(_ input: Int) -> Int {
     return input - 1
 }
- func chooseStepFunction(backward: Bool) -> (Int) -> Int {
+func chooseStepFunction(backward: Bool) -> (Int) -> Int {
     return backward ? stepBackward : stepForward
 }
 ```
 
 使用`typealias`来为已经存在的类型重新定义名字的，如定义函数类型：
 
-```
+```swift
 typealias operation = (Int, Int) -> (Int)
 ```
 
@@ -389,14 +389,14 @@ typealias operation = (Int, Int) -> (Int)
 
 如果你声明一个可选常量或者变量但是没有赋值，它们会自动被设置为 `nil`：
 
-```
+```swift
 var surveyAnswer: String?
 // surveyAnswer 被自动设置为 nil
 ```
 
 ### 可选绑定
 
-```
+```swift
 var autherName: String? = "Author"
 
 if let autherName = autherName {
@@ -408,7 +408,7 @@ if let autherName = autherName {
 
 可以包含多个可选绑定或多个布尔条件在一个` if `语句中，用逗号隔开。也可以嵌套
 
-```
+```swift
 if let firstNumber = Int("4"), let secondNumber = Int("42"), firstNumber < secondNumber && secondNumber < 100 {
     print("\(firstNumber) < \(secondNumber) < 100")
 }
@@ -426,7 +426,7 @@ if let firstNumber = Int("4") {
 
 也可以使用`guard`来实现相同的效果
 
-```
+```swift
 func greet(person: [String: String]) {
     guard let name = person["name"] else {
         return
@@ -454,7 +454,7 @@ greet(["name": "Jane", "location": "Cupertino"])
 + `b` 的类型必须要和 `a` 存储值的类型保持一致
 
 
-```
+```swift
 var optionalInt: Int? = 10
 var mustHaveResult = optionalInt ?? 0
 ```
@@ -465,7 +465,7 @@ var mustHaveResult = optionalInt ?? 0
 
 数组的形式`Array<Element>`或者`[Element]`
 
-```
+```swift
 let evenNumbers = [2, 4, 6, 8]
 
 let evenNumbers2: Array<Int> = [2, 4, 6, 8]
@@ -473,7 +473,7 @@ let evenNumbers2: Array<Int> = [2, 4, 6, 8]
 
 创建空数组
 
-```
+```swift
 var someInts = [Int]()
 
 someInts.append(3)
@@ -484,7 +484,7 @@ someInts = []
 
 在数组后面添加新的数据项可以使用`append(_:)`方法或者`+=`
 
-```
+```swift
 var evenNumbers = [2, 4, 6, 8]
 
 evenNumbers.append(10)
@@ -493,19 +493,19 @@ evenNumbers += [12, 14, 16]
 
 `isEmpty`来判断数组`count`属性是否为`0`
 
-```
+```swift
 print(evenNumbers.isEmpty)
 ```
 
 只读属性`count`来获取数组中的数据项数量
 
-```
+```swift
 print(evenNumbers.count) //8
 ```
 
 如果`print(evenNumbers.first)`，输出结果为`Optional(2)`。因为数组可能为空，所以为可选类型
 
-```
+```swift
 if let first = evenNumbers.first {
     print(first) //2
 } else {
@@ -515,7 +515,7 @@ if let first = evenNumbers.first {
 
 `min()`获取最小值，如下：
 
-```
+```swift
 if let min = evenNumbers.min() {
     print(min)
 }
@@ -523,26 +523,26 @@ if let min = evenNumbers.min() {
 
 获取一些列的值，如下：
 
-```
+```swift
 let firstThree = evenNumbers[0...2]
 //[2, 4, 6]
 ```
 
 是否包含，如下：
 
-```
+```swift
 evenNumbers.contains(3) // false
 ```
 
 插入值`insert(_:at:)`方法
 
-```
+```swift
 evenNumbers.insert(0, at: 0)
 ```
 
 移除值`remove(at:)`方法
 
-```
+```swift
 var removedElement = evenNumbers.removeLast() //16
 var removedZero = evenNumbers.remove(at: 0) //0
 ```
@@ -551,7 +551,7 @@ var removedZero = evenNumbers.remove(at: 0) //0
 
 修改值，如下：
 
-```
+```swift
 evenNumbers[0] = -2
 
 evenNumbers[0...2] = [-2, 0, 2]
@@ -559,7 +559,7 @@ evenNumbers[0...2] = [-2, 0, 2]
 
 交换2个值，如下：
 
-```
+```swift
 print(evenNumbers) //[-2, 0, 2, 8, 10, 12, 14]
 evenNumbers.swapAt(1, 2)
 print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
@@ -567,7 +567,7 @@ print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
 
 数组的遍历，如下的两种方式：
 
-```
+```swift
 for evenNumber in evenNumbers {
     print(evenNumber)
 }
@@ -579,7 +579,7 @@ for (index, evenNumber) in evenNumbers.enumerated() {
 
 `dropFirst()`方法，表示移除前`n`个元素后的数组
 
-```
+```swift
 print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
 let firstThreeRemoved = evenNumbers.dropFirst(3)
 print(evenNumbers) //[-2, 2, 0, 8, 10, 12, 14]
@@ -588,21 +588,21 @@ print(firstThreeRemoved) //[8, 10, 12, 14]
 
 `dropLast()`方法也类似
 
-```
+```swift
 let lastRemoved = evenNumbers.dropLast()
 print(lastRemoved) //[-2, 2, 0, 8, 10, 12]
 ```
 
 `prefix()`方法和`suffix()`方法，获取前多少个和后多少个元素
 
-```
+```swift
 let firstThree2 = evenNumbers.prefix(3)  //[-2, 2, 0]
 let lastOne = evenNumbers.suffix(1) //[14]
 ```
 
 `index(of:)`方法返回元素对应的索引值
 
-```
+```swift
 var students = ["Ben", "Ivy", "Jordell", "Maxime"]
 if let i = students.index(of: "Maxime") {
     students[i] = "Max"
@@ -615,7 +615,7 @@ print(students)
 
 使用`Dictionary<Key, Value>`或者`[Key: Value]`创建字典类型
 
-```
+```swift
 var namesAndScore: [String: Int] = ["Anna": 2, "Brian": 2, "Craig": 8, "Donna": 6]
 
 var namesAndScore2: Dictionary<String, Int> = ["Anna": 2, "Brian": 2, "Craig": 8, "Donna": 6]
@@ -628,7 +628,7 @@ var namesAndScore2: Dictionary<String, Int> = ["Anna": 2, "Brian": 2, "Craig": 8
 
 字典遍历如下：
 
-```
+```swift
 for (player, score) in namesAndScore {
     print("\(player) has a score of \(score)")
 }
@@ -642,19 +642,19 @@ for player in namesAndScore.keys {
 
 创建`Set`使用`Set<Element>`形式，与数组和字典相比，没有简写形式
 
-```
+```swift
 var someSet: Set<Int> = [1, 2, 3, 4]
 ```
 
 `Set`是否包含某个元素
 
-```
+```swift
 someSet.contains(99)
 ```
 
 向`Set`中插入某个元素
 
-```
+```swift
 someSet.insert(5)
 ```
 
@@ -662,7 +662,7 @@ someSet.insert(5)
 
 如下的闭包：
 
-```
+```swift
 var multiplyClosure: (Int, Int) -> Int
 
 multiplyClosure = { (a: Int, b: Int) -> Int in
@@ -674,7 +674,7 @@ let result = multiplyClosure(4, 2)
 
 可以对其进行简写，去掉类型，甚至去掉括号
 
-```
+```swift
 multiplyClosure = { (a, b)  in
     return a * b
 }
@@ -683,7 +683,7 @@ multiplyClosure = { (a, b)  in
 
 闭包可以在其被定义的上下文中捕获常量或变量。即使定义这些常量和变量的原作用域已经不存在，闭包仍然可以在闭包函数体内引用和修改这些值。如下的例子：
 
-```
+```swift
 var counter = 0
 let incrementCounter = {
     counter += 1
@@ -698,7 +698,7 @@ counter // 3
 
 如下的计数：
 
-```
+```swift
 func countingClosure() -> () -> Int {
     var counter = 0
     let incrementingCounter: () -> Int = {
@@ -725,14 +725,14 @@ counter2() //3
 
 `sorted`方法用来排序，如下的例子：
 
-```
+```swift
 let names = ["Zeplin", "Banford", "Apple", "Cutford"]
 names.sorted() //["Apple", "Banford", "Cutford", "Zeplin"]
 ```
 
 默认是从小到大排序，如果想从大到小，可使用`sorted(by:)` 方法，如下：
 
-```
+```swift
 names.sorted(by: {a , b in
     a > b
 })
@@ -744,7 +744,7 @@ names.sorted(by: {a , b in
 
 `filter`方法用于过滤，如下的例子：
 
-```
+```swift
 var prices = [1.50, 10.00, 4.99, 2.30, 8.19]
 let largePrices = prices.filter({ price -> Bool in
     return price > 5
@@ -756,7 +756,7 @@ largePrices //[10, 8.19]
 
 `map`用于将每个数组元素通过某个方法进行转换，如下的例子：
 
-```
+```swift
 let salePrices = prices.map { (price) -> Double in
     return price * 0.9
 }
@@ -767,7 +767,7 @@ salePrices
 
 `reduce`方法把数组元素组合计算为一个值，如下的例子：
 
-```
+```swift
 let sum = prices.reduce(0) { (result, price) -> Double in
     return result + price
 }
@@ -776,7 +776,7 @@ sum
 
 对字典的操作，如下的例子：
 
-```
+```swift
 var stock = [2.0 : 2, 3.0 : 3 ,5.0 : 5]
 let stockSum = stock.reduce(0) { result, pair -> Double in
     return result + (pair.key * Double(pair.value))
@@ -788,7 +788,7 @@ stockSum //38
 
 ### 多行字符串
 
-```
+```swift
 var message = """
     This
     is
@@ -805,7 +805,7 @@ var message = """
 
 遍历字符串字符
 
-```
+```swift
 var name = "Anna"
 for char in name {
     print(char)
@@ -814,7 +814,7 @@ for char in name {
 
 如下的例子，注意区别
 
-```
+```swift
 let cafeNormal = "café"
 let cafeCombining = "cafe\u{0301}"
 
@@ -841,7 +841,7 @@ cafeCombining.unicodeScalars.count //5
 
 如下获取特定索引的 `Character`：
 
-```
+```swift
 let firstIndex = cafeCombining.startIndex
 let firstChar = cafeCombining[firstIndex] //c
 
@@ -860,7 +860,7 @@ let thirdChar = cafeCombining[thirdIndex] //f
 
 #### 子字符串
 
-```
+```swift
 let fullName = "Ray Wenderlich"
 let spaceIndex = fullName.index(of: " ")
 if let spaceIndex = spaceIndex {
@@ -879,7 +879,7 @@ if let spaceIndex = spaceIndex {
 
 如下的结构体：
 
-```
+```swift
 struct RocketConfiguration {
 
 }
@@ -891,7 +891,7 @@ struct RocketConfiguration {
 
 如：
 
-```
+```swift
 struct RocketConfiguration {
     let name: String = "Athena 9 Heavy"
     let numberOfFirstStageCores: Int = 3
@@ -904,7 +904,7 @@ let athena9Heavy = RocketConfiguration()
 如果有可选类型，初始化化时，可选的存储类型，其值默认初始化为`nil`
 
 
-```
+```swift
 struct RocketConfiguration {
     let name: String = "Athena 9 Heavy"
     let numberOfFirstStageCores: Int = 9
@@ -925,7 +925,7 @@ athena9Heavy.numberOfStageReuseLandingLegs // nil
 
 Swift的结构体会自动生成逐一成员构造器，如下：
 
-```
+```swift
 struct RocketStageConfiguration {
     let propellantMass: Double
     let liquidOxygenMass: Double
@@ -950,7 +950,7 @@ let stageOneConfiguration = RocketStageConfiguration(propellantMass: 119.1,
 如果添加了自定义的初始化方法，默认的逐一成员初始化器就没有了
 
 
-```
+```swift
 struct RocketStageConfiguration {
     let propellantMass: Double
     let liquidOxygenMass: Double
@@ -971,7 +971,7 @@ let stageOneConfiguration = RocketStageConfiguration(propellantMass: 119.1,
 
 可以把自定义的初始化方法移到`extension`中
 
-```
+```swift
 struct RocketStageConfiguration {
     let propellantMass: Double
     let liquidOxygenMass: Double
@@ -997,7 +997,7 @@ let stageOneConfiguration = RocketStageConfiguration(propellantMass: 119.1,
 自定义初始化器的参数可以有默认值，如下，当有默认值时，可以使用无参数的初始化器
 
 
-```
+```swift
 struct Weather {
     let temperatureCelsius: Double
     let windSpeedKilometersPerHour: Double
@@ -1028,7 +1028,7 @@ currentWeather.windSpeedKilometersPerHour // 8.046720000000001
 
 如下的例子：
 
-```
+```swift
 struct GuidanceSensorStatus {
     var currentZAngularVelocityRadiansPerMinute: Double
     let initialZAngularVelocityRadiansPerMinute: Double
@@ -1055,7 +1055,7 @@ guidanceStatus.needsCorrection // false
 
 如果，在上面的例子中再添加一个如下的自定义初始化器，使用初始化器委托：
 
-```
+```swift
     init(zAngularVelocityDegreesPerMinute: Double) {
         self.needsCorrection = false
         self.init(zAngularVelocityDegreesPerMinute: zAngularVelocityDegreesPerMinute,
@@ -1065,7 +1065,7 @@ guidanceStatus.needsCorrection // false
 
 编译器会提示错误：
 
-```
+```swift
 error: StructInitTest.playground:60:30: error: 'self' used before self.init call
         self.needsCorrection = false
                              ^
@@ -1091,7 +1091,7 @@ error: StructInitTest.playground:60:30: error: 'self' used before self.init call
 
 如下的例子：
 
-```
+```swift
 struct CombustionChamberStatus {
     var temperatureKelvin: Double
     var pressureKiloPascals: Double
@@ -1118,7 +1118,7 @@ CombustionChamberStatus(temperatureCelsius: 32, pressureAtmospheric: 0.96)
 
 控制台输出顺序如下：
 
-```
+```swift
 Phase 1 delegating init
 Phase 1 init
 CombustionChamberStatus fully initialized
@@ -1134,7 +1134,7 @@ Phase 2 delegating init
 
 如下的例子：
 
-```
+```swift
 struct TankStatus {
     var currentVolume: Double
     var currentLiquidType: String?
@@ -1165,7 +1165,7 @@ if let tankStatus = TankStatus(currentVolume: 0.0, currentLiquidType: nil) {
 如下的例子：
 
 
-```
+```swift
 struct Astronaut {
     let name: String
     let age: Int
