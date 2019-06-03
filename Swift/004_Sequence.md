@@ -30,6 +30,36 @@ for number in oneTwoThree {
 
 可起来很简单，但是这种功能可以让你在任何sequence上执行许多的操作。如，检查sequence是否包含特定的值
 
+>The `Sequence` protocol makes no requirement on conforming types regarding whether they will be destructively consumed by iteration. 
+>
+> `Sequence` 协议对遵循协议的类型是否被遍历损坏没有要求
+>
+> As a consequence, don’t assume that multiple `for`-`in` loops on a sequence will either resume iteration or restart from the beginning
+>
+>~~不要假设sequence 的  `for`-`in` 循环将重新开始 或者 从头开始~~
+>
+>```swift
+>for element in sequence {
+>    if ... some condition { break }
+>}
+>
+>for element in sequence {
+>    // No defined behavior
+>}
+>```
+>
+>我的理解是，第一个for-in循环在某种条件下，中断了，第二个for-in循环，不会从头开始遍历(重新遍历)
+>
+> A conforming sequence that is not a collection is allowed to produce an arbitrary sequence of elements in the second `for`-`in` loop.
+>
+>sequence不是collection，在第二个循环中，可能会产生任意序列的元素?
+>
+>To establish that a type you’ve created supports nondestructive iteration, add conformance to the `Collection` protocol.
+>
+>如果要支持无损遍历，要遵循`Collection`协议
+
+这里只是我自己的理解，可参考[Swift中Collection的Protocol](<https://mikefighting.github.io/2017/07/28/note-advance-swift-collection-protocols/>)
+
 参考[关于序列和集合需要知道的二三事](<https://academy.realm.io/cn/posts/try-swift-soroush-khanlou-sequence-collection/>)
 
 > 序列是一个记录了一组元素的列表。它有两个重要的特性：**第一**，它的容量可以有限也可无限；**第二**，只可以迭代 (iterate) 一次。
