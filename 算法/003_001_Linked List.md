@@ -140,11 +140,56 @@ extension Node: CustomStringConvertible {
 
 
 
+## Swift集合
 
+将Linked List变成swift集合，遵循`Collection`协议([020_Collection协议](<https://github.com/winfredzen/iOS-Basic/blob/master/Swift/020_Collection%E5%8D%8F%E8%AE%AE.md>))
 
-
-
-
-
-
+```swift
+extension LinkedList: Collection {
+    
+    //遵循Comparable协议，重载==和<
+    public struct Index: Comparable {
+        
+        public var node: Node<Value>?
+        
+        static public func ==(lhs: Index, rhs: Index) -> Bool {
+            switch (lhs.node, rhs.node) {
+            case let (left?, right?):
+                return left.next === right.next
+            case (nil, nil):
+                return true
+            default:
+                return false
+            }
+        }
+        
+        static public func <(lhs: Index, rhs: Index) -> Bool {
+            guard lhs != rhs else {
+                return false
+            }
+            let nodes = sequence(first: lhs.node) { $0?.next }
+            return nodes.contains { $0 === rhs.node }
+        }
+        
+    }
+    
+    // 开始索引
+    public var startIndex: Index {
+        return Index(node: head)
+    }
+    // lastIndex是最后element后面的index
+    public var endIndex: Index {
+        return Index(node: tail?.next)
+    }
+    // i后面的索引
+    public func index(after i: Index) -> Index {
+        return Index(node: i.node?.next)
+    }
+    // 获取node的值
+    public subscript(position: Index) -> Value {
+        return position.node!.value
+    }
+    
+}
+```
 
