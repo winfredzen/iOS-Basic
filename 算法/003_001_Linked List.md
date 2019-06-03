@@ -83,5 +83,68 @@ extension Node: CustomStringConvertible {
 
 
 
+## list中移除值
+
++ `pop`: 移除list最前面的node
++ `removeLast`: 移除list最后面的node
++ `remove(at:)`: 移除其它位置的node
+
+```swift
+    @discardableResult
+    public mutating func pop() -> Value? {
+        defer {
+            head = head?.next
+            if isEmpty {
+                tail = nil
+            }
+        }
+        return head?.value
+    }
+    
+    @discardableResult
+    public mutating func removeLast() -> Value? {
+        // 如果head是nil，return
+        guard let head = head else {
+            return nil
+        }
+        // 如果list只有一个node，等同于pop
+        guard head.next != nil else {
+            return pop()
+        }
+        // 搜索next node直至current.next为nil，current表示的是最后的node
+        var prev = head
+        var current = head
+        
+        while let next = current.next {
+            prev = current
+            current = next
+        }
+        
+        prev.next = nil
+        tail = prev
+        return current.value
+    }
+    
+    @discardableResult
+    public mutating func remove(after node: Node<Value>) -> Value? {
+        defer {
+            //如果node.next是tail
+            if node.next === tail {
+                tail = node
+            }
+            node.next = node.next?.next
+        }
+        return node.next?.value
+    }
+```
+
+
+
+
+
+
+
+
+
 
 
