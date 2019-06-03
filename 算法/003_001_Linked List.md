@@ -39,6 +39,48 @@ extension Node: CustomStringConvertible {
 + `append`: 在list结尾添加node
 + `insert(after:)`: 在某个node后面添加node
 
+```swift
+    public mutating func append(_ value: Value) {
+        
+        // 如果list为空，将head和tail都更新为新的node
+        guard !isEmpty else {
+            push(value)
+            return
+        }
+        
+        tail!.next = Node(value: value)
+        
+        tail = tail!.next
+    }
+    
+    //获取指定index的node
+    public func node(at index: Int) -> Node<Value>? {
+        
+        var currentNode = head
+        var currentIndex = 0
+        
+        while currentNode != nil && currentIndex < index {
+            currentNode = currentNode!.next
+            currentIndex += 1
+        }
+        
+        return currentNode
+    }
+    
+    //忽略返回值，编译器不警告
+    @discardableResult
+    public mutating func insert(_ value: Value, after node: Node<Value>) -> Node<Value> {
+        // 如果是在tail后面添加，则直接append
+        guard tail !== node else {
+            append(value)
+            return tail!
+        }
+        // 使用value和node.next创建新的node，在node后面插入
+        node.next = Node(value: value, next: node.next)
+        return node.next!
+    }
+```
+
 
 
 
