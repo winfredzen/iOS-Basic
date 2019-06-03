@@ -35,7 +35,9 @@ extension Node: CustomStringConvertible {
 
 ## list中添加value
 
-
++ `push`: 在list最前面添加node
++ `append`: 在list结尾添加node
++ `insert(after:)`: 在某个node后面添加node
 
 
 
