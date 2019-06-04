@@ -15,7 +15,7 @@
 
 2.协议的类型转换
 
-不强制只有get类型，也可以set
+不强制转换，如果声明时只有get方法，set方法也起作用
 
 ```swift
 protocol FullyNamed{
@@ -33,7 +33,7 @@ dcHero.lastName = “Girl”
 print(dcHero) // SuperHero(firstName: “Bat”, lastName: “Girl”)
 ```
 
-如果显示的转换，将不允许set
+如果显式的强制转换，将不允许set
 
 ```swift
 var anotherDcHero:FullyNamed = SuperHero()
