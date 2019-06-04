@@ -280,3 +280,29 @@ List2: 1 -> 2 -> 3
 ```
 
 并不是值类型的语法，原因是底层使用的Node是引用类型。但当前的LinkedList是个struct，应该是值类型的
+
+实现Copy on write(COW)
+
+```swift
+    private mutating func copyNodes() {
+      	guard !isKnownUniquelyReferenced(&head) else {
+  				return
+				}
+        guard var oldNode = head else {
+            return
+        }
+        
+        head = Node(value: oldNode.value)
+        var newNode = head
+        
+        while let nextOldNode = oldNode.next {
+            newNode!.next = Node(value: nextOldNode.value)
+            newNode = newNode!.next
+            
+            oldNode = nextOldNode
+        }
+        
+        tail = newNode
+    }
+```
+
