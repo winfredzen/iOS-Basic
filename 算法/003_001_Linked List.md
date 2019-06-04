@@ -193,3 +193,90 @@ extension LinkedList: Collection {
 }
 ```
 
+做如下的测试：
+
+```swift
+var list = LinkedList<Int>()
+for i in 0...9 {
+    list.append(i)
+}
+
+print("List: \(list)")
+print("First element: \(list[list.startIndex])")
+print("Array containing first 3 elements: \(Array(list.prefix(3)))")
+print("Array containing last 3 elements: \(Array(list.suffix(3)))")
+
+let sum = list.reduce(0, +)
+print("Sum of all values: \(sum)")
+```
+
+输出结果如下：
+
+```xml
+List: 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9         
+First element: 0
+Array containing first 3 elements: [0, 1, 2]
+Array containing last 3 elements: [7, 8, 9]
+Sum of all values: 45
+```
+
+
+
+**值类型语义和copy-on-write**
+
+大概的意思就是复制，不是引用，如对array的处理：
+
+```swift
+	let array1 = [1, 2]
+  var array2 = array1
+  
+  print("array1: \(array1)")
+  print("array2: \(array2)")
+  
+  print("---After adding 3 to array 2---")
+  array2.append(3)
+  print("array1: \(array1)")
+  print("array2: \(array2)")
+```
+
+输出结果为：
+
+```xml
+---Example of array cow---
+array1: [1, 2]
+array2: [1, 2]
+---After adding 3 to array 2---
+array1: [1, 2]
+array2: [1, 2, 3]
+```
+
+当array2修改是，array1不变化
+
+
+
+看下当前的`LinkedList`
+
+```swift
+	var list1 = LinkedList<Int>()
+  list1.append(1)
+  list1.append(2)
+  var list2 = list1
+  print("List1: \(list1)")
+  print("List2: \(list2)")
+  
+  print("After appending 3 to list2")
+  list2.append(3)
+  print("List1: \(list1)")
+  print("List2: \(list2)")
+```
+
+```xml
+---Example of linked list cow---
+List1: 1 -> 2
+List2: 1 -> 2
+After appending 3 to list2
+List1: 1 -> 2 -> 3
+List2: 1 -> 2 -> 3
+```
+
+并不是值类型的语法，原因是底层使用的Node是引用类型。但当前的LinkedList是个struct，应该是值类型的
