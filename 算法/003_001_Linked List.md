@@ -33,6 +33,32 @@ extension Node: CustomStringConvertible {
 
 ![015](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/images/015.png)
 
+```swift
+public struct LinkedList<Value> {
+
+  public var head: Node<Value>?
+  public var tail: Node<Value>?
+  
+  public init() {}
+
+  public var isEmpty: Bool {
+    return head == nil
+  }
+}
+
+extension LinkedList: CustomStringConvertible {
+
+  public var description: String {
+    guard let head = head else {
+      return "Empty list"
+    }
+    return String(describing: head)
+  }
+}
+```
+
+
+
 ## list中添加value
 
 + `push`: 在list最前面添加node
