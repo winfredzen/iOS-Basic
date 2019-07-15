@@ -78,7 +78,84 @@ public func request(
 
 ![02](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/9.png)
 
+在上面方法的内部，调用`URLRequest`扩展的`init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil)`方法，构建`URLRequest`
 
+```swift
+    public init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
+        let url = try url.asURL() //协议方法
+
+        self.init(url: url)
+
+        httpMethod = method.rawValue
+
+        if let headers = headers { //设置请求头
+            for (headerField, headerValue) in headers {
+                setValue(headerValue, forHTTPHeaderField: headerField)
+            }
+        }
+    }
+```
+
+然后对urlRequest进行编码
+
+```swift
+let encodedURLRequest = try encoding.encode(originalRequest!, with: parameters)
+```
+
+`ParameterEncoding`为一个协议，表示的是如果将参数集合应用到`URLRequest`
+
+```swift
+/// A type used to define how a set of parameters are applied to a `URLRequest`.
+public protocol ParameterEncoding {
+    /// Creates a URL request by encoding parameters and applying them onto an existing request.
+    ///
+    /// - parameter urlRequest: The request to have parameters applied.
+    /// - parameter parameters: The parameters to apply.
+    ///
+    /// - throws: An `AFError.parameterEncodingFailed` error if encoding fails.
+    ///
+    /// - returns: The encoded request.
+    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest
+}
+```
+
+具体调用的是`ParameterEncoding.swift`中的如下方法：
+
+![03](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/10.png)
+
+
+
+然后调用`request(_ urlRequest: URLRequestConvertible) -> DataRequest`，创建DataRequest，获取请求的结果
+
+```swift
+    /// Creates a `DataRequest` to retrieve the contents of a URL based on the specified `urlRequest`.
+    ///
+    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
+    ///
+    /// - parameter urlRequest: The URL request.
+    ///
+    /// - returns: The created `DataRequest`.
+    @discardableResult
+    open func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+        var originalRequest: URLRequest?
+
+        do {
+            originalRequest = try urlRequest.asURLRequest()
+            let originalTask = DataRequest.Requestable(urlRequest: originalRequest!)
+
+            let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
+            let request = DataRequest(session: session, requestTask: .data(originalTask, task))
+
+            delegate[task] = request
+
+            if startRequestsImmediately { request.resume() }
+
+            return request
+        } catch {
+            return request(originalRequest, failedWith: error)
+        }
+    }
+```
 
 
 
