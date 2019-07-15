@@ -72,6 +72,12 @@ public func request(
 
 在`Alamofire.swift`文件中，可见`String`、`URL`、`URLComponents`都实现了该协议
 
+![01](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/8.png)
+
+另外还有个`URLRequestConvertible`协议，可以用于构建URL requests，其中`URLRequest`实现了该协议
+
+![02](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/9.png)
+
 
 
 
