@@ -146,6 +146,7 @@ public protocol ParameterEncoding {
             let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
             let request = DataRequest(session: session, requestTask: .data(originalTask, task))
 
+          	//自定义下标
             delegate[task] = request
 
             if startRequestsImmediately { request.resume() }
@@ -157,7 +158,22 @@ public protocol ParameterEncoding {
     }
 ```
 
+`SessionDelegate.swift`中有自定义下标的实现
 
+```swift
+    /// Access the task delegate for the specified task in a thread-safe manner.
+    open subscript(task: URLSessionTask) -> Request? {
+        get {
+            lock.lock() ; defer { lock.unlock() }
+            return requests[task.taskIdentifier]
+        }
+        set {
+            lock.lock() ; defer { lock.unlock() }
+            requests[task.taskIdentifier] = newValue
+        }
+    }
+
+```
 
 
 
