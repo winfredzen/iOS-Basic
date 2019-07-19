@@ -13,6 +13,7 @@
 		D7B4CC4D22D449A60068FD59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC4B22D449A60068FD59 /* Main.storyboard */; };
 		D7B4CC4F22D449B90068FD59 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC4E22D449B90068FD59 /* Assets.xcassets */; };
 		D7B4CC5222D449B90068FD59 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC5022D449B90068FD59 /* LaunchScreen.storyboard */; };
+		D7F760AC22DC2E73001711CB /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F760AB22DC2E73001711CB /* UserModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		D7B4CC4E22D449B90068FD59 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D7B4CC5122D449B90068FD59 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7B4CC5322D449B90068FD59 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7F760AB22DC2E73001711CB /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,8 +94,17 @@
 		D7B4CC5922D48B960068FD59 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				D7F760AA22DC2E2C001711CB /* Model */,
 			);
 			path = Test;
+			sourceTree = "<group>";
+		};
+		D7F760AA22DC2E2C001711CB /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				D7F760AB22DC2E73001711CB /* UserModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,10 +184,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-BaseProject/Pods-BaseProject-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -209,6 +222,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7B4CC4A22D449A60068FD59 /* ViewController.swift in Sources */,
+				D7F760AC22DC2E73001711CB /* UserModel.swift in Sources */,
 				D7B4CC4822D449A60068FD59 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
