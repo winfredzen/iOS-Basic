@@ -177,5 +177,191 @@ public protocol ParameterEncoding {
 
 
 
+## Parameter Encoding
+
+在官方文档[Parameter Encoding](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#parameter-encoding)也有详细的解释，也可参考：
+
++ [Alamofire源码解读系列(四)之参数编码(ParameterEncoding)](https://www.jianshu.com/p/88d756f81fa9)
+
+Parameter Encoding表示的是参数的编码方式，在`Alamofire`源码的`ParameterEncoding.swift`中定义
+
+通过枚举`HTTPMethod`定义了请求方式，如下：
+
+```swift
+public enum HTTPMethod: String {
+    case options = "OPTIONS"
+    case get     = "GET"
+    case head    = "HEAD"
+    case post    = "POST"
+    case put     = "PUT"
+    case patch   = "PATCH"
+    case delete  = "DELETE"
+    case trace   = "TRACE"
+    case connect = "CONNECT"
+}
+```
+
+参数`Parameters`为字典的别名
+
+```swift
+public typealias Parameters = [String: Any]
+```
+
+定义了一个协议`ParameterEncoding`
+
+```swift
+/// A type used to define how a set of parameters are applied to a `URLRequest`.
+public protocol ParameterEncoding {
+    /// Creates a URL request by encoding parameters and applying them onto an existing request.
+    ///
+    /// - parameter urlRequest: The request to have parameters applied.
+    /// - parameter parameters: The parameters to apply.
+    ///
+    /// - throws: An `AFError.parameterEncodingFailed` error if encoding fails.
+    ///
+    /// - returns: The encoded request.
+    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest
+}
+```
+
+定义三种编码方式
+
++ URLEncoding - URL相关的编码，可以拼接到URL中，也可以通过request的HTTP body传值，具体的位置取决于`Destination`
+  + `.methodDependent` - 当请求为GET、HEAD和DELETE时，拼接到URL，其它请求方式，设置到HTTP body中
+  + `.queryString` - 拼接到URL中
+  + `.httpBody` - 拼接到httpBody中
++ JSONEncoding
++ PropertyListEncoding
+
+
+
+###URLEncoding
+
+使用HTTP body的请求，`Content-Type`会被设置为`application/x-www-form-urlencoded; charset=utf-8`
+
+##### GET Request With URL-Encoded Parameters
+
+GET请求，如下的形式是等价的
+
+```swift
+let parameters: Parameters = ["foo": "bar"]
+
+// All three of these calls are equivalent
+Alamofire.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
+Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
+Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
+
+// https://httpbin.org/get?foo=bar
+```
+
+##### POST Request With URL-Encoded Parameters
+
+POST请求
+
+```swift
+let parameters: Parameters = [
+    "foo": "bar",
+    "baz": ["a", 1],
+    "qux": [
+        "x": 1,
+        "y": 2,
+        "z": 3
+    ]
+]
+
+// All three of these calls are equivalent
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
+
+// HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
+```
+
+##### Configuring the Encoding of `Bool` Parameters
+
+Bool参数的编码，`URLEncoding.BoolEncoding`枚举提供如下的方法来编码`Bool`参数
+
++ `.numeric` - 将true作为1，false作为0
++ `.literal` - 将true和false作为字符串字面量
+
+默认，Alamofire使用`.numeric`方法
+
+可以使用你自己的`URLEncoding`，指定 `Bool` 的编码：
+
+```swift
+let encoding = URLEncoding(boolEncoding: .literal)
+```
+
+##### Configuring the Encoding of `Array` Parameters
+
+对应Array参数，`URLEncoding.ArrayEncoding`提供了如下的方法来编码 `Array` 参数：
+
++ `.brackets` -   `foo=[1,2]`编码为`foo[]=1&foo[]=2`
++ `.noBrackets` - `foo=[1,2]`编码为`foo=1&foo=2`
+
+默认使用`.brackets`编码，也可以自己指定：
+
+```swift
+let encoding = URLEncoding(arrayEncoding: .noBrackets)
+```
+
+
+
+### JSON Encoding
+
+`JSONEncoding`类型创建JSON来表示参数，HTTP header中`Content-Type`被设置为`application/json`
+
+```swift
+let parameters: Parameters = [
+    "foo": [1,2,3],
+    "bar": [
+        "baz": "qux"
+    ]
+]
+
+// Both calls are equivalent
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
+Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
+
+// HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
+```
+
+
+
+### Property List Encoding
+
+`PropertyListEncoding`使用`PropertyListSerialization`创建一个plist来表示参数对象，`Content-Type`被设置为`application/x-plist`
+
+
+
+### Custom Encoding
+
+可以自定义编码，如下的例子表示的是，将一个string数组编码
+
+```swift
+struct JSONStringArrayEncoding: ParameterEncoding {
+    private let array: [String]
+
+    init(array: [String]) {
+        self.array = array
+    }
+
+    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+        var urlRequest = try urlRequest.asURLRequest()
+
+        let data = try JSONSerialization.data(withJSONObject: array, options: [])
+
+        if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        }
+
+        urlRequest.httpBody = data
+
+        return urlRequest
+    }
+}
+```
+
+
 
 
