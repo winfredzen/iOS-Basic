@@ -140,15 +140,25 @@ sessionManager.request("https://httpbin.org/get")
 
 
 
+### TaskConvertible
 
+```swift
+protocol TaskConvertible {
+    func task(session: URLSession, adapter: RequestAdapter?, queue: DispatchQueue) throws -> URLSessionTask
+}
+```
 
+为一个协议，其中的方法返回值为`URLSessionTask`类型
 
+`DataRequest`中的实现如下：
 
+![13](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/13.png)
 
+所以请求的过程如下，可参考[Alamofire源码解读系列(十三)之请求(Request)](https://www.jianshu.com/p/823926f35396)
 
+![14](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/14.png)
 
-
-
+![15](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/15.png)
 
 
 
