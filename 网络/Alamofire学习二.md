@@ -109,6 +109,21 @@ public protocol RequestAdapter {
 open var adapter: RequestAdapter?
 ```
 
+`URLRequest`有如下的扩展extension：
+
+```swift
+extension URLRequest {
+		......
+
+    func adapt(using adapter: RequestAdapter?) throws -> URLRequest {
+        guard let adapter = adapter else { return self }
+        return try adapter.adapt(self)
+    }
+}
+```
+
+
+
 官方文档中的例子，[RequestAdapter](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#requestadapter)：
 
 ```swift
