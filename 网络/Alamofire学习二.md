@@ -58,6 +58,23 @@ Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON 
 
 ![12](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/12.png)
 
+在`Request.swift`中，有如下的几个类，它们都继承自`Request`：
+
++ DataRequest
++ DownloadRequest
++ UploadRequest
++ StreamRequest
+
+> All `Request` instances are always created by an owning session manager, and never initialized directly.
+>
+> 所有的request实例都是被session manager创建，绝不直接创建
+
+request可以被暂停、恢复、取消
+
++ `suspend()` - 暂停底层的task和dispatch queue
++ `resume()` - 恢复底层的task和dispatch queue，如果拥有的manager没有将`startRequestsImmediately`设置为true，request必须调用`resume()`来开始
++ `cancel()` - 取消底层的task，生成一个错误，传递给注册的response handlers
+
 
 
 

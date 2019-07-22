@@ -74,9 +74,61 @@ public func request(
 
 ![01](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/8.png)
 
+所以可以使用如下的方式来传递url到 `request`, `upload`, 和 `download` 方法中
+
+```swift
+let urlString = "https://httpbin.org/post"
+Alamofire.request(urlString, method: .post)
+
+let url = URL(string: urlString)!
+Alamofire.request(url, method: .post)
+
+let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+Alamofire.request(urlComponents, method: .post)
+```
+
 另外还有个`URLRequestConvertible`协议，可以用于构建URL requests，其中`URLRequest`实现了该协议
 
 ![02](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/9.png)
+
+可以直接传递到`request`, `upload`, 和 `download`方法中
+
+例如`Alamofire`文件中的Data Request，定义了如下的一个方法：
+
+```swift
+/// Creates a `DataRequest` using the default `SessionManager` to retrieve the contents of a URL based on the
+/// specified `urlRequest`.
+///
+/// - parameter urlRequest: The URL request
+///
+/// - returns: The created `DataRequest`.
+@discardableResult
+public func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
+    return SessionManager.default.request(urlRequest)
+}
+```
+
+可以使用如下的方式来进行请求：
+
+```swift
+let url = URL(string: "https://httpbin.org/post")!
+var urlRequest = URLRequest(url: url)
+urlRequest.httpMethod = "POST"
+
+let parameters = ["foo": "bar"]
+
+do {
+    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+} catch {
+    // No-op
+}
+
+urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+Alamofire.request(urlRequest)
+```
+
+
 
 在上面方法的内部，调用`URLRequest`扩展的`init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil)`方法，构建`URLRequest`
 
