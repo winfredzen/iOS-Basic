@@ -46,7 +46,41 @@ Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON 
 
 在`SessionManager.swift`也可以看到如下的实现
 
-![11]([https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/11.png](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/11.png))
+![11](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/11.png)
+
+可见其通过configuration的`httpAdditionalHeaders`设置请求头
+
+
+
+## Request
+
+在`Alamofire.swift`文件中，我们可以看到如下的分类：
+
+![12](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/12.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
