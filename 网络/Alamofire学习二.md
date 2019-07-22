@@ -46,7 +46,7 @@ Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON 
 
 在`SessionManager.swift`也可以看到如下的实现
 
-
+![11]([https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/11.png](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/11.png))
 
 
 
