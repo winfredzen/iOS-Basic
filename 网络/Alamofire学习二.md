@@ -1,0 +1,64 @@
+# Alamofire学习二
+
+如何设置请求头？
+
+## HTTP Headers
+
+在`Alamofire.swift`中，请求方法中有请求头的参数，默认为`nil`
+
+```swift
+public func request(
+    _ url: URLConvertible,
+    method: HTTPMethod = .get,
+    parameters: Parameters? = nil,
+    encoding: ParameterEncoding = URLEncoding.default,
+    headers: HTTPHeaders? = nil)
+    -> DataRequest
+```
+
+`HTTPHeaders`的定义如下，为字典的别名
+
+```swift
+/// A dictionary of headers to apply to a `URLRequest`.
+public typealias HTTPHeaders = [String: String]
+```
+
+使用上面的方式定义请求头可以很方便的修改请求头
+
+```swift
+let headers: HTTPHeaders = [
+    "Authorization": "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==",
+    "Accept": "application/json"
+]
+
+Alamofire.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+    debugPrint(response)
+}
+```
+
+> 对于固定的HTTP headers，推荐在`URLSessionConfiguration`中设置，会自动应用到`URLSession`创建的`URLSessionTask`上，可参考[[Session Manager Configurations](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#session-manager) ]
+
+默认的Alamofire的`SessionManager`对每个request提供了如下的默认的请求头
+
++ Accept-Encoding - 默认为`gzip;q=1.0, compress;q=0.5`
++ Accept-Language - 格式类似于`en;q=1.0`
++ User-Agent - `iOS Example/1.0 (com.alamofire.iOS-Example; build:1; iOS 10.0.0) Alamofire/4.0.0`
+
+在`SessionManager.swift`也可以看到如下的实现
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
