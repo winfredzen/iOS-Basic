@@ -128,6 +128,10 @@ urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
 Alamofire.request(urlRequest)
 ```
 
+>Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
+
+具体的一些自定义实现`URLRequestConvertible`，可参考：[API Parameter Abstraction](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#api-parameter-abstraction)
+
 
 
 在上面方法的内部，调用`URLRequest`扩展的`init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil)`方法，构建`URLRequest`
