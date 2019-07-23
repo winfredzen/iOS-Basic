@@ -87,7 +87,7 @@ public let queue: OperationQueue
 
 
 
-3.`DataRequest`继承自`Request`，其内部有个`delegate`属性和`taskDelegate`属性
+3.`DataRequest`继承自`Request`，其内部有个`delegate`属性和`taskDelegate`属性，都是`TaskDelegate`类型
 
 ```swift
     /// The delegate for the underlying task.
@@ -112,7 +112,7 @@ public let queue: OperationQueue
 
 
 
-4.`SessionManager.default`，进行`SessionManager`的初始化
+4.`SessionManager.default`，进行`SessionManager`的初始化，相当于是个单例
 
 ```swift
     /// A default instance of `SessionManager`, used by top-level Alamofire request methods, and suitable for use
@@ -137,7 +137,7 @@ public let queue: OperationQueue
     }
 ```
 
-可以看到`session`的代理被设置为`SessionDelegate`，为`SessionManager`的一个属性：
+可以看到`session`(`URLSession`)的代理被设置为`SessionDelegate`，为`SessionManager`的一个属性：
 
 ```swift
     /// The session delegate handling all the task and session delegate callbacks.
