@@ -16,6 +16,8 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 
 在Xcode打了一些断点，发现其调用过程如下：
 
+
+
 1.注意Alamofire可以链式调用，如后面的`responseJSON`方法，网络调用是个异步的过程，所以必须是在获取结果后调用，这是如何实现的呢？
 
 `DataRequest`的`responseJSON(queue:options:completionHandler:)`内部调用`response(queue:responseSerializer:completionHandler:)`方法(`ResponseSerialization.swift`文件)：
@@ -27,6 +29,8 @@ Alamofire.request("https://httpbin.org/get").responseJSON { response in
 ![17](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/17.png)
 
 可以看到，它向`TaskDelegate`的`queue`中，加入如上的内容
+
+
 
 2.`TaskDelegate`中有名为`queue`的属性
 
@@ -81,4 +85,103 @@ public let queue: OperationQueue
     }
 ```
 
-3.
+
+
+3.`DataRequest`继承自`Request`，其内部有个`delegate`属性和`taskDelegate`属性
+
+```swift
+    /// The delegate for the underlying task.
+    open internal(set) var delegate: TaskDelegate {
+        get {
+            taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
+            return taskDelegate
+        }
+        set {
+            taskDelegateLock.lock() ; defer { taskDelegateLock.unlock() }
+            taskDelegate = newValue
+        }
+    }
+    
+    private var taskDelegate: TaskDelegate
+    private var taskDelegateLock = NSLock()
+```
+
+在其初始化方法`init(session:, requestTask:, error:)`中对其进行赋值
+
+![18](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/18.png)
+
+
+
+4.`SessionManager.default`，进行`SessionManager`的初始化
+
+```swift
+    /// A default instance of `SessionManager`, used by top-level Alamofire request methods, and suitable for use
+    /// directly for any ad hoc requests.
+    public static let `default`: SessionManager = {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = SessionManager.defaultHTTPHeaders
+
+        return SessionManager(configuration: configuration)
+    }()
+    
+    
+        public init(
+        configuration: URLSessionConfiguration = URLSessionConfiguration.default,
+        delegate: SessionDelegate = SessionDelegate(),
+        serverTrustPolicyManager: ServerTrustPolicyManager? = nil)
+    {
+        self.delegate = delegate
+        self.session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+
+        commonInit(serverTrustPolicyManager: serverTrustPolicyManager)
+    }
+```
+
+可以看到`session`的代理被设置为`SessionDelegate`，为`SessionManager`的一个属性：
+
+```swift
+    /// The session delegate handling all the task and session delegate callbacks.
+    public let delegate: SessionDelegate
+```
+
+
+
+5.所以当一个请求完成，其调用的是`SessionDelegate`的`urlSession(_:task:didCompleteWithError:)`方法
+
+这个方法内部，会调用request的delegate的`urlSession(_:task:didCompleteWithError:)`方法，即`TaskDelegate`中的方法
+![19](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/19.png)
+
+![20](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/20.png)
+
+
+
+6.调用`TaskDelegate`的`urlSession(_:task:didCompleteWithError:)`方法
+
+![21](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/21.png)
+
+将queue的`isSuspended`设置为`false`
+
+此时会执行queue的操作，即如下所示的内容，即response的回调
+
+![16](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/16.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
