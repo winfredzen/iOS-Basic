@@ -24,8 +24,9 @@ class ViewController: UIViewController {
 //            }
 //        }
         
+        let url = "https://free-api.heweather.net/s6/weather/now?location=CN101010100&key=75d498e399c14c6c9cc0c2c674eada5d"
         let parameters: Parameters = ["foo" : "bar"]
-        Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent)).responseJSON { response in
+        Alamofire.request(url, parameters: parameters, encoding: URLEncoding(destination: .methodDependent)).responseJSON { response in
             
             print("Request: \(String(describing: response.request))")
             
