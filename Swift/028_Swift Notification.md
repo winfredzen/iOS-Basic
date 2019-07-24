@@ -63,3 +63,60 @@ NotificationCenter.default.addObserver(self, selector: #selector(onDidReceiveDat
 }
 ```
 
+参考：
+
++ [从 Notification.Name 看 Swift 如何优雅的解决 String 硬编码](https://juejin.im/post/5b66ed0bf265da0fa50a3840)
++ [How To: Using Notification Center In Swift](https://learnappmaking.com/notification-center-how-to-swift/)
++ [Notification in Swift (NSNotification)](https://medium.com/@dmytro.anokhin/notification-in-swift-d47f641282fa)
+
+
+
+Alamofire中使用通知的方式：
+
+在`Notifications.swift`中定义了如下的内容：
+
+```swift
+extension Notification.Name {
+    /// Used as a namespace for all `URLSessionTask` related notifications.
+    public struct Task {
+        /// Posted when a `URLSessionTask` is resumed. The notification `object` contains the resumed `URLSessionTask`.
+        public static let DidResume = Notification.Name(rawValue: "org.alamofire.notification.name.task.didResume")
+
+        /// Posted when a `URLSessionTask` is suspended. The notification `object` contains the suspended `URLSessionTask`.
+        public static let DidSuspend = Notification.Name(rawValue: "org.alamofire.notification.name.task.didSuspend")
+
+        /// Posted when a `URLSessionTask` is cancelled. The notification `object` contains the cancelled `URLSessionTask`.
+        public static let DidCancel = Notification.Name(rawValue: "org.alamofire.notification.name.task.didCancel")
+
+        /// Posted when a `URLSessionTask` is completed. The notification `object` contains the completed `URLSessionTask`.
+        public static let DidComplete = Notification.Name(rawValue: "org.alamofire.notification.name.task.didComplete")
+    }
+}
+
+// MARK: -
+
+extension Notification {
+    /// Used as a namespace for all `Notification` user info dictionary keys.
+    public struct Key {
+        /// User info dictionary key representing the `URLSessionTask` associated with the notification.
+        public static let Task = "org.alamofire.notification.key.task"
+
+        /// User info dictionary key representing the responseData associated with the notification.
+        public static let ResponseData = "org.alamofire.notification.key.responseData"
+    }
+}
+
+```
+
+抛出通知：
+
+```swift
+        NotificationCenter.default.post(
+            name: Notification.Name.Task.DidResume,
+            object: self,
+            userInfo: [Notification.Key.Task: task]
+        )
+```
+
+
+
