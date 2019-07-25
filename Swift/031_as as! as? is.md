@@ -6,7 +6,7 @@
 
 + [Swift - as、as!、as?三种类型转换操作符使用详解（附样例）](http://www.hangge.com/blog/cache/detail_1089.html) - 某些用例，可能有错误，可以参考下
 + [Swift 3.0 - What's is, as, as? and as! operators?](https://jayeshkawli.ghost.io/swift-3-0-whats-is-as-as-and-as-operators/)
-+ [『簡易說明Swift 4』Any — 型別轉型 （Type Casting）]([https://medium.com/@chao.shin.mail/%E7%B0%A1%E6%98%93%E8%AA%AA%E6%98%8Eswift-4-any-%E5%9E%8B%E5%88%A5%E8%BD%89%E5%9E%8B-type-casting-f4dd2dde71d3](https://medium.com/@chao.shin.mail/簡易說明swift-4-any-型別轉型-type-casting-f4dd2dde71d3))
++ [『簡易說明Swift 4』Any — 型別轉型 （Type Casting）](https://medium.com/@chao.shin.mail/簡易說明swift-4-any-型別轉型-type-casting-f4dd2dde71d3)
 
 `as` `as!` `as?` `is`主要是用在类型转换，类型判断方面
 
