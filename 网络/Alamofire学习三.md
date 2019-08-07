@@ -84,7 +84,28 @@ func responsePropertyList(
 
 
 
+##DataResponse 
 
+上面的`response`相关的方法中，回调的闭包的参数，都是`DataResponse`类型：
+
+> Used to store all data associated with a serialized response of a data or upload request.
+>
+>  用来存储response数据 or 上传请求 序列化的结果 
+
+属性如下：
+
+![22](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/22.png)
+
++ request - 表示请求
++ response - 表示服务器对请求的响应
++ data - 表示服务器返回的数据
++ result - 表示响应序列化的结果，其类型为`Result<Value>`
++ value - 如果成功，表示result的关联类型的值，失败则为`nil`
++ error - 如果失败，表示result的error关联类型的值，失败则为`nil`
+
+
+
+## Result
 
 
 
