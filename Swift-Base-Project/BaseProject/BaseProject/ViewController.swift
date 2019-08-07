@@ -11,10 +11,16 @@ import Alamofire
 import SwiftyJSON
 
 class ViewController: UIViewController {
+    
+    var person = Person()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        
+        person.addObserver(self, forKeyPath: "age", options: .new, context: nil)
+        
         
 //        Alamofire.request("https://httpbin.org/get").responseJSON { response in
 //            debugPrint(response)
@@ -180,5 +186,21 @@ class ViewController: UIViewController {
     }
 
 
+    @IBAction func kvoTest(_ sender: Any) {
+        
+        person.age = 100
+        
+    }
+    
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        if let change = change {
+            let age = change[NSKeyValueChangeKey.newKey]
+            print("\(age)")
+        }
+        
+        
+    }
 }
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		788A9C89E4D47C5857BF87DB /* Pods_BaseProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17140C02218F18E70CCFB78F /* Pods_BaseProject.framework */; };
+		D747BDCC22E85681004EE1D3 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = D747BDCB22E85681004EE1D3 /* Person.swift */; };
 		D7B4CC4822D449A60068FD59 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B4CC4722D449A60068FD59 /* AppDelegate.swift */; };
 		D7B4CC4A22D449A60068FD59 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B4CC4922D449A60068FD59 /* ViewController.swift */; };
 		D7B4CC4D22D449A60068FD59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC4B22D449A60068FD59 /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 		17140C02218F18E70CCFB78F /* Pods_BaseProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BaseProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C45A087F2BA11C5896EBF9C /* Pods-BaseProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseProject.release.xcconfig"; path = "Pods/Target Support Files/Pods-BaseProject/Pods-BaseProject.release.xcconfig"; sourceTree = "<group>"; };
 		8E6B23218015D522165E10A4 /* Pods-BaseProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BaseProject.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BaseProject/Pods-BaseProject.debug.xcconfig"; sourceTree = "<group>"; };
+		D747BDCB22E85681004EE1D3 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		D7B4CC4422D449A60068FD59 /* BaseProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BaseProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B4CC4722D449A60068FD59 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D7B4CC4922D449A60068FD59 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				D7F760AB22DC2E73001711CB /* UserModel.swift */,
+				D747BDCB22E85681004EE1D3 /* Person.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 			files = (
 				D7B4CC4A22D449A60068FD59 /* ViewController.swift in Sources */,
 				D7F760AC22DC2E73001711CB /* UserModel.swift in Sources */,
+				D747BDCC22E85681004EE1D3 /* Person.swift in Sources */,
 				D7B4CC4822D449A60068FD59 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
