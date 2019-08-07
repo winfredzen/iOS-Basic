@@ -107,13 +107,49 @@ func responsePropertyList(
 
 ## Result
 
+`Result`是个枚举，用来表示请求是否成功还是发生了错误
 
+![23](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/23.png)
 
+那么是如何创建`Result`的呢？
 
+已`responseJSON`为例，内部调用`DataRequest`的如下的方法：
 
+```swift
+    @discardableResult
+    public func responseJSON(
+        queue: DispatchQueue? = nil,
+        options: JSONSerialization.ReadingOptions = .allowFragments,
+        completionHandler: @escaping (DataResponse<Any>) -> Void)
+        -> Self
+    {
+        return response(
+            queue: queue,
+            responseSerializer: DataRequest.jsonResponseSerializer(options: options),
+            completionHandler: completionHandler
+        )
+    }
+```
 
+注意这里的`responseSerializer`类型为`DataRequest.jsonResponseSerializer(options: options)`，其返回结果为`DataResponseSerializer`，其有个变量`serializeResponse`，为一个闭包类型
 
+![25](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/25.png)
 
+![26](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/26.png)
+
+在该方法的内部
+
+![24](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/24.png)
+
+`responseSerializer`调用`serializeResponse`方法，返回的就是`Result`类型
+
+这里调用的就是：
+
+```swift
+Request.serializeResponseJSON(options: options, response: response, data: data, error: error)
+```
+
+![27](https://github.com/winfredzen/iOS-Basic/blob/master/网络/images/27.png)
 
 
 
