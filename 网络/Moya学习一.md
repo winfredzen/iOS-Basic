@@ -12,7 +12,7 @@
 
 Task为枚举，表示的是一个HTTP Task，表示请求数据的方式：
 
-
+![31](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/31.png)
 
 ## Endpoint
 
