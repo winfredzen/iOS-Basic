@@ -2,7 +2,7 @@
 
 [Moya](https://github.com/Moya/Moya)是对Alamofire的进一步封装，具体的介绍可参考其[中文文档](https://github.com/Moya/Moya/blob/master/Readme_CN.md)，详细介绍可参考[docs_CN](https://github.com/Moya/Moya/tree/master/docs_CN)
 
-基本用法参考：[Basic Usage](https://github.com/Moya/Moya/blob/master/docs_CN/Examples/Basic.md)，可以对其有个直观的映象，可以快速了解该怎么用
+基本用法参考：[Basic Usage](https://github.com/Moya/Moya/blob/master/docs_CN/Examples/Basic.md)，可以对其有个直观的印象，可以快速了解该怎么用
 
 ## Target
 
@@ -25,7 +25,7 @@ Task为枚举，表示的是一个HTTP Task，表示请求数据的方式：
 最终用来生成请求，有如下的属性：
 
 + url - 代表请求的url
-+ sampleResponseClosure - 一个闭包，复制返回一个`EndpointSampleResponse`, 指定返回的数据
++ sampleResponseClosure - 一个闭包，返回一个`EndpointSampleResponse`, 可以指定返回的数据
 + method - 请求方式
 + task - 请求的Task
 + httpHeaderFields - 请求头
@@ -44,9 +44,13 @@ public typealias SampleResponseClosure = () -> EndpointSampleResponse
 
 
 
-Endpoint有如下的扩展，将一个`Endpoint`转为`URLRequest`，根据task类型进行判断，该调用request的那个方法
+Endpoint有如下的扩展，将一个`Endpoint`转为`URLRequest`，根据task类型进行判断，该调用request的encoded方法，传递的参数不一样
 
 ![28](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/28.png)
+
+encoded的方法是`URLRequest`的扩展，位于`URLRequest+Encoding.swift`文件中
+
+![33](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/33.png)
 
 
 
