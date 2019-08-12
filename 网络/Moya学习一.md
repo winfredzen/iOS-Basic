@@ -2,11 +2,15 @@
 
 [Moya](https://github.com/Moya/Moya)是对Alamofire的进一步封装，具体的介绍可参考其[中文文档](https://github.com/Moya/Moya/blob/master/Readme_CN.md)，详细介绍可参考[docs_CN](https://github.com/Moya/Moya/tree/master/docs_CN)
 
+基本用法参考：[Basic Usage](https://github.com/Moya/Moya/blob/master/docs_CN/Examples/Basic.md)，可以对其有个直观的映象，可以快速了解该怎么用
+
 ## Target
 
 需定义一个遵循`TargetType`协议的枚举类型，具体解释参考[Targets](https://github.com/Moya/Moya/blob/master/docs_CN/Targets.md)
 
+`TargetType`协议的内容
 
+![32](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/32.png)
 
 ## Task
 
