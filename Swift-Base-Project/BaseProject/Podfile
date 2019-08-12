@@ -7,7 +7,14 @@ target 'BaseProject' do
 
   # Pods for BaseProject
 
+  # 网络请求
+  pod 'Moya', '~> 13.0'
   pod 'Alamofire'
+  
   pod 'SwiftyJSON', '~> 4.0'
+  
+  # MD5
+  pod 'SwiftHash'
+
 
 end

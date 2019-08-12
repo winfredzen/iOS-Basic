@@ -14,6 +14,10 @@
 		D7B4CC4D22D449A60068FD59 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC4B22D449A60068FD59 /* Main.storyboard */; };
 		D7B4CC4F22D449B90068FD59 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC4E22D449B90068FD59 /* Assets.xcassets */; };
 		D7B4CC5222D449B90068FD59 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D7B4CC5022D449B90068FD59 /* LaunchScreen.storyboard */; };
+		D7E0213022FD10B2008D0815 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E0212F22FD10B2008D0815 /* Manager.swift */; };
+		D7E55D0322FC01B3006BBBC6 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E55D0222FC01B3006BBBC6 /* APIKeys.swift */; };
+		D7E55D0522FC023F006BBBC6 /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E55D0422FC023F006BBBC6 /* API.swift */; };
+		D7E55D0722FC0251006BBBC6 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7E55D0622FC0251006BBBC6 /* APIManager.swift */; };
 		D7F760AC22DC2E73001711CB /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7F760AB22DC2E73001711CB /* UserModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +33,10 @@
 		D7B4CC4E22D449B90068FD59 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D7B4CC5122D449B90068FD59 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D7B4CC5322D449B90068FD59 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D7E0212F22FD10B2008D0815 /* Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
+		D7E55D0222FC01B3006BBBC6 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
+		D7E55D0422FC023F006BBBC6 /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
+		D7E55D0622FC0251006BBBC6 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		D7F760AB22DC2E73001711CB /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,6 +90,7 @@
 		D7B4CC4622D449A60068FD59 /* BaseProject */ = {
 			isa = PBXGroup;
 			children = (
+				D7E55D0122FBF592006BBBC6 /* Network */,
 				D7B4CC5922D48B960068FD59 /* Test */,
 				D7B4CC4722D449A60068FD59 /* AppDelegate.swift */,
 				D7B4CC4922D449A60068FD59 /* ViewController.swift */,
@@ -101,11 +110,22 @@
 			path = Test;
 			sourceTree = "<group>";
 		};
+		D7E55D0122FBF592006BBBC6 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				D7E55D0222FC01B3006BBBC6 /* APIKeys.swift */,
+				D7E55D0422FC023F006BBBC6 /* API.swift */,
+				D7E55D0622FC0251006BBBC6 /* APIManager.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		D7F760AA22DC2E2C001711CB /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				D7F760AB22DC2E73001711CB /* UserModel.swift */,
 				D747BDCB22E85681004EE1D3 /* Person.swift */,
+				D7E0212F22FD10B2008D0815 /* Manager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -187,11 +207,17 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-BaseProject/Pods-BaseProject-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
+				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftHash/SwiftHash.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftHash.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,9 +251,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				D7B4CC4A22D449A60068FD59 /* ViewController.swift in Sources */,
+				D7E55D0322FC01B3006BBBC6 /* APIKeys.swift in Sources */,
 				D7F760AC22DC2E73001711CB /* UserModel.swift in Sources */,
+				D7E0213022FD10B2008D0815 /* Manager.swift in Sources */,
 				D747BDCC22E85681004EE1D3 /* Person.swift in Sources */,
+				D7E55D0522FC023F006BBBC6 /* API.swift in Sources */,
 				D7B4CC4822D449A60068FD59 /* AppDelegate.swift in Sources */,
+				D7E55D0722FC0251006BBBC6 /* APIManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
