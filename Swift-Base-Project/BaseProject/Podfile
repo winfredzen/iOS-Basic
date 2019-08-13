@@ -18,6 +18,10 @@ target 'BaseProject' do
   
   # HUD
   pod 'SVProgressHUD'
+  
+  # json解析
+  pod 'HandyJSON', '~> 5.0.0'
+
 
 
 

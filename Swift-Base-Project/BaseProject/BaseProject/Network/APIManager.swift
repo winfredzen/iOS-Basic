@@ -74,6 +74,26 @@ struct APIManager {
         
         provider.request(target) { result in
             
+            switch result {
+            case let .success(response):
+                
+                let data = response.data
+                let statusCode = response.statusCode
+                
+                //处理json
+                let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String : Any]
+                if let baseModel = BaseModel.deserialize(from: json) {
+                    print(baseModel)
+                    print("\(baseModel.status) \(baseModel.message)")
+                }
+                
+            case let .failure(error):
+                
+                print("\(error)")
+                
+            }
+            
+            
         }
         
     }
