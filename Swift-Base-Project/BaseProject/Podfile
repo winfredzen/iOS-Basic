@@ -15,6 +15,10 @@ target 'BaseProject' do
   
   # MD5
   pod 'SwiftHash'
+  
+  # HUD
+  pod 'SVProgressHUD'
+
 
 
 end

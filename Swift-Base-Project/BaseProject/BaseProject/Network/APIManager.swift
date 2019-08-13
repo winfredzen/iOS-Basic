@@ -9,6 +9,7 @@
 import Foundation
 import Moya
 import Alamofire
+import SVProgressHUD
 
 struct APIManager {
     
@@ -52,7 +53,22 @@ struct APIManager {
         return endpoint;
     }
     
-    static let provider = MoyaProvider<API>(endpointClosure: myEndpointClosure)
+    //插件
+    //网络活动插件
+    private static let networkActivityPlugin: NetworkActivityPlugin = NetworkActivityPlugin {
+        (changeType, target) in
+        switch changeType {
+        case .began:
+            SVProgressHUD.show()
+        case .ended:
+            SVProgressHUD.dismiss()
+        }
+    }
+    //日志插件
+    private static let networkLoggerPlugin: NetworkLoggerPlugin = NetworkLoggerPlugin(verbose: true)
+    private static let plugins: [PluginType] = [networkActivityPlugin, networkLoggerPlugin]
+    
+    static let provider = MoyaProvider<API>(endpointClosure: myEndpointClosure, plugins: plugins)
     
     static func requset(_ target: API, completion: @escaping Completion){
         
