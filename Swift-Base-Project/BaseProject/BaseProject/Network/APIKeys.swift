@@ -9,7 +9,7 @@
 import Foundation
 
 struct APIConfig {
-    static let baseURL = "http://apipbl.curefun.com"
+    static let baseURL = "http://xxxx.xxxx.com"
 }
 
 
