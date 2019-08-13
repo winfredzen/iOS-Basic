@@ -162,6 +162,13 @@ Moya插件在请求被发送或接收时进行回调，插件可以用来：
 + 隐藏和显示网络指示器
 + 给request添加额外的信息
 
+`PluginType`协议方法：
+
++ prepare - 在request被发送前调用来修改一个请求
++ willSend - 在通过网络（或stubbed）发送请求之前立即调用
++ didReceive - 在收到响应后调用，但在MoyaProvider调用其完成处理程序之前调用
++ process - 在完成之前调用，用来修改结果
+
 
 
 
