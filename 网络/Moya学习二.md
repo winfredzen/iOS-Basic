@@ -169,7 +169,10 @@ Moya插件在请求被发送或接收时进行回调，插件可以用来：
 + didReceive - 在收到响应后调用，但在MoyaProvider调用其完成处理程序之前调用
 + process - 在完成之前调用，用来修改结果
 
+Moya自带2个插件
 
++ NetworkActivityPlugin -  网络活动
++ NetworkLoggerPlugin - 相当于log
 
 
 
