@@ -1,8 +1,8 @@
 //
-//  API.swift
+//  AuthAPI.swift
 //  BaseProject
 //
-//  Created by 王振 on 2019/8/8.
+//  Created by 王振 on 2019/8/14.
 //  Copyright © 2019 curefun. All rights reserved.
 //
 
@@ -10,19 +10,17 @@ import Foundation
 import Moya
 import SwiftHash
 
-enum API {
+enum Auth {
     case login(phone: String, password: String)
 }
 
-extension API: TargetType {
+extension Auth: TargetType {
     var baseURL: URL { return URL.init(string: APIConfig.AuthBaseURL)! }
     
     var path: String {
         switch self {
         case .login:
             return "/user/login"
-        default:
-            return ""
         }
     }
     
@@ -30,14 +28,12 @@ extension API: TargetType {
         switch self {
         case .login:
             return .post
-        default:
-            return .get
         }
     }
     
     var task: Task {
         switch self {
-        case .login(let phone, let password):
+        case let .login(phone, password):
             return .requestParameters(parameters: ["phone" : phone, "password" : password], encoding: JSONEncoding.default)
         }
     }
@@ -50,8 +46,12 @@ extension API: TargetType {
         return nil
     }
     
+
+}
+
+extension Auth: AdditionalParametersProtocol {
     //sign签名
-    var additionalParameters : [String : String]  {
+    var additionalParameters : [String : String]?  {
         
         let date = Date()
         let timeInterval = UInt64(date.timeIntervalSince1970 * 1000)

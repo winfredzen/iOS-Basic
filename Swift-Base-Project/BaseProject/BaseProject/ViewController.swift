@@ -9,6 +9,7 @@
 import UIKit
 import Alamofire
 import SwiftyJSON
+import Moya
 
 class ViewController: UIViewController {
     
@@ -34,6 +35,13 @@ class ViewController: UIViewController {
         APIManager.requset(.login(phone: "18008657309", password: "123456"), completion: { result in
             
         })
+        
+        MultiTargetAPIManager.requset(MultiTarget(Weatehr.now("CN101010100", "75d498e399c14c6c9cc0c2c674eada5d")), completion: {
+            succ, reuslt in
+            if succ {
+                print("succ: \(reuslt!)")
+            }
+        });
   
     }
 
