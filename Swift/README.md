@@ -199,7 +199,7 @@ case _ where myAge >= 61:
 default:
     print("Invalid age")
 }
-```swift
+```
 
 
 ## 函数
