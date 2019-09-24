@@ -784,6 +784,22 @@ let stockSum = stock.reduce(0) { result, pair -> Double in
 stockSum //38
 ```
 
+`0`表示的是初始值为0
+
+### flatMap
+
+```swift
+var values = [[1,3,5,7],[9]]
+let flattenResult = values.flatMap{ $0 }
+/// [1, 3, 5, 7, 9]
+```
+
+```swift
+var values:[Int?] = [1,3,5,7,9,nil]
+let flattenResult = values.flatMap{ $0 }
+/// [1, 3, 5, 7, 9]
+```
+
 ## 字符串
 
 ### 多行字符串
