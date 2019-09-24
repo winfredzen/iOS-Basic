@@ -786,7 +786,7 @@ stockSum //38
 
 `0`表示的是初始值为0
 
-### flatMap
+#### flatMap
 
 ```swift
 var values = [[1,3,5,7],[9]]
