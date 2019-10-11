@@ -97,7 +97,7 @@ convenience init?(identifier: String, reusable: Bool) {
 
 如下的OC代码：
 
-```
+```objective-c
 @interface RocketComponent : NSObject
 
 @property(nonatomic, copy) NSString *model;
