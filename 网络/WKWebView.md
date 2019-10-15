@@ -282,7 +282,12 @@ extension ViewController: WKScriptMessageHandler {
 contentController.add(self, name: "jsHandler")
 ```
 
+## Local Storage
 
+设置Local Storage，可参考如下的链接：
+
++ [Is there a way to set local storage in WKWebView](https://stackoverflow.com/questions/44896823/is-there-a-way-to-set-local-storage-in-wkwebview)
++ [How to set the local storage before a UIWebView loading its initial request?](https://stackoverflow.com/questions/42622192/how-to-set-the-local-storage-before-a-uiwebview-loading-its-initial-request?noredirect=1&lq=1)
 
 ## 其它
 

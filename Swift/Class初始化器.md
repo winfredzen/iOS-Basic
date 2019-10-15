@@ -60,7 +60,7 @@ Swift编译器执行四种有效的安全检查来确保两段式初始化过程
 
 1.指定初始化器的可失败初始化器
 
-```
+```swift
 // Init #1c - Designated
 init?(identifier: String, reusable: Bool) {
   let identifierComponents = identifier.components(separatedBy: "-")
@@ -76,7 +76,7 @@ init?(identifier: String, reusable: Bool) {
 
 2.便捷初始化器的可失败初始化器
 
-```
+```swift
 // Init #1c - Convenience
 convenience init?(identifier: String, reusable: Bool) {
   let identifierComponents = identifier.components(separatedBy: "-")
@@ -97,7 +97,7 @@ convenience init?(identifier: String, reusable: Bool) {
 
 如下的OC代码：
 
-```
+```objective-c
 @interface RocketComponent : NSObject
 
 @property(nonatomic, copy) NSString *model;
@@ -119,7 +119,7 @@ convenience init?(identifier: String, reusable: Bool) {
 
 如下，`Tank`继承`RocketComponent`，并添加属性`encasingMaterial`
 
-```
+```objective-c
 @interface RocketComponent : NSObject
 
 @property(nonatomic, copy) NSString *model;
@@ -146,7 +146,7 @@ Tank *fuelTank = [[Tank alloc] initWithModel:@"Athena" serialNumber:@"003" reusa
 
 但如下的Swift代码：
 
-```
+```swift
 class RocketComponent {
     let model: String
     let serialNumber: String
@@ -205,7 +205,7 @@ class Tank: RocketComponent {
 
 首先，引入如下的初始化方法：
 
-```
+```swift
 init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: String) {
   self.model = model
   self.serialNumber = serialNumber
@@ -220,7 +220,7 @@ init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: Stri
 
 原因是`Tank`是子类，在Swift中，子类只能初始化它引入的属性，子类不能初始化父类的属性。所以，子类的指定初始化器必须`delegate up`到父类的指定初始化器
 
-```
+```swift
     // Init #2a - Designated
     init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: String) {
         self.encasingMaterial = encasingMaterial
@@ -231,7 +231,7 @@ init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: Stri
 
 但如果我们如下写初始化方法：
 
-```
+```swift
 // Init #2a - Designated
 init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: String) {
   super.init(model: model, serialNumber: serialNumber, reusable: reusable)
@@ -246,7 +246,7 @@ init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: Stri
 
 同样，如下：
 
-```
+```swift
 // Init #2a - Designated
 init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: String) {
   self.encasingMaterial = encasingMaterial
@@ -284,7 +284,7 @@ init(model: String, serialNumber: String, reusable: Bool, encasingMaterial: Stri
 
 使用`override`
 
-```
+```swift
 // Init #2b - Designated
 override init(model: String, serialNumber: String, reusable: Bool) {
   self.encasingMaterial = "Aluminum"
@@ -297,7 +297,7 @@ override init(model: String, serialNumber: String, reusable: Bool) {
 
 如下方法：
 
-```
+```swift
     // Init #3d - Designated
      override init(model: String, serialNumber: String, reusable: Bool) {
         self.liquidType = "LOX"
@@ -317,7 +317,7 @@ override init(model: String, serialNumber: String, reusable: Bool) {
 
 可以被替换为便捷初始化方法：
 
-```
+```swift
 // Init #3d - Convenience
 convenience override init(model: String, serialNumber: String, reusable: Bool) {
   self.init(model: model, serialNumber: serialNumber, reusable: reusable,
