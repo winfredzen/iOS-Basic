@@ -12,7 +12,7 @@ public final class RingLayer: CALayer {
             
             //修改渐变的旋转角度
             
-            //gradientLayer.setValue(getAngle(value: value), forKeyPath: CALayer.rotationKeyPath)
+//            gradientLayer.setValue(getAngle(value: value), forKeyPath: CALayer.rotationKeyPath)
             
             for layer: CALayer in [gradientLayer, ringTipLayer] {
                 layer.setValue(getAngle(value: value), forKeyPath: CALayer.rotationKeyPath)
@@ -87,7 +87,8 @@ public final class RingLayer: CALayer {
     private func initPhase2() {
         backgroundColor = UIColor.black.cgColor
         
-        //addSublayer(backgroundLayer) //添加背景圆环
+//        addSublayer(backgroundLayer) //添加背景圆环
+//        addSublayer(foregroundLayer) //有渐变的layer
         
         [backgroundLayer, foregroundLayer, ringTipLayer].forEach(addSublayer(_:))
         
@@ -138,9 +139,7 @@ private extension RingLayer {
     func preparePaths() {
         
         backgroundLayer.path = getMaskPath(value: 1) //背景圆环
-        
         foregroundMask.path = getMaskPath(value: value) //渐变mask path
-        
         //一个小圆形
         ringTipLayer.path = makePath(startAngle: -0.00001, endAngle: 0)
         
@@ -167,5 +166,6 @@ private extension RingLayer {
 
 
 let ringLayer = RingLayer()
+ringLayer.value = 2.2
 
 PlaygroundPage.set(layers: ringLayer)
