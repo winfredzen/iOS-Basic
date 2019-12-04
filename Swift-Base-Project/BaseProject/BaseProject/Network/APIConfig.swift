@@ -18,7 +18,7 @@ protocol AdditionalParametersProtocol {
 //}
 
 struct APIConfig {
-    static let AuthBaseURL = "http://xxxx.xxxx.com"
+    static let AuthBaseURL = "http://apipbl.curefun.com"
     static let WeatherBaseURL = "https://free-api.heweather.net/s6/weather"
 }
 
