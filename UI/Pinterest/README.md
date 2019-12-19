@@ -1,8 +1,5 @@
-# UI
+# Pinterest
 
-UI注重记录项目的一些UI的实现
+Demo来自[UICollectionView Custom Layout Tutorial: Pinterest](https://www.raywenderlich.com/4829472-uicollectionview-custom-layout-tutorial-pinterest)
 
-+ [Ring](https://github.com/winfredzen/iOS-Basic/tree/master/UI/CALayerRing)
-+ [自定义Slider](https://github.com/winfredzen/iOS-Basic/tree/master/UI/CustomSlider)
-+ [Shadow Path](https://github.com/winfredzen/iOS-Basic/blob/master/UI/001_Shadow%20Path.md)
 
