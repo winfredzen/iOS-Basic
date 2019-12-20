@@ -31,3 +31,4 @@ class MyTableViewCell: UITableViewCell, TableViewCellProtocol {
 }
 ```
 
+**给关联类型添加约束**
