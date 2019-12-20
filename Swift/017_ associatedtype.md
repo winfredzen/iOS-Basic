@@ -32,3 +32,16 @@ class MyTableViewCell: UITableViewCell, TableViewCellProtocol {
 ```
 
 **给关联类型添加约束**
+
+可以在协议里给关联类型添加约束来要求遵循的类型满足约束，例如容器中的元素都是可判等的
+
+```swift
+protocol Container {
+    associatedtype Item: Equatable
+    mutating func append(_ item: Item)
+    var count: Int { get }
+    subscript(i: Int) -> Item { get }
+}
+```
+
+
