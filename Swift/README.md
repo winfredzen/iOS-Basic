@@ -1,5 +1,15 @@
 # Swift-Basic
 
+## 如何学习源码
+
+参考：
+
++ [如何阅读 Swift 标准库中的源码](https://swift.gg/2016/12/30/how-to-read-the-swift-standard-libray-source/)
+
+Swift的代码仓库[apple](https://github.com/apple)/[swift](https://github.com/apple/swift)，其标准库位于`stdlib/public/core`
+
+
+
 ## 基础部分
 
 ### 元祖
