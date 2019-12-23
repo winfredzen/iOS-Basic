@@ -16,6 +16,10 @@ public protocol Hashable : Equatable {
 
 遵循`Hashable`协议的任何类型，可以用在set中或者作为一个字典的key。标准库中的许多类型都遵循`Hashable`协议：Strings, integers, floating-point 和 Boolean 值, 即使 sets 都默认可哈希。其它类型，如optionals、arrays和ranges，在其类型参数实现哈希时，会自动的变成hashable
 
+```swift
+public struct Set<Element: Hashable> {}
+```
+
 自定义类型有可以hashable。定义一个枚举，不带关联值，会自动变成可Hashable。可以给自定义添加Hashable，实现`hash(into:)`方法。
 
 > For structs whose stored properties are all `Hashable`, and for enum types that have all-`Hashable`associated values, the compiler is able to provide an implementation of `hash(into:)`automatically.
