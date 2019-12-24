@@ -119,110 +119,124 @@ extension AlbumDetailViewController {
 
   func generateLayout() -> UICollectionViewLayout {
     
-    // Syncing badge
-    let syncingBadgeAnchor = NSCollectionLayoutAnchor(
-      edges: [.top, .trailing],
-      fractionalOffset: CGPoint(x: -0.3, y: 0.3))
-    let syncingBadge = NSCollectionLayoutSupplementaryItem(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .absolute(20),
-        heightDimension: .absolute(20)),
-      elementKind: AlbumDetailViewController.syncingBadgeKind,
-      containerAnchor: syncingBadgeAnchor)
+    //1
+    let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+    let fullPhotoItem = NSCollectionLayoutItem(layoutSize: itemSize)
     
-    //第一种类型，full size
-    let fullPhotoItem = NSCollectionLayoutItem(
-    layoutSize: NSCollectionLayoutSize(
-      widthDimension: .fractionalWidth(1.0),
-      heightDimension: .fractionalWidth(2/3)),
-    supplementaryItems: [syncingBadge])
-    fullPhotoItem.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2);
+    //2
+    let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalWidth(2/3))
+    let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: fullPhotoItem, count: 1)
     
-    //第二种类型
-    // Second type: Main with pair
-    // 3
-    let mainItem = NSCollectionLayoutItem(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(2/3),
-        heightDimension: .fractionalHeight(1.0)))
-
-    mainItem.contentInsets = NSDirectionalEdgeInsets(
-      top: 2,
-      leading: 2,
-      bottom: 2,
-      trailing: 2)
-
-    // 2
-    let pairItem = NSCollectionLayoutItem(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1.0),
-        heightDimension: .fractionalHeight(0.5)))
-
-    pairItem.contentInsets = NSDirectionalEdgeInsets(
-      top: 2,
-      leading: 2,
-      bottom: 2,
-      trailing: 2)
-
-    let trailingGroup = NSCollectionLayoutGroup.vertical(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1/3),
-        heightDimension: .fractionalHeight(1.0)),
-      subitem: pairItem,
-      count: 2)
-
-    // 1
-    let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1.0),
-        heightDimension: .fractionalWidth(4/9)),
-      subitems: [mainItem, trailingGroup])
-    
-    
-    // Third type. Triplet
-    let tripletItem = NSCollectionLayoutItem(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1/3),
-        heightDimension: .fractionalHeight(1.0)))
-
-    tripletItem.contentInsets = NSDirectionalEdgeInsets(
-      top: 2,
-      leading: 2,
-      bottom: 2,
-      trailing: 2)
-
-    let tripletGroup = NSCollectionLayoutGroup.horizontal(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1.0),
-        heightDimension: .fractionalWidth(2/9)),
-      subitems: [tripletItem, tripletItem, tripletItem])
-    
-    // Fourth type. Reversed main with pair
-    let mainWithPairReversedGroup = NSCollectionLayoutGroup.horizontal(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1.0),
-        heightDimension: .fractionalWidth(4/9)),
-      subitems: [trailingGroup, mainItem])
-    
-
-    let nestedGroup = NSCollectionLayoutGroup.vertical(
-      layoutSize: NSCollectionLayoutSize(
-        widthDimension: .fractionalWidth(1.0),
-        heightDimension: .fractionalWidth(16/9)),
-      subitems: [
-        fullPhotoItem,
-        mainWithPairGroup,
-        tripletGroup,
-        mainWithPairReversedGroup
-      ]
-    )
-
-    let section = NSCollectionLayoutSection(group: nestedGroup)
-
+    //3
+    let section = NSCollectionLayoutSection(group: group)
     let layout = UICollectionViewCompositionalLayout(section: section)
-
-    
     return layout
+    
+    
+//    // Syncing badge
+//    let syncingBadgeAnchor = NSCollectionLayoutAnchor(
+//      edges: [.top, .trailing],
+//      fractionalOffset: CGPoint(x: -0.3, y: 0.3))
+//    let syncingBadge = NSCollectionLayoutSupplementaryItem(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .absolute(20),
+//        heightDimension: .absolute(20)),
+//      elementKind: AlbumDetailViewController.syncingBadgeKind,
+//      containerAnchor: syncingBadgeAnchor)
+//
+//    //第一种类型，full size
+//    let fullPhotoItem = NSCollectionLayoutItem(
+//    layoutSize: NSCollectionLayoutSize(
+//      widthDimension: .fractionalWidth(1.0),
+//      heightDimension: .fractionalWidth(2/3)),
+//    supplementaryItems: [syncingBadge])
+//    fullPhotoItem.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2);
+//
+//    //第二种类型
+//    // Second type: Main with pair
+//    // 3
+//    let mainItem = NSCollectionLayoutItem(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(2/3),
+//        heightDimension: .fractionalHeight(1.0)))
+//
+//    mainItem.contentInsets = NSDirectionalEdgeInsets(
+//      top: 2,
+//      leading: 2,
+//      bottom: 2,
+//      trailing: 2)
+//
+//    // 2
+//    let pairItem = NSCollectionLayoutItem(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1.0),
+//        heightDimension: .fractionalHeight(0.5)))
+//
+//    pairItem.contentInsets = NSDirectionalEdgeInsets(
+//      top: 2,
+//      leading: 2,
+//      bottom: 2,
+//      trailing: 2)
+//
+//    let trailingGroup = NSCollectionLayoutGroup.vertical(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1/3),
+//        heightDimension: .fractionalHeight(1.0)),
+//      subitem: pairItem,
+//      count: 2)
+//
+//    // 1
+//    let mainWithPairGroup = NSCollectionLayoutGroup.horizontal(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1.0),
+//        heightDimension: .fractionalWidth(4/9)),
+//      subitems: [mainItem, trailingGroup])
+//
+//
+//    // Third type. Triplet
+//    let tripletItem = NSCollectionLayoutItem(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1/3),
+//        heightDimension: .fractionalHeight(1.0)))
+//
+//    tripletItem.contentInsets = NSDirectionalEdgeInsets(
+//      top: 2,
+//      leading: 2,
+//      bottom: 2,
+//      trailing: 2)
+//
+//    let tripletGroup = NSCollectionLayoutGroup.horizontal(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1.0),
+//        heightDimension: .fractionalWidth(2/9)),
+//      subitems: [tripletItem, tripletItem, tripletItem])
+//
+//    // Fourth type. Reversed main with pair
+//    let mainWithPairReversedGroup = NSCollectionLayoutGroup.horizontal(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1.0),
+//        heightDimension: .fractionalWidth(4/9)),
+//      subitems: [trailingGroup, mainItem])
+//
+//
+//    let nestedGroup = NSCollectionLayoutGroup.vertical(
+//      layoutSize: NSCollectionLayoutSize(
+//        widthDimension: .fractionalWidth(1.0),
+//        heightDimension: .fractionalWidth(16/9)),
+//      subitems: [
+//        fullPhotoItem,
+//        mainWithPairGroup,
+//        tripletGroup,
+//        mainWithPairReversedGroup
+//      ]
+//    )
+//
+//    let section = NSCollectionLayoutSection(group: nestedGroup)
+//
+//    let layout = UICollectionViewCompositionalLayout(section: section)
+//
+//
+//    return layout
   }
 
   func snapshotForCurrentState() -> NSDiffableDataSourceSnapshot<Section, AlbumDetailItem> {
