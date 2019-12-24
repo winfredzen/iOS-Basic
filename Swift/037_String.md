@@ -64,17 +64,21 @@ let four = ####"This is a string"####
 
 
 
+## 对象的class名字作为字符串
 
+参考：
 
++ [Get class name of object as string in Swift](https://stackoverflow.com/questions/24494784/get-class-name-of-object-as-string-in-swift)
 
+使用
 
+```swift
+String(describing: YourType.self)
+```
 
+或者
 
-
-
-
-
-
-
-
+```swift
+String(describing: self)
+```
 
