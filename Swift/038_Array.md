@@ -21,3 +21,5 @@ let arr = Array(0...4)
 
 range是个`ClosedRange`类型
 
+![31](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/31.png)
+
