@@ -112,7 +112,7 @@ struct FibsIterator: IteratorProtocol {
 
 使自己的自定义类型遵循Sequence可以实现许多有用的操作，例如for-in循环和contains方法。在自定义类型中遵循Sequence，需要添加 `makeIterator()` 方法，并返回一个`iterator`
 
-或者，自己的类型充当其iterator，同时遵循`IteratorProtocol`和`Sequence`协议
+另一种方式是，自己的类型充当其iterator，实现`IteratorProtocol`协议的要求，同时声明遵循`IteratorProtocol`和`Sequence`协议
 
 如下的例子，一个倒计时Countdown序列
 
