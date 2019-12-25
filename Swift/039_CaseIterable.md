@@ -56,3 +56,8 @@ enum Direction: CaseIterable {
 }
 ```
 
+参考：
+
++ [How to list all cases in an enum using CaseIterable](https://www.hackingwithswift.com/example-code/language/how-to-list-all-cases-in-an-enum-using-caseiterable)
++ [Swift 4.2 新特性详解 CaseIterable.allCases](https://www.jianshu.com/p/92b88e4525d1)
+
