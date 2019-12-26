@@ -49,3 +49,36 @@ print(anotherDcHero)
 3.协议中的私有属性
 
 + [协议中的私有属性](https://swift.gg/2019/02/18/protocols-private-properties/)
+
+
+
+## 使用中遇到的一些问题
+
+1.提示`Type xxxx doesnt conform to protocol 'NSObjectProtocol'`
+
+例如，我自定义一个类，只遵循`UICollectionViewDataSource`协议
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

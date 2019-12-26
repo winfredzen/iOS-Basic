@@ -28,7 +28,7 @@
 
 import UIKit
 
-class DataSource: NSObject, UICollectionViewDataSource {
+class DataSource: UICollectionViewDataSource {
     let emoji = Emoji.shared
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
