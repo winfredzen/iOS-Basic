@@ -58,9 +58,15 @@ print(anotherDcHero)
 
 例如，我自定义一个类，只遵循`UICollectionViewDataSource`协议
 
+![32](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/32.png)
 
+原因是[Type CCC doesnt conform to protocol 'NSObjectProtocol'](https://stackoverflow.com/questions/34638065/type-ccc-doesnt-conform-to-protocol-nsobjectprotocol)
 
+> If you follow up the inheritance chain, `NSURLSessionDataDelegate` inherits `NSURLSessionTaskDelegate`, which inherits `NSURLSessionDelegate`, which inherits, `NSObjectProtocol`. This protocol has various required methods like `isEqual(_:)` and `respondsToSelector(_:)` which you class does not implement.
 
+所以需要继承自`NSObject`
+
+![33](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/33.png)
 
 
 
