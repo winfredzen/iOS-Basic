@@ -24,7 +24,7 @@ kitty.wasFed //true
 
 
 
-参考[Swift Standard Library](https://github.com/apple/swift/tree/master/stdlib/public/core)，可发现String,  Array, 和 Dictionary，都是用struct实现的，都是值类型
+参考[Swift Standard Library](https://github.com/apple/swift/tree/master/stdlib/public/core)，可发现`String`,  `Array`, 和 `Dictionary`，都是用`struct`实现的，都是值类型
 
 什么时候使用值类型，什么时候使用引用类型？在Apple的[Value and Reference Types](https://developer.apple.com/swift/blog/?id=10)中，有如下的说明：
 
@@ -115,13 +115,76 @@ circle.center         // {x: 0.0, y: 0.0}
 
 
 
+## Mutability
+
+Mutability可变性
+
+如下的例子：
+
+```swift
+class Dog {
+  var wasFed = false
+}
+
+let dog = Dog()
+let puppy = dog
+puppy.wasFed = true
+```
+
+`puppy`被声明为`let`，但是你可以修改`wasFed`属性
+
+>For reference types, let means the reference must remain constant. In other words, you can’t change the instance the constant references, but you can mutate the instance itself.
+>
+>对于引用类型，let表示的是reference必须不变。无法改变实例的常量引用，但可以更改实例本身。
+
+> For value types, let means the instance must remain constant. No properties of the instance will ever change, regardless of whether the property is declared with let or var.
+>
+> 对于值类型，`let`意味着实例必须保持不变。 不管该属性是用`let`还是`var`声明的，实例的属性都不会改变。
+
+
+
 ## 混合使用
 
 ### 引用类型包含值类型的属性
 
-### 值类型包含应用类型属性
+引用类型包含值类型的属性，如下的例子，一般没什么问题：
 
-### 可能会出现的问题
+```swift
+struct Address {
+  var streetAddress: String
+  var city: String
+  var state: String
+  var postalCode: String
+}
+
+class Person {          // Reference type
+  var name: String      // Value type
+  var address: Address  // Value type
+
+  init(name: String, address: Address) {
+    self.name = name
+    self.address = address
+  }
+}
+
+// 1
+let kingsLanding = Address(
+  streetAddress: "1 King Way",
+  city: "Kings Landing",
+  state: "Westeros",
+  postalCode: "12345")
+let madKing = Person(name: "Aerys", address: kingsLanding)
+let kingSlayer = Person(name: "Jaime", address: kingsLanding)
+
+// 2
+kingSlayer.address.streetAddress = "1 King Way Apt. 1"
+
+// 3
+madKing.address.streetAddress  // 1 King Way
+kingSlayer.address.streetAddress // 1 King Way Apt. 1
+```
+
+### 值类型包含应用类型属性
 
 ```swift
 struct Address {
@@ -146,6 +209,11 @@ struct Bill {
     let billedTo: Person
 }
 
+```
+
+如上的例子，`Bill`是个值类型，但是`billedTo`属性确是个引用类型，多个`Bill`共享`billedTo`的`Person`对象
+
+```swift
 let kingsLanding = Address(
     streetAddress: "1 King Way",
     city: "Kings Landing",
@@ -195,7 +263,11 @@ bill.billedTo.name //Bob
 bill2.billedTo.name //Bob
 ```
 
+即虽然`let bill2 = bill`，都是值类型，但是修改`bill`的`billedTo`的`name`属性，造成了`bill2`属性的改变，违背了值类型的规则
+
 所以这里的问题是，即使你的struct是不可变的，但是内部的数据可以被修改
+
+### Copy-on-Write计算属性
 
 如何解决呢？使用`Copy-on-Write`计算属性
 
