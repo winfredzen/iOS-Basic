@@ -1,6 +1,43 @@
-# Alamofire学习二
+# Alamofire学习二 - HTTPHeaders
 
 如何设置请求头？
+
+--------
+
+在新版本中，`HTTPHeaders`被定义为结构体，表示是的`An order-preserving and case-insensitive representation of HTTP headers.`HTTP header的顺序保存和不区分大小写的表示
+
+`HTTPHeader`表示是单个HTTP header的`name / value`对
+
+```swift
+/// A representation of a single HTTP header's name / value pair.
+public struct HTTPHeader: Hashable {
+    /// Name of the header.
+    public let name: String
+
+    /// Value of the header.
+    public let value: String
+
+    /// Creates an instance from the given `name` and `value`.
+    ///
+    /// - Parameters:
+    ///   - name:  The name of the header.
+    ///   - value: The value of the header.
+    public init(name: String, value: String) {
+        self.name = name
+        self.value = value
+    }
+}
+```
+
+
+
+------
+
+以下下为旧版本内容，源码已修改，不再适用
+
+-----
+
+
 
 ## HTTP Headers
 
