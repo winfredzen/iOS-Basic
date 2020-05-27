@@ -8,7 +8,9 @@
 
 ## Computed Properties
 
+参考：
 
++ [Swift computed properties](https://medium.com/@micosmin/swift-computed-properties-2a8fd9f88d6)
 
 ### Read-Only Computed Properties
 
