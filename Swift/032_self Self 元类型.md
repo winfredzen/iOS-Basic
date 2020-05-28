@@ -61,7 +61,13 @@
 > let anotherInstance = metatype.init(string: "some string")
 > ```
 
-
+> Swift 中的元类型用 .Type 表示。比如 Int.Type 就是 Int 的元类型。 类型与值有着不同的形式，就像 Int 与 5 的关系。元类型也是类似，.Type 是类型，类型的 .self 是元类型的值。
+>
+> ```swift
+> let intMetatype: Int.Type = Int.self
+> ```
+>
+> `Int.Type`是类型，`Int.self`是值
 
 ## AnyClass
 
