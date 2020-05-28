@@ -7,12 +7,23 @@
 //
 
 import UIKit
+import Alamofire
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        AF.request("https://httpbin.org/get").response { response in
+            
+            print(type(of: response)) //DataResponse<Optional<Data>, AFError>
+            
+            print("\n")
+            
+            debugPrint(response)
+        }
+        
     }
 
 
