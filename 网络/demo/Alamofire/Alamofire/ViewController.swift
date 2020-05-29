@@ -15,14 +15,31 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        AF.request("https://httpbin.org/get").response { response in
-            
-            print(type(of: response)) //DataResponse<Optional<Data>, AFError>
-            
-            print("\n")
-            
-            debugPrint(response)
+//        AF.request("https://httpbin.org/get").response { response in
+//
+//            print(type(of: response)) //DataResponse<Optional<Data>, AFError>
+//
+//        }
+        
+//        AF.request("https://swapi.dev/api/films").responseJSON { (response) in
+//            print(type(of: response)) //DataResponse<Any, AFError>
+//        }
+        
+        let url = URL(string: "https://httpbin.org/post")!
+        var urlRequest = URLRequest(url: url)
+        urlRequest.method = .post
+
+        let parameters = ["foo": "bar"]
+
+        do {
+            urlRequest.httpBody = try JSONEncoder().encode(parameters)
+        } catch {
+            // Handle error.
         }
+
+        urlRequest.headers.add(.contentType("application/json"))
+
+        AF.request(urlRequest)
         
     }
 
