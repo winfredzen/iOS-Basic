@@ -1,33 +1,49 @@
 # Alamofire学习一
 
-只是对[**Alamofire**](<https://github.com/Alamofire/Alamofire>)的初步理解，现在还无法做到对Alamofire的整体理解
+参考：
 
-对Alamofire源码的解析，可参考[Alamofire源码解读系列(一)之概述和使用](<https://www.jianshu.com/p/f39ad2a3c10b>)的系列文章
++ [Usage](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#introduction)
 
 我只是通过调用请求的一步步升入来理解下代码
 
-通常的一个请求，调用的是如下的方法，其内部调用的是`SessionManager.default.request`
+通常的一个请求，调用的是如下的方法
 
 ```swift
-public func request(
-    _ url: URLConvertible,
-    method: HTTPMethod = .get,
-    parameters: Parameters? = nil,
-    encoding: ParameterEncoding = URLEncoding.default,
-    headers: HTTPHeaders? = nil)
-    -> DataRequest
-{
-    return SessionManager.default.request(
-        url,
-        method: method,
-        parameters: parameters,
-        encoding: encoding,
-        headers: headers
-    )
+AF.request("https://httpbin.org/get").response { response in
+    debugPrint(response)
 }
 ```
 
+在Alamofire5中使用的是命令空间`AF`，其定义为：
+
+```swift
+public let AF = Session.default
+```
+
+`request`方法如下，创建了一个`DataRequest`：
+
+```swift
+    open func request(_ convertible: URLConvertible,
+                      method: HTTPMethod = .get,
+                      parameters: Parameters? = nil,
+                      encoding: ParameterEncoding = URLEncoding.default,
+                      headers: HTTPHeaders? = nil,
+                      interceptor: RequestInterceptor? = nil,
+                      requestModifier: RequestModifier? = nil) -> DataRequest {
+        let convertible = RequestConvertible(url: convertible,
+                                             method: method,
+                                             parameters: parameters,
+                                             encoding: encoding,
+                                             headers: headers,
+                                             requestModifier: requestModifier)
+
+        return request(convertible, interceptor: interceptor)
+    }
+```
+
 上面的方法：
+
++ URLConvertible - 一个协议
 
 + method - 有默认值，默认为get
 
@@ -35,38 +51,34 @@ public func request(
 
 + encoding - 表示参数的编码方式，默认为`URLEncoding.default`
 
-+ headers - 表示未HTTP headers，默认为nil。`HTTPHeaders`为别名
-
-  ```swift
-  /// A dictionary of headers to apply to a `URLRequest`.
-  public typealias HTTPHeaders = [String: String]
-  ```
++ headers - 表示未HTTP headers，默认为nil。`HTTPHeaders`为`struct`
 
 
 
-在`SessionManager`中调用如下的方法：
+
+其方法实现中的`RequestConvertible`为结构体，实现了`URLRequestConvertible`协议，见下面
 
 ```swift
-    @discardableResult
-    open func request(
-        _ url: URLConvertible,
-        method: HTTPMethod = .get,
-        parameters: Parameters? = nil,
-        encoding: ParameterEncoding = URLEncoding.default,
-        headers: HTTPHeaders? = nil)
-        -> DataRequest
-    {
-        var originalRequest: URLRequest?
+    struct RequestConvertible: URLRequestConvertible {
+        let url: URLConvertible
+        let method: HTTPMethod
+        let parameters: Parameters?
+        let encoding: ParameterEncoding
+        let headers: HTTPHeaders?
+        let requestModifier: RequestModifier?
 
-        do {
-            originalRequest = try URLRequest(url: url, method: method, headers: headers)
-            let encodedURLRequest = try encoding.encode(originalRequest!, with: parameters)
-            return request(encodedURLRequest)
-        } catch {
-            return request(originalRequest, failedWith: error)
+        func asURLRequest() throws -> URLRequest {
+            var request = try URLRequest(url: url, method: method, headers: headers)
+            try requestModifier?(&request)
+
+            return try encoding.encode(request, with: parameters)
         }
     }
 ```
+
+
+
+## `URLConvertible`
 
 参数`url`遵循`URLConvertible`协议，该协议可以用来构建`URL`，`URL`用来构建url请求
 
@@ -77,347 +89,265 @@ public func request(
 所以可以使用如下的方式来传递url到 `request`, `upload`, 和 `download` 方法中
 
 ```swift
-let urlString = "https://httpbin.org/post"
-Alamofire.request(urlString, method: .post)
+let urlString = "https://httpbin.org/get"
+AF.request(urlString)
 
 let url = URL(string: urlString)!
-Alamofire.request(url, method: .post)
+AF.request(url)
 
 let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-Alamofire.request(urlComponents, method: .post)
+AF.request(urlComponents)
 ```
 
-另外还有个`URLRequestConvertible`协议，可以用于构建URL requests，其中`URLRequest`实现了该协议
+
+
+## `URLRequestConvertible`
+
+另外还有个`URLRequestConvertible`协议，可以用于构建`URLRequest`，其中`URLRequest`默认实现了该协议
 
 ![02](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/9.png)
 
 可以直接传递到`request`, `upload`, 和 `download`方法中
 
-例如`Alamofire`文件中的Data Request，定义了如下的一个方法：
+> Alamofire uses `URLRequestConvertible` as the foundation of all requests flowing through the request pipeline.
+>
+> `URLRequestConvertible`是request pipeline调用的基础
 
-```swift
-/// Creates a `DataRequest` using the default `SessionManager` to retrieve the contents of a URL based on the
-/// specified `urlRequest`.
-///
-/// - parameter urlRequest: The URL request
-///
-/// - returns: The created `DataRequest`.
-@discardableResult
-public func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
-    return SessionManager.default.request(urlRequest)
-}
-```
-
-可以使用如下的方式来进行请求：
+建议在`ParameterEncoder`不满足使用要求时，自定义`URLRequest`
 
 ```swift
 let url = URL(string: "https://httpbin.org/post")!
 var urlRequest = URLRequest(url: url)
-urlRequest.httpMethod = "POST"
+urlRequest.method = .post
 
 let parameters = ["foo": "bar"]
 
 do {
-    urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+    urlRequest.httpBody = try JSONEncoder().encode(parameters)
 } catch {
-    // No-op
+    // Handle error.
 }
 
-urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+urlRequest.headers.add(.contentType("application/json"))
 
-Alamofire.request(urlRequest)
+AF.request(urlRequest)
 ```
 
->Applications interacting with web applications in a significant manner are encouraged to have custom types conform to `URLRequestConvertible` as a way to ensure consistency of requested endpoints. Such an approach can be used to abstract away server-side inconsistencies and provide type-safe routing, as well as manage authentication credentials and other state.
-
-具体的一些自定义实现`URLRequestConvertible`，可参考：[API Parameter Abstraction](https://github.com/Alamofire/Alamofire/blob/master/Documentation/AdvancedUsage.md#api-parameter-abstraction)
-
-
-
-在上面方法的内部，调用`URLRequest`扩展的`init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil)`方法，构建`URLRequest`
+注意这里的`AF.request`方法为`request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil)`，如下：
 
 ```swift
-    public init(url: URLConvertible, method: HTTPMethod, headers: HTTPHeaders? = nil) throws {
-        let url = try url.asURL() //协议方法
+    open func request(_ convertible: URLRequestConvertible, interceptor: RequestInterceptor? = nil) -> DataRequest {
+        let request = DataRequest(convertible: convertible,
+                                  underlyingQueue: rootQueue,
+                                  serializationQueue: serializationQueue,
+                                  eventMonitor: eventMonitor,
+                                  interceptor: interceptor,
+                                  delegate: self)
 
-        self.init(url: url)
+        perform(request)
 
-        httpMethod = method.rawValue
-
-        if let headers = headers { //设置请求头
-            for (headerField, headerValue) in headers {
-                setValue(headerValue, forHTTPHeaderField: headerField)
-            }
-        }
+        return request
     }
 ```
 
-然后对urlRequest进行编码
+
+
+## HTTP Methods HTTP方法
+
+`HTTPMethod`定义了HTTP方法
 
 ```swift
-let encodedURLRequest = try encoding.encode(originalRequest!, with: parameters)
-```
+public struct HTTPMethod: RawRepresentable, Equatable, Hashable {
+    /// `CONNECT` method.
+    public static let connect = HTTPMethod(rawValue: "CONNECT")
+    /// `DELETE` method.
+    public static let delete = HTTPMethod(rawValue: "DELETE")
+    /// `GET` method.
+    public static let get = HTTPMethod(rawValue: "GET")
+    /// `HEAD` method.
+    public static let head = HTTPMethod(rawValue: "HEAD")
+    /// `OPTIONS` method.
+    public static let options = HTTPMethod(rawValue: "OPTIONS")
+    /// `PATCH` method.
+    public static let patch = HTTPMethod(rawValue: "PATCH")
+    /// `POST` method.
+    public static let post = HTTPMethod(rawValue: "POST")
+    /// `PUT` method.
+    public static let put = HTTPMethod(rawValue: "PUT")
+    /// `TRACE` method.
+    public static let trace = HTTPMethod(rawValue: "TRACE")
 
-`ParameterEncoding`为一个协议，表示的是如果将参数集合应用到`URLRequest`
+    public let rawValue: String
 
-```swift
-/// A type used to define how a set of parameters are applied to a `URLRequest`.
-public protocol ParameterEncoding {
-    /// Creates a URL request by encoding parameters and applying them onto an existing request.
-    ///
-    /// - parameter urlRequest: The request to have parameters applied.
-    /// - parameter parameters: The parameters to apply.
-    ///
-    /// - throws: An `AFError.parameterEncodingFailed` error if encoding fails.
-    ///
-    /// - returns: The encoded request.
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest
-}
-```
-
-具体调用的是`ParameterEncoding.swift`中的如下方法：
-
-![03](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%BD%91%E7%BB%9C/images/10.png)
-
-
-
-然后调用`request(_ urlRequest: URLRequestConvertible) -> DataRequest`，创建DataRequest，获取请求的结果
-
-```swift
-    /// Creates a `DataRequest` to retrieve the contents of a URL based on the specified `urlRequest`.
-    ///
-    /// If `startRequestsImmediately` is `true`, the request will have `resume()` called before being returned.
-    ///
-    /// - parameter urlRequest: The URL request.
-    ///
-    /// - returns: The created `DataRequest`.
-    @discardableResult
-    open func request(_ urlRequest: URLRequestConvertible) -> DataRequest {
-        var originalRequest: URLRequest?
-
-        do {
-            originalRequest = try urlRequest.asURLRequest()
-            let originalTask = DataRequest.Requestable(urlRequest: originalRequest!)
-
-            let task = try originalTask.task(session: session, adapter: adapter, queue: queue)
-            let request = DataRequest(session: session, requestTask: .data(originalTask, task))
-
-          	//自定义下标
-            delegate[task] = request
-
-            if startRequestsImmediately { request.resume() }
-
-            return request
-        } catch {
-            return request(originalRequest, failedWith: error)
-        }
+    public init(rawValue: String) {
+        self.rawValue = rawValue
     }
+}
 ```
 
-`SessionDelegate.swift`中有自定义下标的实现
+这些值可以用在`AF.request`方法的的`method`参数上，如：
 
 ```swift
-    /// Access the task delegate for the specified task in a thread-safe manner.
-    open subscript(task: URLSessionTask) -> Request? {
-        get {
-            lock.lock() ; defer { lock.unlock() }
-            return requests[task.taskIdentifier]
-        }
-        set {
-            lock.lock() ; defer { lock.unlock() }
-            requests[task.taskIdentifier] = newValue
-        }
+AF.request("https://httpbin.org/get")
+AF.request("https://httpbin.org/post", method: .post)
+AF.request("https://httpbin.org/put", method: .put)
+AF.request("https://httpbin.org/delete", method: .delete)
+```
+
+Alamofire也提供了URLRequest的一个扩展，来桥接`httpMethod`属性到`HTTPMethod`值
+
+```swift
+public extension URLRequest {
+    /// Returns the `httpMethod` as Alamofire's `HTTPMethod` type.
+    var method: HTTPMethod? {
+        get { return httpMethod.flatMap(HTTPMethod.init) }
+        set { httpMethod = newValue?.rawValue }
     }
-
-```
-
-
-
-## Parameter Encoding
-
-在官方文档[Parameter Encoding](https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#parameter-encoding)也有详细的解释，也可参考：
-
-+ [Alamofire源码解读系列(四)之参数编码(ParameterEncoding)](https://www.jianshu.com/p/88d756f81fa9)
-
-Parameter Encoding表示的是参数的编码方式，在`Alamofire`源码的`ParameterEncoding.swift`中定义
-
-通过枚举`HTTPMethod`定义了请求方式，如下：
-
-```swift
-public enum HTTPMethod: String {
-    case options = "OPTIONS"
-    case get     = "GET"
-    case head    = "HEAD"
-    case post    = "POST"
-    case put     = "PUT"
-    case patch   = "PATCH"
-    case delete  = "DELETE"
-    case trace   = "TRACE"
-    case connect = "CONNECT"
 }
 ```
 
-参数`Parameters`为字典的别名
+
+
+## Request Parameters and Parameter Encoders
+
+Alamofire支持任何`Encodable`类型作为请求的参数。这写参数通过符合`ParameterEncoding`协议的类型，进行转换，并添加到`URLRequest`中，然后通过网络发送。
 
 ```swift
-public typealias Parameters = [String: Any]
-```
+struct Login: Encodable {
+    let email: String
+    let password: String
+}
 
-定义了一个协议`ParameterEncoding`
+let login = Login(email: "test@test.test", password: "testPassword")
 
-```swift
-/// A type used to define how a set of parameters are applied to a `URLRequest`.
-public protocol ParameterEncoding {
-    /// Creates a URL request by encoding parameters and applying them onto an existing request.
-    ///
-    /// - parameter urlRequest: The request to have parameters applied.
-    /// - parameter parameters: The parameters to apply.
-    ///
-    /// - throws: An `AFError.parameterEncodingFailed` error if encoding fails.
-    ///
-    /// - returns: The encoded request.
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest
+AF.request("https://httpbin.org/post",
+           method: .post,
+           parameters: login,
+           encoder: JSONParameterEncoder.default).response { response in
+    debugPrint(response)
 }
 ```
 
-定义三种编码方式
+ Alamofire包括两种ParameterEncoder兼容类型：
 
-+ URLEncoding - URL相关的编码，可以拼接到URL中，也可以通过request的HTTP body传值，具体的位置取决于`Destination`
-  + `.methodDependent` - 当请求为GET、HEAD和DELETE时，拼接到URL，其它请求方式，设置到HTTP body中
-  + `.queryString` - 拼接到URL中
-  + `.httpBody` - 拼接到httpBody中
-+ JSONEncoding
-+ PropertyListEncoding
++ JSONParameterEncoder
++ URLEncodedFormParameterEncoder
 
 
 
-### URLEncoding
+### URLEncodedFormParameterEncoder
 
-使用HTTP body的请求，`Content-Type`会被设置为`application/x-www-form-urlencoded; charset=utf-8`
+`URLEncodedFormParameterEncoder`编码，可以拼接到URL中，也可以通过request的HTTP body传值，具体的位置取决于`Destination`。`URLEncodedFormParameterEncoder.Destination`有如下的三种形式：
 
-##### GET Request With URL-Encoded Parameters
++ `.methodDependent` - 当请求为GET、HEAD和DELETE时，拼接到URL，其它请求方式，设置到HTTP body中
++ `.queryString` - 拼接到URL中
++ `.httpBody` - 拼接到httpBody中
 
-GET请求，如下的形式是等价的
+如果`Content-Type`没被设置的话，`Content-Type`会被设置为`application/x-www-form-urlencoded;charset=utf-8`
+
+**GET Request With URL-Encoded Parameters**
 
 ```swift
-let parameters: Parameters = ["foo": "bar"]
+let parameters = ["foo": "bar"]
 
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/get", parameters: parameters, encoding: URLEncoding(destination: .methodDependent))
+AF.request("https://httpbin.org/get", parameters: parameters) // encoding defaults to `URLEncoding.default`
+AF.request("https://httpbin.org/get", parameters: parameters, encoder: URLEncodedFormParameterEncoder.default)
+AF.request("https://httpbin.org/get", parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .methodDependent))
 
 // https://httpbin.org/get?foo=bar
 ```
 
-##### POST Request With URL-Encoded Parameters
-
-POST请求
+**POST Request With URL-Encoded Parameters**
 
 ```swift
-let parameters: Parameters = [
-    "foo": "bar",
-    "baz": ["a", 1],
-    "qux": [
-        "x": 1,
-        "y": 2,
-        "z": 3
-    ]
+let parameters: [String: [String]] = [
+    "foo": ["bar"],
+    "baz": ["a", "b"],
+    "qux": ["x", "y", "z"]
 ]
 
 // All three of these calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: URLEncoding.httpBody)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder.default)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: URLEncodedFormParameterEncoder(destination: .httpBody))
 
-// HTTP body: foo=bar&baz[]=a&baz[]=1&qux[x]=1&qux[y]=2&qux[z]=3
-```
-
-##### Configuring the Encoding of `Bool` Parameters
-
-Bool参数的编码，`URLEncoding.BoolEncoding`枚举提供如下的方法来编码`Bool`参数
-
-+ `.numeric` - 将true作为1，false作为0
-+ `.literal` - 将true和false作为字符串字面量
-
-默认，Alamofire使用`.numeric`方法
-
-可以使用你自己的`URLEncoding`，指定 `Bool` 的编码：
-
-```swift
-let encoding = URLEncoding(boolEncoding: .literal)
-```
-
-##### Configuring the Encoding of `Array` Parameters
-
-对应Array参数，`URLEncoding.ArrayEncoding`提供了如下的方法来编码 `Array` 参数：
-
-+ `.brackets` -   `foo=[1,2]`编码为`foo[]=1&foo[]=2`
-+ `.noBrackets` - `foo=[1,2]`编码为`foo=1&foo=2`
-
-默认使用`.brackets`编码，也可以自己指定：
-
-```swift
-let encoding = URLEncoding(arrayEncoding: .noBrackets)
+// HTTP body: "qux[]=x&qux[]=y&qux[]=z&baz[]=a&baz[]=b&foo[]=bar"
 ```
 
 
 
-### JSON Encoding
+另外还涉及到如下的处理，具体参考文档：
 
-`JSONEncoding`类型创建JSON来表示参数，HTTP header中`Content-Type`被设置为`application/json`
++ Array - ArrayEncoding
++ Bool - BoolEncoding
++ Data - DataEncoding
++ Date - DateEncoding
++ KeyEncoding
++ SpaceEncoding
+
+
+
+### JSONParameterEncoder
+
+`JSONParameterEncoder`使用`JSONEncoder`编码`Encodable`值。并设置`URLRequest`的`httpBody`的值。`Content-Type`被设置为`application/json`
 
 ```swift
-let parameters: Parameters = [
-    "foo": [1,2,3],
-    "bar": [
-        "baz": "qux"
-    ]
+let parameters: [String: [String]] = [
+    "foo": ["bar"],
+    "baz": ["a", "b"],
+    "qux": ["x", "y", "z"]
 ]
 
-// Both calls are equivalent
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding.default)
-Alamofire.request("https://httpbin.org/post", method: .post, parameters: parameters, encoding: JSONEncoding(options: []))
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.default)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.prettyPrinted)
+AF.request("https://httpbin.org/post", method: .post, parameters: parameters, encoder: JSONParameterEncoder.sortedKeys)
 
-// HTTP body: {"foo": [1, 2, 3], "bar": {"baz": "qux"}}
+// HTTP body: {"baz":["a","b"],"foo":["bar"],"qux":["x","y","z"]}
+```
+
+#### 配置一个自定义的`JSONEncoder`
+
+```swift
+let encoder = JSONEncoder()
+encoder.dateEncoding = .iso8601
+encoder.keyEncodingStrategy = .convertToSnakeCase
+let parameterEncoder = JSONParameterEncoder(encoder: encoder)
 ```
 
 
 
-### Property List Encoding
+### 手动配置`URLRequest`的参数编码
 
-`PropertyListEncoding`使用`PropertyListSerialization`创建一个plist来表示参数对象，`Content-Type`被设置为`application/x-plist`
-
-
-
-### Custom Encoding
-
-可以自定义编码，如下的例子表示的是，将一个string数组编码
+直接在`URLRequest`中编码参数，`ParameterEncoder`相关API在`Alamofire`之外，也可以使用
 
 ```swift
-struct JSONStringArrayEncoding: ParameterEncoding {
-    private let array: [String]
+let url = URL(string: "https://httpbin.org/get")!
+var urlRequest = URLRequest(url: url)
 
-    init(array: [String]) {
-        self.array = array
-    }
+let parameters = ["foo": "bar"]
+let encodedURLRequest = try URLEncodedFormParameterEncoder.default.encode(parameters, 
+                                                                          into: urlRequest)
+```
 
-    func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-        var urlRequest = try urlRequest.asURLRequest()
 
-        let data = try JSONSerialization.data(withJSONObject: array, options: [])
 
-        if urlRequest.value(forHTTPHeaderField: "Content-Type") == nil {
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        }
+## HTTP Headers
 
-        urlRequest.httpBody = data
+添加自定义的`HTTPHeaders`到`Request`
 
-        return urlRequest
-    }
+```swift
+let headers: HTTPHeaders = [
+    "Authorization": "Basic VXNlcm5hbWU6UGFzc3dvcmQ=",
+    "Accept": "application/json"
+]
+
+AF.request("https://httpbin.org/headers", headers: headers).responseJSON { response in
+    debugPrint(response)
 }
 ```
 
+其它的方式参考使用文档
 
 
 
