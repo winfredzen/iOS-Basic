@@ -50,3 +50,13 @@ print(greatestHeight)
 
 
 
+## 遍历
+
+参考：
+
++ [How to loop over arrays](https://www.hackingwithswift.com/articles/76/how-to-loop-over-arrays)
+
+
+
+
+
