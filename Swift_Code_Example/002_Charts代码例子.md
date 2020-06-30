@@ -30,3 +30,27 @@ open class ComponentBase: NSObject
 
 另外注意这里的`xOffset`类型为`CGFloat`
 
+
+
+## 枚举兼容OC
+
+```swift
+    @objc(XAxisLabelPosition)
+    public enum LabelPosition: Int
+    {
+        case top
+        case bottom
+        case bothSided
+        case topInside
+        case bottomInside
+    }
+```
+
+
+
+
+
+
+
+
+
