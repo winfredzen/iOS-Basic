@@ -28,5 +28,5 @@ open class ComponentBase: NSObject
 
 ```
 
-
+另外注意这里的`xOffset`类型为`CGFloat`
 
