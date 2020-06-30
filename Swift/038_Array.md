@@ -23,3 +23,30 @@ range是个`ClosedRange`类型
 
 ![31](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/31.png)
 
+
+
+## 一些方法
+
+## max
+
+```swift
+@inlinable public func max(by areInIncreasingOrder: (Element, Element) throws -> Bool) rethrows -> Element?
+```
+
+返回序列中的最大值，返回的是可选类型，如官方文档中的例子：
+
+```swift
+let heights = [67.5, 65.7, 64.3, 61.1, 58.5, 60.3, 64.9]
+let greatestHeight = heights.max()
+print(greatestHeight)
+// Prints "Optional(67.5)"
+```
+
+参考：
+
++ [Finding an Array’s Minimum and Maximum Values in Swift](https://shapiroadam.com/array-minimum-maximum-value-swift/)
+
+
+
+
+
