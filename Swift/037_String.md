@@ -1,5 +1,55 @@
 # String
 
+参考：
+
++ [字符串和字符](https://swiftgg.gitbook.io/swift/swift-jiao-cheng/03_strings_and_characters)
+
++ [Swift String Cheat Sheet](https://useyourloaf.com/blog/swift-string-cheat-sheet/)
+
+
+
+## 初始化
+
+初始化包括从其它类型转换、使用字面量等很多种方式
+
+```swift
+var emptyString = ""            // Empty (Mutable) String
+let stillEmpty = String()       // Another empty String
+let helloWorld = "Hello World!" // String literal
+
+let a = String(true)            // from boolean: "true"
+let b: Character = "A"          // Explicit type to create a Character
+let c = String(b)               // from character "A"
+let d = String(3.14)            // from Double "3.14"
+let e = String(1000)            // from Int "1000"
+let f = "Result = \(d)"         // Interpolation "Result = 3.14"
+let g = "\u{2126}"              // Unicode Ohm sign Ω
+
+// New in Swift 4.2
+let hex = String(254, radix: 16, uppercase: true) // "FE"
+let octal = String(18, radix: 8) // "22"
+```
+
+**创建重复的值**
+
+```swift
+let h = String(repeating:"01", count:3) // 010101
+```
+
+**从文件中创建string**
+
+```swift
+if let txtPath = Bundle.main.path(forResource: "lorem", ofType: "txt") {
+  do {
+    let lorem = try String(contentsOfFile: txtPath, encoding: .utf8)
+  } catch {
+    print("Something went wrong")
+  }
+}
+```
+
+
+
 ## Raw Strings
 
 参考：
@@ -61,6 +111,36 @@ let four = ####"This is a string"####
 ```
 
 其输出结果为`My dog said "woof"#gooddog`
+
+
+
+## 使用Index来遍历
+
++ startIndex - 表示是第一个element的位置，如果为空的话，则等于endIndex
++ endIndex - 获取最后一个 `Character` 的**后一个位置**的索引
+
+它们都是`String.Index`类型
+
+```swift
+let hello = "hello"
+let startIndex = hello.startIndex // 0
+let endIndex = hello.endIndex     // 5
+hello[startIndex]                 // "h"
+```
+
+通过调用 `String` 的 `index(before:)` 或 `index(after:)` 方法，可以立即得到前面或后面的一个索引
+
+```swift
+hello[hello.index(after: startIndex)] // "e"
+hello[hello.index(before: endIndex)]  // "o"
+```
+
+通过调用 `index(_:offsetBy:)` 方法来获取对应偏移量的索引
+
+```swift
+hello[hello.index(startIndex, offsetBy: 1)]  // "e"
+hello[hello.index(endIndex, offsetBy: -4)]   // "e"
+```
 
 
 
