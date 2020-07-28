@@ -1,5 +1,11 @@
 # Runtime
 
+推荐文档：
+
++ [iOS Runtime详解](https://www.jianshu.com/p/6ebda3cd8052)
+
+
+
 官方文档[Objective-C Runtime Programming Guide](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008048-CH1-SW1)
 
 **1.什么是Runtime？**
