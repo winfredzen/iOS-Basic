@@ -136,6 +136,70 @@ struct objc_class {
 
 
 
+![015](https://github.com/winfredzen/iOS-Basic/blob/master/Runtime/images/015.webp)
+
+
+
+**实验论证**
+
+为了确认上述结论，让我们来看下文章开头中 ReportFunction 函数的输出。这个函数的目的是沿着isa指针查找并打印日志。
+
+执行 ReportFunction 之前，我们需要使用我们动态创建的类来创建一个实例，并对他调用 report 的方法。
+
+```objective-c
+id instanceOfNewClass =
+    [[newClass alloc] initWithDomain:@"someDomain" code:0 userInfo:nil];
+[instanceOfNewClass performSelector:@selector(report)];
+[instanceOfNewClass release];
+```
+
+
+
+因为这里没有 **report** 方法的声明，我使用 **performSelector:** 来调用他，所以编译器不会给出警告。
+
+**ReportFunciton** 现在将会遍历 isa 指针，然后告诉我们对象所使用的类、元类以及元类的类。
+
+
+
+> 获取一个对象的类：**ReportFunction** 使用 **object_getClass** 来跟踪 isa 指针，因为 isa 指针是类结构中被保护的成员（你不能直接访问对象的 isa 指针）。**ReportFunction** 没有使用一个类方法来做这些，是因为对一个类对象调用类方法不会返回元类，取而代之的是又返回了这个类（所以 [NSString class] 将返回 NSString 的类而不是 NSString 元类）。
+
+
+
+运行后输出如下：
+
+> This object is 0x10010c810.
+>  Class is RuntimeErrorSubclass, and super is NSError.
+>  Following the isa pointer 1 times gives 0x10010c600
+>  Following the isa pointer 2 times gives 0x10010c630
+>  Following the isa pointer 3 times gives 0x7fff71038480
+>  Following the isa pointer 4 times gives 0x7fff71038480
+>  NSObject's class is 0x7fff710384a8
+>  NSObject's meta class is 0x7fff71038480
+
+
+
+看一下isa所指向的地址的值：
+
++  instanceOfNewClass实例对象的地址：  0x10010c810
+
++ instanceOfNewClass 的类的地址：        0x10010c600
+
++ RuntimeErrorSubclass 的元类的地址：  0x10010c630
+
++ RuntimeErrorSubclass 的元类的类的地址：  0x7fff71038480 (即NSObject的元类地址)
+
++ NSObject 元类的类就是 NSObject 的元类（地址相同）。
+
+
+
+地址的值并不是主要的，但是他体现了之前我们所描述的从类到元类，再到NSObject元类的整个进度。
+
+**总结：**
+
+- 元类是一个类对象的类。每一个类有他自己独一无二的元类（因为每个类能够有自己独一无二的方法列表）。这就意味着类对象的类并不是和他们一样的类。
+- 元类能确保类对象有所有底层类的实例和类方法，中间加上所有自己的类方法。所有类继承自NSObject，这意味着NSObject所有的实例和协议方法为所有类（和元类）对象都定义了。
+- 所有元类使用基类的元类（NSObject 元类）来作为他们的类，包括只在运行时自定义的类的元类。
+
 
 
 
