@@ -23,6 +23,7 @@
 > }
 > ```
 >
+> SideTable的定义很清晰，有三个成员:
 >
 > + **spinlock_t slock** : 自旋锁，用于上锁/解锁 SideTable。
 >
