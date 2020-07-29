@@ -7,7 +7,7 @@
 + [iOS初探+load和+initialize](http://readus.org/2015/07/29/ios-load-and-initialize/)
 + [Objective-C类初始化:load与initialize](http://wufawei.com/2013/06/load-initialize/)
 
-####load方法
+#### load方法
 原型如下
 
 	+ (void)load
@@ -47,7 +47,7 @@ load函数调用特点如下：
 
 可以发现，子类并没有调用父类的方法。（可以与initialize方法做比较）
 
-####initialize方法
+#### initialize方法
 其原型如下：
 
 	+ (void)initialize
@@ -103,7 +103,7 @@ initialize函数的特点是：
 	    }
 	}
 
-####load和initialize的区别
+#### load和initialize的区别
 load和initialize之间的区别如下：
 
 1. initialize是"惰性调用的"，即只有当用到了相关的类时，才会调用。如果某个类一直都没有使用，则其initialize方法就一直不会运行。这也就是说，应用程序无须把每个类的initialize都执行一遍。
@@ -112,7 +112,7 @@ load和initialize之间的区别如下：
 load方法的问题在于，执行该方法时，运行期系统处于“脆弱状态（fragile state）”。在执行子类的load方法之前，必定会执行所有超类的load方法。
 
 
-####load和initialize方法的使用
+#### load和initialize方法的使用
 load方法的应用场景可参考：
 
 + [寒哥教你学iOS - 经验漫谈](http://www.jianshu.com/p/cb54054d3add)
