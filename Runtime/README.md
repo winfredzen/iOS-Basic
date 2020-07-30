@@ -3,6 +3,23 @@
 推荐文档：
 
 + [iOS Runtime详解](https://www.jianshu.com/p/6ebda3cd8052)
++ [Objective-C 的 Runtime](http://www.samirchen.com/objective-c-runtime/)
+
+
+
+大神系列文章：
+
++ [神经病院 Objective-C Runtime 出院第三天——如何正确使用 Runtime](http://halfrost.com/how_to_use_runtime/)
++ [神经病院 Objective-C Runtime 住院第二天——消息发送与转发](http://halfrost.com/objc_runtime_objc_msgsend/) 
++ [神经病院 Objective-C Runtime 入院第一天—— isa 和 Class](http://halfrost.com/objc_runtime_isa_class/)
+
+
+
+
+
+
+
+-------
 
 
 
