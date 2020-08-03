@@ -1,4 +1,4 @@
-# Collection
+# Collection协议
 
 [Collection](<https://developer.apple.com/documentation/swift/collection>):
 
@@ -16,7 +16,7 @@
 >
 > 有了`Collection`协议就可以确定元素的位置了，包括开始位置和结束位置，这样就能够确定哪些元素是可以访问过的，从而避免多次访问一个元素，并且通过一个给定的位置直接找到对应位置的元素
 >
-> 
+> ![36](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/36.png)
 
 
 
