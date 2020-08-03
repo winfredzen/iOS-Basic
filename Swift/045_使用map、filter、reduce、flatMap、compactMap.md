@@ -6,6 +6,10 @@
 
 ## `map`
 
+```swift
+func map<T>(_ transform: (Element) throws -> T) rethrows -> [T]
+```
+
 使用map遍历一个集合，并对集合中的每个元素应用相同的操作。
 
 如我们遍历每个元素，计算其立方值
