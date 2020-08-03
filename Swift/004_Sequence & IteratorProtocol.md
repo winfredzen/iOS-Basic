@@ -1,4 +1,66 @@
-# Sequence
+# Sequence & IteratorProtocol
+
+浏览blog时，发现有**SequenceType 与 GeneratorType**类型的说明。需要注意的是，Swift3.0中，使用**Sequence & IteratorProtocol**来代替
+
+
+
+-----
+
+
+
+## IteratorProtocol
+
+[IteratorProtocol](<https://developer.apple.com/documentation/swift/iteratorprotocol>)声明：
+
+```swift
+protocol IteratorProtcol {
+    associatedtype Element
+    mutating func next() -> Element?
+}
+```
+
+`Sequence` 协议是基于 `IteratorProtocol` 构建的
+
+其中仅声明了一个 `next()` 方法，用来返回 Sequence 中的下一个元素，或者当没有下一个元素时返回 `nil`
+
+例如，实现一个斐波那契数列
+
+```swift
+struct FibsIterator: IteratorProtocol {
+    var state = (0, 1)
+    mutating func next() -> Int? {
+        let upcomingNumber = state.0
+        state = (state.1, state.0 + state.1)
+        return upcomingNumber
+    }
+}
+```
+
+
+
+## Sequence
+
+```swift
+public protocol Sequence {
+  /// A type representing the sequence's elements.
+  associatedtype Element
+
+  /// A type that provides the sequence's iteration interface and
+  /// encapsulates its iteration state.
+  associatedtype Iterator: IteratorProtocol where Iterator.Element == Element
+
+  /// A type that represents a subsequence of some of the sequence's elements.
+  // associatedtype SubSequence: Sequence = AnySequence<Element>
+  //   where Element == SubSequence.Element,
+  //         SubSequence.SubSequence == SubSequence
+  // typealias SubSequence = AnySequence<Element>
+  /// Returns an iterator over the elements of this sequence.
+  __consuming func makeIterator() -> Iterator
+```
+
+**可见Sequence，与IteratorProtocol是关联的**
+
+
 
 参考文档：
 
@@ -77,34 +139,6 @@ for number in oneTwoThree {
 > + 一个函数，用来构建`Iterator`
 
 
-
-## IteratorProtocol
-
-[IteratorProtocol](<https://developer.apple.com/documentation/swift/iteratorprotocol>)声明：
-
-```swift
-protocol IteratorProtcol {
-    associatedtype Element
-    mutating func next() -> Element?
-}
-```
-
-`Sequence` 协议是基于 `IteratorProtocol` 构建的
-
-其中仅声明了一个 `next()` 方法，用来返回 Sequence 中的下一个元素，或者当没有下一个元素时返回 `nil`
-
-例如，实现一个斐波那契数列
-
-```swift
-struct FibsIterator: IteratorProtocol {
-    var state = (0, 1)
-    mutating func next() -> Int? {
-        let upcomingNumber = state.0
-        state = (state.1, state.0 + state.1)
-        return upcomingNumber
-    }
-}
-```
 
 
 
