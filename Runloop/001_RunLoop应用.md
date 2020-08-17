@@ -4,7 +4,7 @@
 
 + [RunLoop已入门？不来应用一下？](https://www.jianshu.com/p/c0a550d2ac97)
 
-**1.在RunLoop即将进入休眠前，加入大图片**
+**1.在RunLoop即将进入休眠前，加载大图片**
 
 参考：
 
