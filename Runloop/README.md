@@ -202,6 +202,10 @@ CFRunLoopSourceRef是事件源（输入源），其分类是：
 + Source0：非基于Port的（可以理解为用户主动触发的事件，例如按钮点击事件）
 + Source1：基于Port的（可以理解为系统内部的消息事件）
 
+> **CFRunLoopSourceRef** 是事件产生的地方。Source有两个版本：Source0 和 Source1。
+> • Source0 只包含了一个回调（函数指针），它并不能主动触发事件。使用时，你需要先调用 CFRunLoopSourceSignal(source)，将这个 Source 标记为待处理，然后手动调用 CFRunLoopWakeUp(runloop) 来唤醒 RunLoop，让其处理这个事件。
+> • Source1 包含了一个 mach_port 和一个回调（函数指针），被用于通过内核和其他线程相互发送消息。这种 Source 能主动唤醒 RunLoop 的线程，其原理在下面会讲到。
+
 ## CFRunloopObserver
 
 `CFRunLoopObserverRef`是观察者，能够监听RunLoop的状态改变
@@ -392,9 +396,17 @@ typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
 >+ 最后一次销毁:runloop退出的时候
 >+ 其他时候的创建和销毁:当runloop即将睡眠的时候销毁之前的释放池,重新创建一个新的
 
+参考：
 
++ [深入理解RunLoop](https://blog.ibireme.com/2015/05/18/runloop/)
 
-
+> App启动后，苹果在主线程 RunLoop 里注册了两个 Observer，其回调都是 _wrapRunLoopWithAutoreleasePoolHandler()。
+>
+> 第一个 Observer 监视的事件是 Entry(即将进入Loop)，其回调内会调用 _objc_autoreleasePoolPush() 创建自动释放池。其 order 是-2147483647，优先级最高，保证创建释放池发生在其他所有回调之前。
+>
+> 第二个 Observer 监视了两个事件： BeforeWaiting(准备进入休眠) 时调用_objc_autoreleasePoolPop() 和 _objc_autoreleasePoolPush() 释放旧的池并创建新池；Exit(即将退出Loop) 时调用 _objc_autoreleasePoolPop() 来释放自动释放池。这个 Observer 的 order 是 2147483647，优先级最低，保证其释放池子发生在其他所有回调之后。
+>
+> 在主线程执行的代码，通常是写在诸如事件回调、Timer回调内的。这些回调会被 RunLoop 创建好的 AutoreleasePool 环绕着，所以不会出现内存泄漏，开发者也不必显示创建 Pool 了。
 
 
 
