@@ -53,9 +53,23 @@ c.主类和分类的同名方法如何调用？
 
 
 
+## 其它
 
+1.在学习第三方源代码时，见到有如下的用法
 
+```objective-c
+- (NSIndexPath *)zf_shouldPlayIndexPath {
+    return objc_getAssociatedObject(self, _cmd);
+}
+```
 
+参考：
+
++ [ObjC中_cmd的用法](https://www.jianshu.com/p/fdb1bc445266)
+
+> _cmd在Objective-C的方法中表示当前方法的selector，正如同self表示当前方法调用的对象实例。
+>
+> 由于`objc_getAssociatedObject` 和 `objc_setAssociatedObject` 第二个参数需要传入一个属性的键名，是 `const void *` 类型的
 
 
 
