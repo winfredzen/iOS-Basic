@@ -35,3 +35,17 @@
 
 + [KMP](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/005_001_KMP.md)
 
+
+# 其它文章
+
+## 哈希表
+
++ [一篇文章教你读懂哈希表-HashMap](https://zhuanlan.zhihu.com/p/84327339)
++ [哈希表（散列表）原理详解](https://blog.csdn.net/duan19920101/article/details/51579136)
+
+
+
+
+
+
+
