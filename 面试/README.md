@@ -18,3 +18,8 @@
 + [iOS 证书幕后原理](http://chuquan.me/2020/03/22/ios-certificate-principle/)
 + [深度长文：细说iOS代码签名](http://xelz.info/blog/2019/01/11/ios-code-signature/)
 + [iOS 打包签名，你真的懂吗？](https://my.oschina.net/editorial-story/blog/3184897)
+
+### 加密
+
++ [密码学概述](https://halfrost.com/cryptography_overview/)
++ [浅谈常见的七种加密算法及实现](https://juejin.im/post/6844903638117122056)
