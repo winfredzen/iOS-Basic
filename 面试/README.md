@@ -28,6 +28,8 @@
 
 #### HTTP
 
++ [HTTP 的特性](https://hit-alibaba.github.io/interview/basic/network/HTTP.html)
+
 #### HTTPS
 
 + [HTTPS 温故知新（一） —— 开篇](https://halfrost.com/https-begin/)
