@@ -23,3 +23,11 @@
 
 + [密码学概述](https://halfrost.com/cryptography_overview/)
 + [浅谈常见的七种加密算法及实现](https://juejin.im/post/6844903638117122056)
+
+### 网络
+
+#### HTTP
+
+#### HTTPS
+
++ [HTTPS 温故知新（一） —— 开篇](https://halfrost.com/https-begin/)
