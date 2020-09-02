@@ -7,6 +7,11 @@
 
 ## 分类知识点
 
+### 启动
+
++ [iOS 程序 main 函数之前发生了什么](http://blog.sunnyxx.com/2014/08/30/objc-pre-main/)
++ [由App的启动说起](http://www.cocoachina.com/articles/15019)
+
 ### Block
 
 + [谈Objective-C Block的实现](https://www.cnblogs.com/HypeCheng/p/4597205.html)
