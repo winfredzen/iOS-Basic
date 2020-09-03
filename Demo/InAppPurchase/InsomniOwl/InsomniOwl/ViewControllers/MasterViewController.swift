@@ -21,6 +21,7 @@
  */
 
 import UIKit
+import StoreKit
 
 class MasterViewController: UIViewController {
 
@@ -31,7 +32,7 @@ class MasterViewController: UIViewController {
   let showDetailSegueIdentifier = "showDetail"
   let randomImageSegueIdentifier = "randomImage"
   let refreshControl = UIRefreshControl()
-  var products = [String]()
+  var products = [SKProduct]()
 
   // MARK: - View Life Cycle
   override func viewDidLoad() {
@@ -39,6 +40,8 @@ class MasterViewController: UIViewController {
 
     refreshControl.addTarget(self, action: #selector(requestAllProducts), for: .valueChanged)
     tableView.addSubview(refreshControl)
+    refreshControl.beginRefreshing()
+    requestAllProducts()
 
 
     setupNavigationBarButtons()
@@ -62,7 +65,19 @@ class MasterViewController: UIViewController {
     _ = navigationController?.popViewController(animated: true)
   }
 
+  
+  //请求所有的数据
   @objc func requestAllProducts() {
+    
+    OwlProducts.store.requestProducts { [weak self] success, products in
+      
+      if success, let products = products {
+        self?.products = products
+        self?.tableView.reloadData()
+      }
+      self?.refreshControl.endRefreshing()
+      
+    }
     
   }
 

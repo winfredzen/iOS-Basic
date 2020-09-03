@@ -45,4 +45,10 @@ public struct OwlProducts {
     UIImage(named: "InLoveOwl")
   ]
   
+  static let store = IAPHelper.init(productIDs: OwlProducts.productIDsConsumables.union(OwlProducts.productIDsNonConsumables).union(OwlProducts.productIDsNonRenewing))
+  
+  
+  
+  
+  
 }
