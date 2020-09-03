@@ -109,6 +109,9 @@ extension MasterViewController: UITableViewDataSource {
     
     // supress warning
     print(product)
+    
+    cell.lblProductName.text = product.localizedTitle
+    cell.lblPrice.text = ProductCell.priceFormatter.string(from: product.price)
 
 
     return cell
