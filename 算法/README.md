@@ -28,10 +28,22 @@
 + [插入排序](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/001_003_%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F.md)
 + [归并排序](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/001_004_%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F.md)
 + [基数排序](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/001_005_%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F.md)
-+ [基数排序](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/001_005_%E5%9F%BA%E6%95%B0%E6%8E%92%E5%BA%8F.md)
-
 
 ## 其它
 
 + [KMP](https://github.com/winfredzen/iOS-Basic/blob/master/%E7%AE%97%E6%B3%95/005_001_KMP.md)
+
+
+# 其它文章
+
+## 哈希表
+
++ [一篇文章教你读懂哈希表-HashMap](https://zhuanlan.zhihu.com/p/84327339)
++ [哈希表（散列表）原理详解](https://blog.csdn.net/duan19920101/article/details/51579136)
+
+
+
+
+
+
 
