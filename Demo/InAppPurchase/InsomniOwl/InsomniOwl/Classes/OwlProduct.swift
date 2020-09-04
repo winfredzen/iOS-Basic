@@ -47,8 +47,16 @@ public struct OwlProducts {
   
   static let store = IAPHelper.init(productIDs: OwlProducts.productIDsConsumables.union(OwlProducts.productIDsNonConsumables).union(OwlProducts.productIDsNonRenewing))
   
+  public static func resourceName(for productIdentifier: String) -> String? {
+    return productIdentifier.components(separatedBy: ".").last
+  }
   
   
+  static func handlePurchase(purchaseIdentifier: String) {
+    if productIDsNonConsumables.contains(purchaseIdentifier) {
+      store.purchasedProducts.insert(purchaseIdentifier) //购买产品
+    }
+  }
   
   
 }

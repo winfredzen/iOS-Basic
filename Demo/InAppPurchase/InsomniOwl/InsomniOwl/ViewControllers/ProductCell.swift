@@ -21,6 +21,7 @@
  */
 
 import UIKit
+import StoreKit
 
 class ProductCell: UITableViewCell {
 
@@ -31,6 +32,37 @@ class ProductCell: UITableViewCell {
   @IBOutlet weak var btnBuy: UIButton!
   @IBOutlet weak var imgCheckmark: UIImageView!
   
+  //hanlder
+  var buyButtonHandler: ((_ product: SKProduct) -> ())?
+  var product: SKProduct? {
+    didSet {
+      guard let product = product else { return }
+      if btnBuy.allTargets.count == 0 {
+        btnBuy.addTarget(self, action: #selector(buyButtonTapped(_:)), for: .touchUpInside)
+        
+      }
+      
+      //显示
+      lblProductName.text = product.localizedTitle
+      if OwlProducts.store.isPurchased(product.productIdentifier) { //已购买
+        btnBuy.isHidden = true
+        imgCheckmark.isHidden = false
+      } else {//未购买，显示价格
+        ProductCell.priceFormatter.locale = product.priceLocale
+        lblPrice.text = ProductCell.priceFormatter.string(from: product.price)
+        
+        btnBuy.isHidden = false
+        imgCheckmark.isHidden = true
+        
+        btnBuy.setTitle("Buy", for: .normal)
+        btnBuy.setImage(UIImage(named: "IconBuy"), for: .normal)
+        
+      }
+      
+    }
+  }
+  
+  
   // MARK: - Properties
   static let priceFormatter: NumberFormatter = {
     let formatter = NumberFormatter()
@@ -38,4 +70,12 @@ class ProductCell: UITableViewCell {
     formatter.numberStyle = .currency
     return formatter
   }()
+  
+  //购买按钮事件
+  @objc func buyButtonTapped(_ sender: AnyObject) {
+    guard let product = product, let buyButtonHandler = buyButtonHandler else { return }
+    
+    buyButtonHandler(product)
+  }
+  
 }

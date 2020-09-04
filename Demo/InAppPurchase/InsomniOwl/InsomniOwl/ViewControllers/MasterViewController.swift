@@ -45,6 +45,9 @@ class MasterViewController: UIViewController {
 
 
     setupNavigationBarButtons()
+    
+    //添加通知观察
+    NotificationCenter.default.addObserver(self, selector: #selector(handlePurchaseNotification(_:)), name: Notification.Name.purchaseNotification, object: nil)
 
     
   }
@@ -80,6 +83,17 @@ class MasterViewController: UIViewController {
     }
     
   }
+  
+  //处理购买通知
+  @objc func handlePurchaseNotification(_ notification: NSNotification) {
+    
+    DispatchQueue.main.async {
+      
+      self.tableView.reloadData()
+      
+    }
+    
+  }
 
   @objc func restoreTapped(_ sender: AnyObject) {
     // Restore Consumables from Apple
@@ -91,6 +105,18 @@ class MasterViewController: UIViewController {
     if segue.identifier == showDetailSegueIdentifier {
       
 
+      guard let viewController = segue.destination as? DetailViewController,
+        let product = sender as? SKProduct else { return }
+      
+      if OwlProducts.store.isPurchased(product.productIdentifier) {
+        let name = OwlProducts.resourceName(for: product.productIdentifier) ?? "default"
+        viewController.productName = product.localizedTitle
+        viewController.image = UIImage(named: name)
+      } else {
+        viewController.productName = "No owl"
+        viewController.image = nil
+      }
+      
     }
   }
 }
@@ -110,12 +136,24 @@ extension MasterViewController: UITableViewDataSource {
     // supress warning
     print(product)
     
-    cell.lblProductName.text = product.localizedTitle
-    cell.lblPrice.text = ProductCell.priceFormatter.string(from: product.price)
+//    cell.lblProductName.text = product.localizedTitle
+//    cell.lblPrice.text = ProductCell.priceFormatter.string(from: product.price)
+    
+    cell.product = product
+    
+    //购买事件
+    cell.buyButtonHandler = { product  in
+      OwlProducts.store.buyProduct(product: product)
+      
+    }
 
 
     return cell
   }
+  
+  
+  
+  
 }
 
 // MARK: - UITableViewDelegate
@@ -124,5 +162,13 @@ extension MasterViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let product = products[indexPath.row]
     performSegue(withIdentifier: showDetailSegueIdentifier, sender: product)
+  }
+  
+  func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    
+    let product = products[indexPath.row]
+    
+    performSegue(withIdentifier: showDetailSegueIdentifier, sender: product)
+    
   }
 }

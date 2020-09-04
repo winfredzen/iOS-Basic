@@ -21,7 +21,7 @@
  */
 
 import UIKit
-
+import StoreKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,6 +30,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
+    SKPaymentQueue.default().add(self)
+    
 		return true
 	}
+}
+
+
+extension AppDelegate: SKPaymentTransactionObserver {
+  func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
+    
+    for transaction in transactions {
+      switch transaction.transactionState {
+      case .purchased:
+        completeTransaction(transaction)
+      case .failed:
+        failedTransaction(transaction)
+      default:
+        print("Unhandled transaction state")
+      }
+      
+    }
+    
+  }
+  
+  fileprivate func completeTransaction(_ transaction: SKPaymentTransaction) {
+    deliverPurchaseNotification(for: transaction.payment.productIdentifier)
+    SKPaymentQueue.default().finishTransaction(transaction)
+  }
+  
+  fileprivate func failedTransaction(_ transaction: SKPaymentTransaction) {
+    if let transactionError = transaction.error as NSError?,
+      let localizedDescription = transaction.error?.localizedDescription,
+      transactionError.code != SKError.paymentCancelled.rawValue {
+      print("Transaction error: \(localizedDescription)")
+    }
+    SKPaymentQueue.default().finishTransaction(transaction)
+  }
+  
+  fileprivate func deliverPurchaseNotification(for identifier: String?) {
+    
+    guard let identifier = identifier else { return }
+    
+    NotificationCenter.default.post(name: Notification.Name.purchaseNotification, object: identifier)
+    
+    //购买了该内购项
+    OwlProducts.handlePurchase(purchaseIdentifier: identifier)
+    
+  }
+  
+}
+
+//通知
+extension Notification.Name {
+  
+  static let purchaseNotification = Notification.Name("PurchaseNotification")
+  
 }

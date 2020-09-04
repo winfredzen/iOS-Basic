@@ -17,6 +17,9 @@ public typealias ProductsRequestCompletionHandler = (_ succ: Bool, _ products: [
 
 class IAPHelper: NSObject {
   
+  //已购买的产品
+  public var purchasedProducts = Set<ProductIdentifier>()
+  
   private let productIdentifiers: Set<String>
   
   private var productsRequest: SKProductsRequest?
@@ -27,7 +30,10 @@ class IAPHelper: NSObject {
     super.init()
   }
   
-  
+  //是否购买了对应标识符的产品
+  public func isPurchased(_ productIdentifier: ProductIdentifier) -> Bool {
+    return purchasedProducts.contains(productIdentifier)
+  }
   
 }
 
@@ -45,6 +51,12 @@ extension IAPHelper {
     productsRequest?.delegate = self
     productsRequest?.start()
     
+  }
+  
+  //购买
+  func buyProduct(product: SKProduct) {
+    let payment = SKPayment(product: product)
+    SKPaymentQueue.default().add(payment)
   }
   
 }
