@@ -43,7 +43,7 @@ extension AppDelegate: SKPaymentTransactionObserver {
     
     for transaction in transactions {
       switch transaction.transactionState {
-      case .purchased:
+      case .purchased, .restored: //购买 or 恢复
         completeTransaction(transaction)
       case .failed:
         failedTransaction(transaction)

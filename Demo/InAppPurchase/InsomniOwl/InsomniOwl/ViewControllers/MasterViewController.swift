@@ -95,8 +95,11 @@ class MasterViewController: UIViewController {
     
   }
 
+  //恢复购买事件
   @objc func restoreTapped(_ sender: AnyObject) {
     // Restore Consumables from Apple
+    
+    OwlProducts.store.restorePurchases()
     
   }
 

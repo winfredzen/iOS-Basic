@@ -42,6 +42,11 @@ class IAPHelper: NSObject {
     return purchasedProducts.contains(productIdentifier)
   }
   
+  //恢复购买
+  public func restorePurchases() {
+    SKPaymentQueue.default().restoreCompletedTransactions()
+  }
+  
 }
 
 
