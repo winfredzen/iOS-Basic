@@ -9,8 +9,8 @@ iOS基础内容，记录学习笔记，内容来自网络和书本，详情见�
 + SwiftUI
 + ~~静态语言 动态语言 AOT JIT~~
 + ~~编译时常量 运行时常量~~
-+ Swift柯里化
-+ reserveCapacity()
++ ~~Swift柯里化~~
++ ~~reserveCapacity()~~
 
 ## iOS UI
 
