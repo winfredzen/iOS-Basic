@@ -8,6 +8,7 @@
 
 import Foundation
 import StoreKit
+import SwiftKeychainWrapper
 
 //表示产品的标识符
 public typealias ProductIdentifier = String
@@ -27,6 +28,12 @@ class IAPHelper: NSObject {
   
   init(productIDs: Set<String>) {
     productIdentifiers = productIDs
+    
+    //已购买的产品
+    purchasedProducts = Set(productIDs.filter({
+      KeychainWrapper.standard.bool(forKey: $0) ?? false
+    }))
+    
     super.init()
   }
   

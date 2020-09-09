@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0BD72A13243BD31B078E375D /* Pods_InsomniOwl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7A99946C452FF41252BE8ED /* Pods_InsomniOwl.framework */; };
 		C0BE36FB1DC98AA1004E3DF2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0BE36FA1DC98AA1004E3DF2 /* AppDelegate.swift */; };
 		C0BE37001DC98AA1004E3DF2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0BE36FE1DC98AA1004E3DF2 /* Main.storyboard */; };
 		C0BE37021DC98AA1004E3DF2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0BE37011DC98AA1004E3DF2 /* Assets.xcassets */; };
@@ -50,6 +51,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4D9DDD7FD1A3E4B64DDB500D /* Pods-InsomniOwl.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InsomniOwl.debug.xcconfig"; path = "Target Support Files/Pods-InsomniOwl/Pods-InsomniOwl.debug.xcconfig"; sourceTree = "<group>"; };
+		7212D44E4D5CEBE2D10E9002 /* Pods-InsomniOwl.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InsomniOwl.release.xcconfig"; path = "Target Support Files/Pods-InsomniOwl/Pods-InsomniOwl.release.xcconfig"; sourceTree = "<group>"; };
 		C0BE36F71DC98AA1004E3DF2 /* InsomniOwl.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InsomniOwl.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0BE36FA1DC98AA1004E3DF2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0BE36FF1DC98AA1004E3DF2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -92,6 +95,7 @@
 		C0BE37511DC9995E004E3DF2 /* SF-UI-Text-RegularItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-RegularItalic.otf"; sourceTree = "<group>"; };
 		C0BE37521DC9995E004E3DF2 /* SF-UI-Text-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Semibold.otf"; sourceTree = "<group>"; };
 		C0BE37531DC9995E004E3DF2 /* SF-UI-Text-SemiboldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-SemiboldItalic.otf"; sourceTree = "<group>"; };
+		C7A99946C452FF41252BE8ED /* Pods_InsomniOwl.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InsomniOwl.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7A7FB022500D62C0099257B /* IAPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		D7A7FB042500D6910099257B /* OwlProduct.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwlProduct.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -107,18 +111,30 @@
 				C0BE37351DC99004004E3DF2 /* CoreGraphics.framework in Frameworks */,
 				C0BE37331DC98FFD004E3DF2 /* QuartzCore.framework in Frameworks */,
 				C0BE37311DC98FF6004E3DF2 /* SystemConfiguration.framework in Frameworks */,
+				0BD72A13243BD31B078E375D /* Pods_InsomniOwl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		746EAE8E9D1BFACD63D2A0CD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4D9DDD7FD1A3E4B64DDB500D /* Pods-InsomniOwl.debug.xcconfig */,
+				7212D44E4D5CEBE2D10E9002 /* Pods-InsomniOwl.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		C0BE36EE1DC98AA1004E3DF2 = {
 			isa = PBXGroup;
 			children = (
 				C0BE36F91DC98AA1004E3DF2 /* InsomniOwl */,
 				C0BE36F81DC98AA1004E3DF2 /* Products */,
 				C0BE372B1DC98FE5004E3DF2 /* Frameworks */,
+				746EAE8E9D1BFACD63D2A0CD /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -180,6 +196,7 @@
 				C0BE37301DC98FF6004E3DF2 /* SystemConfiguration.framework */,
 				C0BE372E1DC98FEF004E3DF2 /* libz.tbd */,
 				C0BE372C1DC98FE5004E3DF2 /* libsqlite3.tbd */,
+				C7A99946C452FF41252BE8ED /* Pods_InsomniOwl.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -228,9 +245,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C0BE37091DC98AA1004E3DF2 /* Build configuration list for PBXNativeTarget "InsomniOwl" */;
 			buildPhases = (
+				61741A51143DCC5DF3BD0549 /* [CP] Check Pods Manifest.lock */,
 				C0BE36F31DC98AA1004E3DF2 /* Sources */,
 				C0BE36F41DC98AA1004E3DF2 /* Frameworks */,
 				C0BE36F51DC98AA1004E3DF2 /* Resources */,
+				A9046E68F16489172D700A0C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -312,6 +331,49 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		61741A51143DCC5DF3BD0549 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-InsomniOwl-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A9046E68F16489172D700A0C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-InsomniOwl/Pods-InsomniOwl-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-InsomniOwl/Pods-InsomniOwl-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C0BE36F31DC98AA1004E3DF2 /* Sources */ = {
@@ -465,6 +527,7 @@
 		};
 		C0BE370A1DC98AA1004E3DF2 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D9DDD7FD1A3E4B64DDB500D /* Pods-InsomniOwl.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = CEW846XYSB;
@@ -481,6 +544,7 @@
 		};
 		C0BE370B1DC98AA1004E3DF2 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7212D44E4D5CEBE2D10E9002 /* Pods-InsomniOwl.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = CEW846XYSB;

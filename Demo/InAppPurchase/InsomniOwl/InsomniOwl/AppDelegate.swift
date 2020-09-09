@@ -22,6 +22,7 @@
 
 import UIKit
 import StoreKit
+import SwiftKeychainWrapper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -55,6 +56,9 @@ extension AppDelegate: SKPaymentTransactionObserver {
   }
   
   fileprivate func completeTransaction(_ transaction: SKPaymentTransaction) {
+    //保存购买项
+    KeychainWrapper.standard.set(true, forKey: transaction.payment.productIdentifier)
+    
     deliverPurchaseNotification(for: transaction.payment.productIdentifier)
     SKPaymentQueue.default().finishTransaction(transaction)
   }
