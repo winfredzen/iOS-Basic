@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftKeychainWrapper
 
 public struct OwlProducts {
   
@@ -51,10 +52,66 @@ public struct OwlProducts {
     return productIdentifier.components(separatedBy: ".").last
   }
   
+  public static func setRandomProduct(with paidUp: Bool) {
+    if paidUp {//支付了
+      KeychainWrapper.standard.set(true, forKey: randomProductID)
+      store.purchasedProducts.insert(randomProductID)
+    } else {//未支付
+      KeychainWrapper.standard.set(false, forKey: randomProductID)
+      store.purchasedProducts.remove(randomProductID)
+    }
+  }
+  
+  public static func daysRemaininOnSubscription() -> Int {
+    if let expiryDate = UserSettings.shared.expirationDate {
+      return Calendar.current.dateComponents([.day], from: Date(), to: expiryDate).day!
+    }
+    return 0
+  }
+  
+  public static func getExpiryDateString() -> String {
+    let remaining = daysRemaininOnSubscription()
+    if remaining > 0, let expiryDate = UserSettings.shared.expirationDate {
+      let dateFormatter = DateFormatter()
+      dateFormatter.dateFormat = "dd/MM/yyyy"
+      return "Subscribed! \n Expires: \(dateFormatter.string(from: expiryDate)) (\(remaining) days"
+    }
+    return "Not Subscribed"
+  }
+  
+  public static func paidUp() -> Bool {
+    var paidUp = false
+    if OwlProducts.daysRemaininOnSubscription() > 0 {
+      paidUp = true
+    } else if UserSettings.shared.randomRemaining > 0 {
+      paidUp = true
+    }
+    setRandomProduct(with: paidUp)
+    return paidUp
+  }
+  
+  public static func handleMonthlySubscription(months: Int) {
+    UserSettings.shared.increaseRandomExpirationDate(by: months)
+    setRandomProduct(with: true)
+  }
   
   static func handlePurchase(purchaseIdentifier: String) {
-    if productIDsNonConsumables.contains(purchaseIdentifier) {
+    
+    //消耗类型
+    if productIDsConsumables.contains(purchaseIdentifier) {
+      UserSettings.shared.increaseRandomRemaining(by: 5)
+    } else if productIDsNonRenewing.contains(purchaseIdentifier), purchaseIdentifier.contains("3Months") {//非续期订阅
+      
+      handleMonthlySubscription(months: 3)
+      
+    }  else if productIDsNonRenewing.contains(purchaseIdentifier), purchaseIdentifier.contains("6Months") {//非续期订阅
+         
+      handleMonthlySubscription(months: 6)
+         
+    } else if productIDsNonConsumables.contains(purchaseIdentifier) {//非消耗型
       store.purchasedProducts.insert(purchaseIdentifier) //购买产品
+      
+      KeychainWrapper.standard.set(true, forKey:purchaseIdentifier)
     }
   }
   

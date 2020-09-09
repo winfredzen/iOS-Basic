@@ -164,14 +164,34 @@ extension MasterViewController: UITableViewDelegate {
 
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let product = products[indexPath.row]
-    performSegue(withIdentifier: showDetailSegueIdentifier, sender: product)
+    
+    //消耗类型 or 非自动续期
+    if OwlProducts.productIDsConsumables.contains(product.productIdentifier) ||
+      OwlProducts.productIDsNonRenewing.contains(product.productIdentifier) {
+      
+      performSegue(withIdentifier: randomImageSegueIdentifier, sender: product)
+      
+    } else {
+      performSegue(withIdentifier: showDetailSegueIdentifier, sender: product)
+    }
+    
   }
   
   func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
     
     let product = products[indexPath.row]
     
-    performSegue(withIdentifier: showDetailSegueIdentifier, sender: product)
+//    //消耗类型 or 非自动续期
+//    if OwlProducts.productIDsConsumables.contains(product.productIdentifier) ||
+//      OwlProducts.productIDsNonRenewing.contains(product.productIdentifier) {
+//
+//      performSegue(withIdentifier: randomImageSegueIdentifier, sender: product)
+//
+//    } else {
+//      performSegue(withIdentifier: showDetailSegueIdentifier, sender: product)
+//    }
+    
+    
     
   }
 }

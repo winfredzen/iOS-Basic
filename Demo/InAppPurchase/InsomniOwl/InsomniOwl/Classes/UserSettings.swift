@@ -21,6 +21,7 @@
  */
 
 import Foundation
+import SwiftKeychainWrapper
 
 let expirationDateKey = "ExpirationDate"
 let remainingKey = "Remaining"
@@ -36,28 +37,46 @@ class UserSettings {
 
   public var expirationDate: Date? {
     set {
-      UserDefaults.standard.set(newValue, forKey: expirationDateKey)
+//      UserDefaults.standard.set(newValue, forKey: expirationDateKey)
+      if let newDate = newValue {
+        KeychainWrapper.standard.set(newDate.timeIntervalSince1970, forKey: expirationDateKey)
+      }
     }
     get {
-      return UserDefaults.standard.object(forKey: expirationDateKey) as? Date
+//      return UserDefaults.standard.object(forKey: expirationDateKey) as? Date
+      
+      if let expiration = KeychainWrapper.standard.double(forKey: expirationDateKey) {
+        return Date(timeIntervalSince1970: expiration)
+      }
+      return nil
+      
     }
   }
 
   public var randomRemaining: Int {
     set {
-      UserDefaults.standard.set(newValue, forKey: "remaining")
+//      UserDefaults.standard.set(newValue, forKey: "remaining")
+      KeychainWrapper.standard.set(newValue, forKey: remainingKey)
     }
     get {
-      return UserDefaults.standard.integer(forKey: "remaining")
+//      return UserDefaults.standard.integer(forKey: "remaining")
+      return KeychainWrapper.standard.integer(forKey: remainingKey) ?? 0
     }
   }
 
   public var lastRandomIndex: Int {
     set {
-      UserDefaults.standard.set(newValue, forKey: "lastRandomIndex")
+//      UserDefaults.standard.set(newValue, forKey: "lastRandomIndex")
+      KeychainWrapper.standard.set(newValue, forKey: lastRandomIndexKey)
     }
     get {
-      return UserDefaults.standard.integer(forKey: "lastRandomIndex")
+//      return UserDefaults.standard.integer(forKey: "lastRandomIndex")
+      
+      if let lastIndex = KeychainWrapper.standard.integer(forKey: lastRandomIndexKey) {
+        return lastIndex
+      }
+      return 0
+      
     }
   }
 
@@ -72,3 +91,4 @@ class UserSettings {
     randomRemaining = lastTimes + times
   }
 }
+

@@ -44,9 +44,30 @@ class ProductCell: UITableViewCell {
       
       //显示
       lblProductName.text = product.localizedTitle
+      
+      imgRandom.isHidden = (product.productIdentifier != OwlProducts.randomProductID)
+      
       if OwlProducts.store.isPurchased(product.productIdentifier) { //已购买
+        
         btnBuy.isHidden = true
         imgCheckmark.isHidden = false
+        
+      } else if OwlProducts.productIDsNonRenewing.contains(product.productIdentifier) {//非自动续订
+        
+        btnBuy.isHidden = false
+        imgCheckmark.isHidden = true
+        
+        if OwlProducts.daysRemaininOnSubscription() > 0 {
+          btnBuy.setTitle("Renew", for: .normal)
+          btnBuy.setImage(UIImage(named: "IconRenew"), for: .normal)
+        } else {
+          btnBuy.setTitle("Buy", for: .normal)
+          btnBuy.setImage(UIImage(named: "IconBuy"), for: .normal)
+        }
+        
+        ProductCell.priceFormatter.locale = product.priceLocale
+        lblPrice.text = ProductCell.priceFormatter.string(from: product.price)
+        
       } else {//未购买，显示价格
         ProductCell.priceFormatter.locale = product.priceLocale
         lblPrice.text = ProductCell.priceFormatter.string(from: product.price)

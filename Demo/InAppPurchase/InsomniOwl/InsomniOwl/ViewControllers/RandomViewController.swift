@@ -50,6 +50,33 @@ class RandomViewController: UIViewController {
 
   func refresh() {
     // TODO
+    
+    guard OwlProducts.paidUp() else {//是否支付了
+      resetGUI()
+      return
+    }
+    
+    btnRandom.isHidden = false
+    var index = 0
+    let count = OwlProducts.randomImages.count - 1
+    repeat {
+      index = Int.random(in: 0...count)
+      
+    } while index == UserSettings.shared.lastRandomIndex
+    
+    imageView.image = OwlProducts.randomImages[index]
+    UserSettings.shared.lastRandomIndex = index
+    
+    if OwlProducts.daysRemaininOnSubscription() > 0 {
+      lblExpiration.text = OwlProducts.getExpiryDateString()
+    } else {
+      lblExpiration.text = "Owls Remaining \(UserSettings.shared.randomRemaining)"
+      UserSettings.shared.randomRemaining = UserSettings.shared.randomRemaining - 1
+      if UserSettings.shared.randomRemaining <= 0 {
+        OwlProducts.setRandomProduct(with: false)
+      }
+    }
+    
   }
 }
 
