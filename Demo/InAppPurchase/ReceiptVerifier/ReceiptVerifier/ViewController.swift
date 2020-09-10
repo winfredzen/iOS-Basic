@@ -79,6 +79,7 @@ class ViewController: UIViewController {
     }
     
     // If a receipt is present validate it, otherwise request to refresh it
+    // 收据存在则验证它
     if Receipt.isReceiptPresent() {
       validateReceipt()
     } else {
@@ -102,6 +103,8 @@ class ViewController: UIViewController {
     return formatter.string(from: date)
   }
   
+  
+  /// 验证收据
   func validateReceipt() {
     verificationStatus.text = "Validating Receipt..."
     verificationStatus.textColor = .green

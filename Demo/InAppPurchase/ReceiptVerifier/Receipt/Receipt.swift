@@ -56,6 +56,63 @@ class Receipt {
   var receiptCreationDate: Date?
   var originalAppVersion: String?
   var inAppReceipts: [IAPReceipt] = []
+  
+  
+  init() {
+    guard let payload = loadReceipt() else {
+      return
+    }
+    
+    guard validateSigning(payload) else {
+      return
+    }
+    
+  }
+  
+  private func validateSigning(_ receipt: UnsafeMutablePointer<PKCS7>?) -> Bool {
+    
+    guard let rootCertUrl = Bundle.main.url(forResource: "AppleIncRootCertificate", withExtension: "cer")
+    
+    
+  }
+  
+  
+  private func loadReceipt() -> UnsafeMutablePointer<PKCS7>? {
+    guard let receiptUrl = Bundle.main.appStoreReceiptURL,
+    let receiptData = try? Data(contentsOf: receiptUrl) else {
+      receiptStatus = .noReceiptPresent //没有存在收据
+      return nil
+    }
+    
+    // openssl work with bio
+    let receiptBIO = BIO_new(BIO_s_mem())
+    let receiptBytes: [UInt8] = .init(receiptData)
+    BIO_write(receiptBIO, receiptBytes, Int32(receiptData.count))
+    
+    let receiptPKCS7 = d2i_PKCS7_bio(receiptBIO, nil)
+    BIO_free(receiptBIO)
+    
+    guard receiptPKCS7 != nil else {
+      receiptStatus = .unknownReceiptFormat //未知格式
+      return nil
+    }
+    
+    guard OBJ_obj2nid(receiptPKCS7!.pointee.type) == NID_pkcs7_signed else {
+      receiptStatus = .invalidPKCS7Signature
+      return nil
+    }
+    
+    let receiptContents = receiptPKCS7!.pointee.d.sign.pointee.contents
+    guard OBJ_obj2nid(receiptContents?.pointee.type) == NID_pkcs7_data else {
+      receiptStatus = .invalidPKCS7Type
+      return nil
+    }
+    
+    
+    return receiptPKCS7
+    
+  }
+  
 
   static public func isReceiptPresent() -> Bool {
     
@@ -69,4 +126,7 @@ class Receipt {
     
     return false
   }
+  
+  
+  
 }
