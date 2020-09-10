@@ -71,8 +71,9 @@ class Receipt {
   
   private func validateSigning(_ receipt: UnsafeMutablePointer<PKCS7>?) -> Bool {
     
-    guard let rootCertUrl = Bundle.main.url(forResource: "AppleIncRootCertificate", withExtension: "cer")
+//    guard let rootCertUrl = Bundle.main.url(forResource: "AppleIncRootCertificate", withExtension: "cer")
     
+    return true
     
   }
   
