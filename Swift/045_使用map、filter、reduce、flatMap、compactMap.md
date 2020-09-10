@@ -84,6 +84,17 @@ let even = digits.filter { $0 % 2 == 0 }
 
 ## **`reduce`**
 
+[`reduce(_:_:)`](https://developer.apple.com/documentation/swift/array/2298686-reduce)官方说明如下：
+
+```swift
+func reduce<Result>(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> Result
+```
+
++ initialResult - 初始累积值，在闭包首次被执行的时候，initialResult被传递给nextPartialResult
++ nextPartialResult - 一个将累积值和序列元素累加的闭包，新的累积值将在下一次调用nextPartialResult中传递给nextPartialResult，或者直接返回给方法调用者
+
+
+
 组合集合中所有的item，创建一个新的value
 
 ![35](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/35.png)
@@ -113,6 +124,15 @@ let names = ["alan","brian","charlie"]
 let csv = names.reduce("===") {text, name in "\(text),\(name)"}
 // "===,alan,brian,charlie"
 ```
+
+
+
+其它可参考：
+
++ [Swift中使用reduce函数的一个小示例](https://stevenocean.github.io/2018/03/16/swift-reduce-example.html)
++ [化零为整：Reduce 详解](https://swift.gg/2015/12/10/reduce-all-the-things/)
+
+
 
 
 
