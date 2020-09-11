@@ -1,5 +1,12 @@
 # RunLoop
 
+参考：
+
++ [深入理解RunLoop](https://blog.ibireme.com/2015/05/18/runloop/)
++ [Runloop](https://hit-alibaba.github.io/interview/iOS/ObjC-Basic/Runloop.html)
+
+
+
 RunLoop从字面上理解就是运行循环，其实它内部就是do-while循环，在这个循环内部不断地处理各种任务（比如Source、Timer、Observer）
 
 其基本作用是：
@@ -70,13 +77,22 @@ iOS中有2套API来访问和使用RunLoop
   	  NSLog(@"%p", mainRunLoop.getCFRunLoop);//0x6040001f1300
   ```
 
-  
+
+
+
+**RunLoop的工作模式**
+
+
+
+
 
 **RunLoop与线程的关系**
 
 + 每条线程都有唯一的一个与之对应的RunLoop对象
 + 主线程的RunLoop已经自动创建好了，子线程的RunLoop需要主动创建
 + RunLoop在第一次获取时创建，在线程结束时销毁
+
+> 线程和 RunLoop 之间是一一对应的，其关系是保存在一个全局的 Dictionary 里。线程刚创建时并没有 RunLoop，如果你不主动获取，那它一直都不会有。RunLoop 的创建是发生在第一次获取时，RunLoop 的销毁是发生在线程结束时。你只能在一个线程的内部获取其 RunLoop（主线程除外）
 
 
 
