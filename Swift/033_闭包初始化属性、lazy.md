@@ -163,6 +163,26 @@ lazy var decimalFormatter: NumberFormatter = {
 
 
 
+### 实际开发中遇到的问题
+
+如下的例子：
+
+![40](https://github.com/winfredzen/iOS-Basic/blob/master/Swift/images/40.png)
+
+错误提示如下：
+
+> Cannot assign value of type '(LaunchScreenVC) -> () -> LaunchScreenVC' to type 'UICollectionViewDelegate?'
+>
+> Cannot assign value of type '(LaunchScreenVC) -> () -> LaunchScreenVC' to type 'UICollectionViewDataSource?'
+
+原因是：
+
+> You can not access self until its initialized. As there is no object of your class till now. Instance method(s) and variable belong to the Object of the class not to the class i.e. they can be called after creating the Object of the class. So it gives you error.
+
+所以，使用`lazy`后就好了
+
+
+
 
 
 
