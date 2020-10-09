@@ -232,17 +232,6 @@ print(employee2.favoriteToy.name)
 
 
 
-## 其它
-
-
-
-+ [Swift 项目中涉及到 JSONDecoder，网络请求，泛型协议式编程的一些记录和想法](https://ming1016.github.io/2018/04/02/record-and-think-about-swift-project-jsondecoder-networking-and-pop/)
-+ [利用 Swift 4 的 JSONDecoder 和 Codable 解析 JSON 和生成自訂型別資料](https://medium.com/%E5%BD%BC%E5%BE%97%E6%BD%98%E7%9A%84-swift-ios-app-%E9%96%8B%E7%99%BC%E5%95%8F%E9%A1%8C%E8%A7%A3%E7%AD%94%E9%9B%86/%E5%88%A9%E7%94%A8-swift-4-%E7%9A%84-jsondecoder-%E5%92%8C-codable-%E8%A7%A3%E6%9E%90-json-%E5%92%8C%E7%94%9F%E6%88%90%E8%87%AA%E8%A8%82%E5%9E%8B%E5%88%A5%E8%B3%87%E6%96%99-ee793622629e)
-
-
-
-
-
 ## 数组的处理
 
 参考：
@@ -258,6 +247,46 @@ print(employee2.favoriteToy.name)
 > ```
 
 
+
++ [Decoding JSON arrays in Swift](https://www.avanderlee.com/swift/json-parsing-decoding/#decoding-json-arrays-in-swift)
+
+
+
+```xml
+[{
+    "title": "Optionals in Swift explained: 5 things you should know",
+    "url": "https://www.avanderlee.com/swift/optionals-in-swift-explained-5-things-you-should-know/"
+},
+{
+    "title": "EXC_BAD_ACCESS crash error: Understanding and solving it",
+    "url": "https://www.avanderlee.com/swift/exc-bad-access-crash/"
+},
+{
+    "title": "Thread Sanitizer explained: Data Races in Swift",
+    "url": "https://www.avanderlee.com/swift/thread-sanitizer-data-races/"
+}]
+```
+
+```swift
+struct BlogPost: Decodable {
+    let title: String
+    let url: URL
+}
+
+let blogPosts: [BlogPost] = try! JSONDecoder().decode([BlogPost].self, from: jsonData)
+print(blogPosts.count) // Prints: 3
+```
+
+
+
+## 其它
+
+
+
++ [JSON Parsing in Swift explained with code examples](https://www.avanderlee.com/swift/json-parsing-decoding/)
+
++ [Swift 项目中涉及到 JSONDecoder，网络请求，泛型协议式编程的一些记录和想法](https://ming1016.github.io/2018/04/02/record-and-think-about-swift-project-jsondecoder-networking-and-pop/)
++ [利用 Swift 4 的 JSONDecoder 和 Codable 解析 JSON 和生成自訂型別資料](https://medium.com/%E5%BD%BC%E5%BE%97%E6%BD%98%E7%9A%84-swift-ios-app-%E9%96%8B%E7%99%BC%E5%95%8F%E9%A1%8C%E8%A7%A3%E7%AD%94%E9%9B%86/%E5%88%A9%E7%94%A8-swift-4-%E7%9A%84-jsondecoder-%E5%92%8C-codable-%E8%A7%A3%E6%9E%90-json-%E5%92%8C%E7%94%9F%E6%88%90%E8%87%AA%E8%A8%82%E5%9E%8B%E5%88%A5%E8%B3%87%E6%96%99-ee793622629e)
 
 
 
