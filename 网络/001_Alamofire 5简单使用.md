@@ -4,6 +4,78 @@
 
 + [Alamofire 5 Tutorial for iOS: Getting Started](https://www.raywenderlich.com/6587213-alamofire-5-tutorial-for-ios-getting-started)
 
+**202010更新**
+
+如下的一个简单请求：
+
+```swift
+        AF.request("https://jsonplaceholder.typicode.com/todos/1").response { response in
+            debugPrint(response)
+        }
+```
+
+`debugPrint`的输出为：
+
+```swift
+[Request]: GET https://jsonplaceholder.typicode.com/todos/1
+    [Headers]: None
+    [Body]: None
+[Response]:
+    [Status Code]: 200
+    [Headers]:
+        access-control-allow-credentials: true
+        Age: 25062
+        Cache-Control: max-age=43200
+        cf-cache-status: HIT
+        cf-ray: 5e1da0af7e2f1a42-SIN
+        cf-request-id: 05c662c1aa00001a425a85f200000001
+        Content-Encoding: br
+        Content-Type: application/json; charset=utf-8
+        Date: Wed, 14 Oct 2020 01:46:37 GMT
+        Etag: W/"53-hfEnumeNh6YirfjyjaujcOPPT+s"
+        expect-ct: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+        Expires: -1
+        nel: {"report_to":"cf-nel","max_age":604800}
+        Pragma: no-cache
+        report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report?lkg-colo=35&lkg-time=1602639997"}],"group":"cf-nel","max_age":604800}
+        Server: cloudflare
+        Set-Cookie: __cfduid=dc279cd211feac6411e4914e2ff2879e91602639997; expires=Fri, 13-Nov-20 01:46:37 GMT; path=/; domain=.typicode.com; HttpOnly; SameSite=Lax
+        Vary: Origin, Accept-Encoding
+        Via: 1.1 vegur
+        x-content-type-options: nosniff
+        x-powered-by: Express
+        x-ratelimit-limit: 1000
+        x-ratelimit-remaining: 999
+        x-ratelimit-reset: 1598841974
+    [Body]:
+        {
+          "userId": 1,
+          "id": 1,
+          "title": "delectus aut autem",
+          "completed": false
+        }
+[Network Duration]: 0.46736109256744385s
+[Serialization Duration]: 0.0s
+[Result]: success(Optional(83 bytes))
+```
+
+`request`的方法定义如下：
+
+```swift
+open func request<Parameters: Encodable>(_ convertible: URLConvertible,
+                                         method: HTTPMethod = .get,
+                                         parameters: Parameters? = nil,
+                                         encoder: ParameterEncoder = URLEncodedFormParameterEncoder.default,
+                                         headers: HTTPHeaders? = nil,
+                                         interceptor: RequestInterceptor? = nil) -> DataRequest
+```
+
+该方法创建了一个`DataRequest`
+
+
+
+
+
 ## responseJSON
 
 如下，获取`Films`
