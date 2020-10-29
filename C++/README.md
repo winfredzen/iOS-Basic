@@ -3,6 +3,7 @@
 参考：
 
 + [C++的初步知识，C++基础知识](http://c.biancheng.net/cpp/biancheng/cpp/rumen_1/)
++ [C++标准库和std命名空间](http://c.biancheng.net/cpp/biancheng/view/2972.html)
 
 
 
