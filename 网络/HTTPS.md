@@ -2,6 +2,8 @@
 
 一些参考文档：
 
++ [iOS 原生库对 https 的处理](https://swiftcafe.io/2016/04/16/swift-https)
+
 + [iOS https证书双向认证的实现机制](https://blog.csdn.net/Z1591090/article/details/104041998)
 + [【干货分享】通信安全：IOS客户端证书校验方法](http://blog.nsfocus.net/ios-ssl-verification/)
 + [iOS 中对 HTTPS 证书链的验证](https://www.cnblogs.com/oc-bowen/p/5896041.html)
