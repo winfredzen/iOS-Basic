@@ -163,17 +163,78 @@ results //[0, 1, 1, 4, 9, 25]
 
 
 
+在代码中，如果发现，多个地方都有遍历一个数组并做相同或类似的事情时，可以考虑给`Array`写一个扩展
+
+```swift
+let array:[Int] = [1, 2, 2, 2, 3, 4, 4]
+var result:[[Int]] = array.isEmpty ? [] : [[array[0]]]
+for (previous, current) in zip(array, array.dropFirst()) { //循环实现
+    if previous == current {
+        result[result.endIndex - 1].append(current)
+    } else {
+        result.append([current])
+    }
+}
+result //[[1], [2, 2, 2], [3], [4, 4]]
+
+//扩展实现
+extension Array {
+    func wz_split(where condition:(Element, Element) -> Bool) -> [[Element]] {
+        var result: [[Element]] = self.isEmpty ? [] : [[self[0]]]
+        for (previous, current) in zip(self, self.dropFirst()) {
+            if condition(previous, current) {
+                result.append([current])
+            } else {
+                result[result.endIndex - 1].append(current)
+            }
+        }
+        return result
+    }
+}
+
+let parts = array.wz_split{ $0 != $1 }
+parts // [[1], [2, 2, 2], [3], [4, 4]]
+let parts2 = array.wz_split(where: !=)
+```
 
 
 
+> 实现**accumulate** — 累加，和 reduce 类似，不过是将所有元素合并到一个数组中，并保留合并时每一步的值。
+>
+> ```swift
+> extension Array {
+>     func accumulate<Result>(_ initialResult: Result, _ nextPartialResult: (Result, Element) -> Result) -> [Result] {
+>         var running = initialResult //创建了一个中间变量来存储每一步的值
+>         return map { next in
+>             running = nextPartialResult(running, next)
+>             return running
+>         }
+>     }
+> }
+> [1,2,3,4].accumulate(0, +) // [1, 3, 6, 10]
+> ```
 
 
 
+#### **filter**
+
+`filter`的可能实现的逻辑：
+
+```swift
+extension Array {
+    func flter(_ isIncluded: (Element) -> Bool) -> [Element] {
+        var result: [Element] = []
+        for x in self where isIncluded(x) {
+            result.append(x)
+        }
+        return result
+    }
+}
+```
 
 
 
-
-
+####  
 
 
 
