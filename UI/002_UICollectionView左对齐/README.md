@@ -109,9 +109,19 @@ class TagLayout: UICollectionViewFlowLayout {
 
 
 
+## 居中的cell
+
+参考：
+
++ [Creating your own Centered CollectionView Flow Layout](https://equaleyes.com/blog/2018/05/10/blog-flow-layout/)
 
 
 
+## 其它参考
+
+其它的实现逻辑，可参考：
+
++ [UICollectionViewLeftAlignedLayout](https://github.com/mokagio/UICollectionViewLeftAlignedLayout) - oc实现，不同的判断思路，使用rect相交来判断
 
 
 
