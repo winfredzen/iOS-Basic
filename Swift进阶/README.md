@@ -392,19 +392,107 @@ type(of: newArray) // Array<Int>
 
 
 
+## 字典
+
+字典的返回值是一个**可选值**，当指定的值不存在时，它就返回`nil`
+
+```swift
+enum Setting {
+    case text(String)
+    case int(Int)
+    case bool(Bool)
+}
+
+let defaultSettings: [String : Setting] = [
+    "Airplane Mode" : .bool(false),
+    "Name": .text("My iPhone"),
+]
+
+let value = defaultSettings["Name"]
+type(of: value) //Optional<__lldb_expr_43.Setting>.Type
+```
+
+一些方法
+
++  `removeValue(forKey:)`  - 从字典中移除一个值
++ `updateValue(_:forKey:)` - 更新字典内容
+
+**合并字典**
+
+合并字典，使用如下的方法：
+
+```swift
+@inlinable public mutating func merge(_ other: [Key : Value], uniquingKeysWith combine: (Value, Value) throws -> Value) rethrows
+```
+
++ 第一个参数 - 是要进行合并的键值对
++ 第二个参数 - 定义如何合并相同键的两个值的函数
+
+文档中的例子：
+
+```swift
+var dictionary = ["a": 1, "b": 2]
+
+// Keeping existing value for key "a":
+dictionary.merge(zip(["a", "c"], [3, 4])) { (current, _) in current }
+// ["b": 2, "a": 1, "c": 4]
+
+// Taking the new value for key "a":
+dictionary.merge(zip(["a", "d"], [5, 6])) { (_, new) in new }
+// ["b": 2, "a": 5, "c": 4, "d": 6]
+```
 
 
 
+```swift
+var settings = defaultSettings 
+let overriddenSettings: [String:Setting] = ["Name": .text("Jane's iPhone")] 
+settings.merge(overriddenSettings, uniquingKeysWith: { $1 }) 
+settings // ["Name": Setting.text("Jane\'s iPhone"), "Airplane Mode": Setting.bool(false)]
+```
+
+> 在上面的例子中，我们使用了 `{ $1 }` 来作为合并两个值的策略。也就是说，如果某个键同时存在于 `settings` 和 `overriddenSettings` 中时，我们使用 `overriddenSettings` 中的值。
 
 
 
+我们还可以从一个 `(Key,Value)` 键值对的序列中构建一个新的字典，使用`init(uniqueKeysWithValues:)`方法：
 
+```swift
+init<S>(uniqueKeysWithValues keysAndValues: S) where S : Sequence, S.Element == (MLDataValue.DictionaryType.Key, MLDataValue.DictionaryType.Value)
+```
 
+```swift
+extension Sequence where Element: Hashable {
+    var frequencies: [Element:Int] {
+        let frequencyPairs = self.map { ($0, 1) }
+        return Dictionary(frequencyPairs, uniquingKeysWith: +)
+    }
+}
+let frequencies = "hello".frequencies // ["o": 1, "h": 1, "e": 1, "l": 2]
+frequencies.filter { $0.value > 1 } // ["l": 2]
+```
 
+**对字典的值做映射**
 
+`mapValues(_:)`的定义如下：
 
+```swift
+func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> Dictionary<Key, T>
+```
 
+> Returns a new dictionary containing the keys of this dictionary with the values transformed by the given closure.
 
+```swift
+let settingsAsStrings = settings.mapValues {
+    setting -> String in
+    switch setting {
+    case .text(let text): return text
+    case .int(let number): return String(number)
+    case .bool(let value): return String(value)
+    }
+}
+settingsAsStrings // ["Name": "Jane\'s iPhone", "Airplane Mode": "false"]
+```
 
 
 
