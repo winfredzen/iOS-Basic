@@ -25,4 +25,13 @@ for code in httpResponseCodes {
 ```
 
 
+可参考：
 
++ [Dictionary default values](https://www.hackingwithswift.com/sixty/2/6/dictionary-default-values)
++ [How to specify default values for dictionary keys](https://www.hackingwithswift.com/example-code/language/how-to-specify-default-values-for-dictionary-keys)
+
+
+```swift
+var scores = ["Taylor Swift": 25, "Ed Sheeran": 20]
+var adeleScore = scores["Adele Adkins", default: 0]
+```
