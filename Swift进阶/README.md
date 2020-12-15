@@ -218,6 +218,12 @@ let parts2 = array.wz_split(where: !=)
 
 #### **filter**
 
+通过组合`map`和`filter`的操作，可以实现许多数组的操作：
+
+```swift
+(1..<10).map { $0 * $0 }.flter { $0 % 2 == 0 } // [4, 16, 36, 64]
+```
+
 `filter`的可能实现的逻辑：
 
 ```swift
@@ -234,7 +240,162 @@ extension Array {
 
 
 
-####  
+#### reduce
+
+`map` 和 `filter` 都作用在一个数组上，并产生另一个新的、经过修改的数组。不过有时候，你可能会想把所有元素合并为一个新的单一的值
+
+```swift
+let fibs = [0, 1, 1, 2, 3, 5]
+var total = 0
+for num in fibs {
+    total = total + num
+}
+total
+```
+
+使用`reduce`实现：
+
+```swift
+let sum = fibs.reduce(0) { total, num in total + num }
+```
+
++ 一个初始值
++ 一个闭包
+
+运算符也是函数，所以我们也可以把上面的例子写成这样：
+
+```swift
+fbs.reduce(0, +) // 12
+```
+
+`reduce` 的输出值的类型不必和元素的类型相同
+
+```swift
+let str = fibs.reduce("") { str, num in str + "\(num)," }
+str //"0,1,1,2,3,5,"
+```
+
+`reduce`的可能实现：
+
+```swift
+extension Array {
+    func wz_reduce<Result>(_ initialResult:Result, _ nextPartialResult:(Result, Element) -> Result) -> Result {
+        var result = initialResult
+        for x in self {
+            result = nextPartialResult(result, x)
+        }
+        return result
+    }
+}
+```
+
+使用 `reduce` 去实现 `map` 和 `filter`
+
+```swift
+extension Array { 
+  func map2<T>(_ transform: (Element) -> T) -> [T] { 
+    return reduce([]) { $0 + [transform($1)] }
+  } 
+  func flter2(_ isIncluded: (Element) -> Bool) -> [Element] { 
+    return reduce([]) { isIncluded($1) ? $0 + [$1] : $0 } } 
+}
+```
+
+官方文档中定义：
+
+```swift
+ @inlinable public func reduce<Result>(_ initialResult: Result, _ nextPartialResult: (Result, Element) throws -> Result) rethrows -> Result
+```
+
+`reduce` 还有另外一个版本，它的类型有所不同，接受一个`inout`参数
+
+```swift
+@inlinable public func reduce<Result>(into initialResult: Result, _ updateAccumulatingResult: (inout Result, Element) throws -> ()) rethrows -> Result
+```
+
+
+
+#### flatMap
+
+`flatMap` 方法将变换和展平这两个操作合并为一个步骤
+
+```swift
+public func flatMap<ElementOfResult>(_ transform: (Element) throws -> ElementOfResult?) rethrows -> [ElementOfResult]
+```
+
+
+
+####  **forEach**
+
+使用`forEach`进行迭代
+
+```swift
+[1, 2, 3].forEach { element in
+    print(element)
+}
+```
+
+注意闭包里面的返回，
+
+```swift
+(1..<10).forEach { number in
+    print(number)
+    if number > 2 { return }
+}
+```
+
+输出：
+
+```swift
+1
+2
+3
+4
+5
+6
+7
+8
+9
+```
+
+> `return` 语句并不会终止循环，它做的仅仅是从闭包中返回，因此在 `forEach` 的实现中会开始下一个循环的迭代
+
+**因为 return 在其中的行为不太明确，我们建议大多数其他情况下不要用 forEach**
+
+
+
+#### 数组切片
+
+可以通过下标来获取某个范围中的元素
+
+```swift
+let fibsArr = [0, 1, 1, 2, 3, 5]
+let slice = fibsArr[1...]
+slice //[1, 1, 2, 3, 5]
+type(of: slice) //ArraySlice<Int>.Type
+```
+
+得到的数据结果为 `ArraySlice`，并不是`Array`
+
+切片类型只是数组的一种**表示方式**，它背后的数据仍然是原来的数组，只不过是用切片的方式来进行表示。因为数组的元素不会被复制，所以创建一个切片的代价是很小的。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
