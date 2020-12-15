@@ -379,11 +379,16 @@ type(of: slice) //ArraySlice<Int>.Type
 
 切片类型只是数组的一种**表示方式**，它背后的数据仍然是原来的数组，只不过是用切片的方式来进行表示。因为数组的元素不会被复制，所以创建一个切片的代价是很小的。
 
+![001](https://github.com/winfredzen/iOS-Basic/blob/master/Swift%E8%BF%9B%E9%98%B6/images/001.png)
 
+将切片数组转为数组
 
+```swift
+let newArray = Array(slice)
+type(of: newArray) // Array<Int>
+```
 
-
-
+> 需要谨记的是切片和它背后的数组是使用相同的索引来引用元素的。因此，**切片索引不需要从零开始**。例如，在上面我们用 `fibs[1...]` 创建的切片的第一个元素的索引是 `1` ，因此错误地访问`slice[0]` 元素会使我们的程序因越界而崩溃。如果你操作切片的话，我们建议你总是基于`startIndex` 和 `endIndex` 属性做索引计算。
 
 
 
