@@ -1,5 +1,11 @@
 # RxSwift
 
+参考：
+
++ [RxSwift中文文档](https://beeth0ven.github.io/RxSwift-Chinese-Documentation/)
+
+
+
 创建observable，so，什么是observable？
 
 > You’ll see “observable”, “observable sequence” and “sequence” used interchangeably  in Rx. And, really, they’re all the same thing. 
@@ -254,6 +260,251 @@ observable.subscribe { element in
 --- Example of: empty ---
 Completed
 ```
+
+
+
+## **Dispose**
+
+要显式的取消一个订阅，调用`dispose()` ，调用`dispose()` 后，当前的 observable  会停止发出事件
+
+```swift
+let observable = Observable.of("A", "B", "C")
+let subscription = observable.subscribe { event in
+    print(event)
+}
+subscription.dispose()
+```
+
+单独管理每个订阅将很乏味，因此RxSwift包含`DisposeBag`类型。 一个dispose bag持有disposable（通常使用`disposed(by:)`方法添加），并且在dispose bag即将被释放时将对每个对象调用`dispose()`方法
+
+> If you forget to add a subscription to a dispose bag, or manually call dispose on it  when you’re done with the subscription, or in some other way cause the observable  to terminate at some point, you will probably leak memory.
+>
+>  Don’t worry if you forget; the Swift compiler should warn you about unused disposables.
+>
+> 如果你忘记在dispose bag中添加订阅，或者在完成订阅后手动在其上调用dispose，或者以其他某种方式导致observable在某个时候终止，则可能会泄漏内存。
+>
+>  如果您忘记了，请不要担心； Swift编译器应警告您有关未使用的disposable。
+
+
+
+```swift
+let disposeBag = DisposeBag()
+Observable.of("A", "B", "C").subscribe {
+    print($0)
+}.disposed(by: disposeBag)
+```
+
+
+
+在前面的例子中，创建observable时，带有指定的event元素。还可以使用`create()`方法来实现
+
+```swift
+    /**
+         Creates an observable sequence from a specified subscribe method implementation.
+    
+         - seealso: [create operator on reactivex.io](http://reactivex.io/documentation/operators/create.html)
+    
+         - parameter subscribe: Implementation of the resulting observable sequence's `subscribe` method.
+         - returns: The observable sequence with the specified implementation for the `subscribe` method.
+         */
+    public static func create(_ subscribe: @escaping (RxSwift.AnyObserver<Self.Element>) -> RxSwift.Disposable) -> RxSwift.Observable<Self.Element>
+```
+
+如下的例子：
+
+```swift
+let disposeBag = DisposeBag()
+Observable<String>.create { (observer) -> Disposable in
+    observer.onNext("1")
+    observer.onCompleted()
+    observer.onNext("?")
+    return Disposables.create()
+}.subscribe(
+    onNext: {print($0)},
+    onError: {print($0)},
+    onCompleted: {print("completed")},
+    onDisposed: {print("disposed")}
+).disposed(by: disposeBag)
+```
+
+输出结果为：
+
+```xml
+1
+completed
+disposed
+```
+
+> **Note**: The last step, returning a `Disposable`, may seem strange at fifirst. Remember that **subscribe operators** **must** return a **disposable** representing the subscription, so you use `Disposables.create()` to create a disposable.
+
+
+
+如果要emit一个error该怎么做呢？
+
+```swift
+enum MyError : Error {
+    case anError
+}
+let disposeBag = DisposeBag()
+Observable<String>.create { (observer) -> Disposable in
+    observer.onNext("1")
+    observer.onError(MyError.anError)
+    observer.onCompleted()
+    observer.onNext("?")
+    return Disposables.create()
+}.subscribe(
+    onNext: {print($0)},
+    onError: {print($0)},
+    onCompleted: {print("completed")},
+    onDisposed: {print("disposed")}
+).disposed(by: disposeBag)
+```
+
+输出结果为：
+
+```xml
+1
+anError
+disposed
+```
+
+
+
+## **Creating observable factories**
+
+`deferred`方法的介绍：
+
+```swift
+extension ObservableType {
+
+    /**
+         Returns an observable sequence that invokes the specified factory function whenever a new observer subscribes.
+    
+         - seealso: [defer operator on reactivex.io](http://reactivex.io/documentation/operators/defer.html)
+    
+         - parameter observableFactory: Observable factory function to invoke for each observer that subscribes to the resulting sequence.
+         - returns: An observable sequence whose observers trigger an invocation of the given observable factory function.
+         */
+    public static func deferred(_ observableFactory: @escaping () throws -> RxSwift.Observable<Self.Element>) -> RxSwift.Observable<Self.Element>
+}
+```
+
+> Returns an observable sequence that invokes the specified factory function whenever a new observer subscribes.
+>
+> 当一个新的observer subscribe时，调用这个指定的工厂方法，返回observable序列
+
+```swift
+let disposeBag = DisposeBag()
+var flip = false
+let factory: Observable<Int> = Observable.deferred {
+    flip.toggle()
+    if flip {
+        return Observable.of(1, 2, 3)
+    } else {
+        return Observable.of(4, 5, 6)
+    }
+}
+for _ in 0...3 {
+    factory.subscribe(onNext: {
+        print($0, terminator: "")
+    })
+    .disposed(by: disposeBag)
+    
+    print()
+}
+```
+
+输出结果为：
+
+```swift
+123
+456
+123
+456
+```
+
+
+
+## Trait
+
+Trait是observables，其行为集比常规observables的要窄。
+
++ 它们的使用是可选的； 您可以在可能使用Trait的任何地方使用常规observables。 
++ 它们的目的是提供一种方法，以将你的意图更清楚地传达给代码的读者或API的使用者。 使用Trait暗示的上下文可以帮助使你的代码更直观
+
+RxSwift具有三种特征：Single，Maybe和Completable
+
+`Single` 发出 `success(value)`或者~~`error(error)`~~事件。`success(value)` 是next和completed事件的结合。这对于一次成功执行并产生值或失败的进程很有用，例如在下载数据或从磁盘加载数据时。**貌似，在`6.0.0-rc.2`的版本中，error变成了failure**
+
+`Completable`将仅发出completed或error(error)事件。它不会发出任何值。当你只关心操作成功完成或失败（例如文件写入）时，可以使用completable。
+
+`Maybe`是`Single`和Completable的混搭，它可以发出success(value)、completed或者error(error)。如果你需要执行一个可能成功或失败的操作，并且有选择地返回成功值，那么Maybe是你的方便之选
+
+```swift
+        let disposeBag = DisposeBag()
+        
+        enum FileReadError: Error {
+            case fileNotFound, unreadable, encodingFailed
+        }
+        
+        func loadText(from name: String) -> Single<String> {
+
+            return Single.create { single in
+                
+                let disposable = Disposables.create()
+                
+                guard let path = Bundle.main.path(forResource: name, ofType:"txt") else {
+                    single(.failure(FileReadError.fileNotFound))
+                    return disposable
+                }
+                
+                guard let data = FileManager.default.contents(atPath: path) else {
+                    single(.failure(FileReadError.unreadable))
+                    return disposable
+                }
+              
+                guard let contents = String(data: data, encoding: .utf8) else {
+                    single(.failure(FileReadError.encodingFailed))
+                    return disposable
+                }
+                
+                single(.success(contents))
+                return disposable
+                
+            }
+        }
+        
+        loadText(from: "Copyright").subscribe {
+            switch $0 {
+            case .success(let string):
+                print(string)
+            case .failure(let error):
+                print(error)
+            }
+        }.disposed(by: disposeBag)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
