@@ -104,7 +104,37 @@ Event: next(Optional(8))
 Event: completed
 ```
 
+> 那么，除了“全程关注”的人之外，还有一类是“半路来的人”，对于这些人，就只能看到他们关注到`evenNumberObservable`之后，发生的事件了，我们可以用下面的代码，来理解这个场景：
+>
+> ```swift
+>         var evenNumberObservable = Observable.from(["1", "2", "3", "4", "5", "6", "7", "8", "9"]).map({ Int($0) })
+>             .filter({
+>                 if let item = $0, item % 2 == 0 {
+>                     print("Observable even: \(item)")
+>                     return true
+>                 }
+>                 return false
+>             })
+>         evenNumberObservable.skip(2).subscribe({ event in
+>             print("Event: \(event)")
+>         })
+> ```
+>
+> ```swift
+> Observable even: 2
+> Observable even: 4
+> Observable even: 6
+> Event: next(Optional(6))
+> Observable even: 8
+> Event: next(Optional(8))
+> Event: completed
+> ```
 
+![006](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/006.png)
+
+> 通过这两个例子，我们要表达的最重要的一个思想，就是Observable中的每一个元素都表示一个“异步发生的事件”这样的概念，operator对Observable的加工是在订阅的时候发生的。这种只有在订阅的时候才emit事件的Observable，有一个专有的名字，叫做**Cold Observable**。
+>
+> 言外之意，就是也有一种Observable是只要创建了就会自动emit事件的，它们叫做**Hot Observable**
 
 
 
@@ -270,6 +300,12 @@ onCompleted: {
 
 ## **订阅** Observable
 
+> `subscribe`，也是一个operator，用于把事件的订阅者（Observer）和事件的产生者（Observable）关联起来。而Observer和Observable之间，有着下面的约定：
+>
+> - 当Observable正常发送事件时，会调用Observer提供的`onNext`方法，这个过程习惯上叫做**emissions**；
+> - 当Observable成功结束时，会调用Observer提供的`onCompleted`方法；因此，在最后一次调用`onNext`之后，就会调用`onCompleted`；
+> - 当Observable发生错误时，就会调用Observer提供的`onError`方法，并且，一旦发生错误，就不会再继续发送其它事件了。对于调用`onComplete`和`onNext`的过程，习惯上叫做**notifications**；
+
 一个observable不会发送event，or执行任何工作，直到它有了一个subscriber
 
 请记住，一个observable对象实际上是一个sequence，并且订阅一个observable实际上更像是在Swift标准库中的`Iterator`上调用`next()`方法
@@ -376,6 +412,73 @@ Completed
 
 
 ## **Dispose**
+
+>  **理解Observable dispose**
+>
+> 一直以来，我们使用的Observable都是有限序列，对`evenNumberObservable`来说，当它emit了所有的数字之后，就自动结束了，此时，它占用的资源就会被回收，这很好理解。
+>
+> 但事情并不总是如此，有些事件队列是无限的，例如像下面这样：
+>
+> ```swift
+>         _ = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+>             .subscribe(onNext: {
+>                 print("Subscribed: \($0)")
+>             })
+> ```
+>
+> 此时会一直输出：
+>
+> ```swift
+> Subscribed: 0
+> Subscribed: 1
+> Subscribed: 2
+> Subscribed: 3
+> Subscribed: 4
+> Subscribed: 5
+> ...
+> ```
+>
+> 我们用`interval`在主线程定义了一个每隔1秒发送一个整数的事件序列
+>
+> 如果我们不强制退出，这会是一个一直执行下去的事件序列。它在程序退出之前，会一直占用着系统资源
+>
+> 例如，假设5秒后，这个事件序列就不再需要了：
+>
+> ```swift
+>     public func delay(_ delay: Double,
+>                       closure: @escaping () -> Void) {
+> 
+>         DispatchQueue.main.asyncAfter(
+>             deadline: .now() + delay) {
+>                 closure()
+>             }
+>     }
+>     
+>     
+>             let disposable =
+>             Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+>                 .subscribe(
+>                     onNext: { print("Subscribed: \($0)") },
+>                     onDisposed: { print("The queue was disposed.") })
+> 
+>         delay(5) {
+>             disposable.dispose()
+>         }
+>         
+> ```
+>
+> 此时控制台输出结构为：
+>
+> ```swift
+> Subscribed: 0
+> Subscribed: 1
+> Subscribed: 2
+> Subscribed: 3
+> Subscribed: 4
+> The queue was disposed.
+> ```
+>
+> 
 
 要显式的取消一个订阅，调用`dispose()` ，调用`dispose()` 后，当前的 observable  会停止发出事件
 
