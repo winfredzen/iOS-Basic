@@ -1,5 +1,117 @@
 # RxSwift
 
+
+
+## 术语
+
+
+
+**Observable**
+
+参考[Observable](http://reactivex.io/documentation/observable.html)，有如下的一张图：
+
+![003](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/003.png)
+
+其中，最上面的一排，就是一个**Observable**。从左到右，表示时间由远及近的流动过程。上面的每一个形状，就表示在“某个时间点发生的事件”，而最右边的竖线则表示事件成功结束
+
+
+
+**Operator**
+
++ [Operators ](http://reactivex.io/documentation/operators.html)
+
+**operators**分为两大类：一类用于创建Observable；
+
+![004](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/004.png)
+
+这些不同的创建方法可以针对不同的事件流类型生成Observable。另一类是接受Observable作为参数，并返回一个新的Observable；
+
+![005](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/005.png)
+
+
+
+## 异步
+
+**Observable**的`map`和`filter`这两个operator和集合中的`map`和`filter`方法非常类似，但它们执行的逻辑却截然不同。
+
+如：
+
+```swift
+      _ = ["1", "2", "3", "4", "5", "6", "7", "8", "9"].map{ Int($0) }
+            .filter{
+                if let item = $0, item % 2 == 0 {
+                    print("arr even: \(item)")
+                    return true
+                }
+                return false
+            }
+        
+        
+       _ = Observable.from(["1", "2", "3", "4", "5", "6", "7", "8", "9"]).map({ Int($0) })
+            .filter({
+                if let item = $0, item % 2 == 0 {
+                    print("Observable even: \(item)")
+                    return true
+                }
+                return false
+            })
+```
+
+此时控制台会输出：
+
+```swift
+arr even: 2
+arr even: 4
+arr even: 6
+arr even: 8
+```
+
+可以发现：
+
+> 调用集合类型的`map`和`filter`方法，表达的是**同步执行**的概念，在调用方法的同时，集合就被立即加工处理了。
+>
+> 但我们创建的Observable，表达的是**异步操作**。**Observable中的每一个元素，都可以理解为一个异步发生的事件**。因此，当我们对Observable调用`map`和`filter`方法时，只表示我们要对事件序列中的元素进行处理的逻辑，而并不会立即对Observable中的元素进行处理。
+>
+> 当我们执行编译结果的时候，**不会在控制台上打印任何消息**。也就是说，**我们没有实际执行任何的筛选逻辑**。
+
+真正的筛选是否发生在，有人订阅这个事件的时候
+
+```swift
+        var evenNumberObservable = Observable.from(["1", "2", "3", "4", "5", "6", "7", "8", "9"]).map({ Int($0) })
+            .filter({
+                if let item = $0, item % 2 == 0 {
+                    print("Observable even: \(item)")
+                    return true
+                }
+                return false
+            })
+        evenNumberObservable.subscribe({ event in
+            print("Event: \(event)")
+        })
+```
+
+输出结果为：
+
+```swift
+Observable even: 2
+Event: next(Optional(2))
+Observable even: 4
+Event: next(Optional(4))
+Observable even: 6
+Event: next(Optional(6))
+Observable even: 8
+Event: next(Optional(8))
+Event: completed
+```
+
+
+
+
+
+## Swift
+
+
+
 参考：
 
 + [RxSwift中文文档](https://beeth0ven.github.io/RxSwift-Chinese-Documentation/)
@@ -100,7 +212,7 @@ let observable3 = Observable.of([one, two, three]) //Observable<[Int]>
 
  `just` 也可以把一个array作为一个单个元素
 
-3.使用`from`,  Converts an array to an observable sequence
+3.使用`from`,  Converts an array to an observable sequence, 用一个`Sequence`类型的对象创建一个Observable
 
 ```swift
 public static func from(_ array: [Self.Element], scheduler: RxSwift.ImmediateSchedulerType = CurrentThreadScheduler.instance) -> RxSwift.Observable<Self.Element>
