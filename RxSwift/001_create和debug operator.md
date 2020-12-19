@@ -20,7 +20,7 @@
 + `RxSwift.AnyObserver<Self.Element>` - 表示任意一个订阅的“替身”，我们要用这个“替身”来表达向订阅者发送各种事件的行为
 + `subscribe`还要返回一个`Disposable`对象，我们可以用这个对象取消订阅进而回收占用的资源
 
-在http://reactivex.io/documentation/operators/create.html中，有如下的介绍：
+在http://reactivex.io/documentation/operators/create.html ，有如下的介绍：
 
 > ### create an Observable from scratch by means of a function
 >
