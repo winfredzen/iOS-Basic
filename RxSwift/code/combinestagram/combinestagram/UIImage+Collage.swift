@@ -30,7 +30,7 @@ import Foundation
 import UIKit
 
 extension Array where Element == UIImage {
-  func collage(size: CGSize) -> UIImage {
+  func collage(size: CGSize) -> UIImage { //array image 绘制为一张图片
     let rows = self.count < 3 ? 1 : 2
     let columns = Int(round(Double(self.count) / Double(rows)))
     let tileSize = CGSize(width: round(size.width / CGFloat(columns)),
@@ -55,7 +55,7 @@ extension Array where Element == UIImage {
 
 extension UIImage {
   func scaled(_ newSize: CGSize) -> UIImage {
-    guard size != newSize else {
+    guard size != newSize else { //image大调整为为newSize
       return self
     }
 

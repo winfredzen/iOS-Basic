@@ -283,7 +283,9 @@ subject.dispose()
 
 > You learned earlier that a relay wraps a subject while maintaining its replay behavior. Unlike other subjects — and observables in general — you add a value onto a relay by using the accept(_:) method. In other words, you don’t use onNext(_:). This is because relays can only accept values, i.e., you cannot add an error or completed event onto them.
 >
-> 使用`accept(_:)` 方法添加value，不能使用 `onNext(_:)`，不能添加error或者completed事件
+> relay包含了一个subject，并且保持了它的replay行为。
+>
+> 使用`accept(_:)` 方法添加value，不能使用 `onNext(_:)`，这是因为，relay只能accept值， 不能添加error或者completed事件
 
 
 
@@ -292,6 +294,8 @@ subject.dispose()
 
 
 ### PublishRelay
+
+`PublishRelay`包含了一个`PublishSubject`
 
 如下的例子：
 
@@ -314,7 +318,44 @@ relay.accept("1")
 
 
 
+`PublishRelay`源码定义如下：
+
+```swift
+import RxSwift
+
+/// PublishRelay is a wrapper for `PublishSubject`.
+///
+/// Unlike `PublishSubject` it can't terminate with error or completed.
+public final class PublishRelay<Element>: ObservableType {
+    private let _subject: PublishSubject<Element>
+    
+    // Accepts `event` and emits it to subscribers
+    public func accept(_ event: Element) {
+        self._subject.onNext(event)
+    }
+    
+    /// Initializes with internal empty subject.
+    public init() {
+        self._subject = PublishSubject()
+    }
+
+    /// Subscribes observer
+    public func subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
+        return self._subject.subscribe(observer)
+    }
+    
+    /// - returns: Canonical interface for push style sequence
+    public func asObservable() -> Observable<Element> {
+        return self._subject.asObservable()
+    }
+}
+```
+
+
+
 ### BehaviorRelay
+
+`BehaviorRelay`包含了一个`BehaviorSubject`
 
 ```swift
 let relay = BehaviorRelay(value: "Initial value")
