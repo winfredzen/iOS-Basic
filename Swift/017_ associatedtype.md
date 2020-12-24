@@ -45,3 +45,61 @@ protocol Container {
 ```
 
 
+
+## where
+
+泛型 `Where` 分句让你能够要求一个关联类型必须遵循指定的协议，或者指定的类型形式参数和关联类型必须相同
+
+```swift
+func allItemsMatch<C1: Container, C2: Container>
+    (_ someContainer: C1, _ anotherContainer: C2) -> Bool
+    where C1.ItemType == C2.ItemType, C1.ItemType: Equatable {
+        
+        // Check that both containers contain the same number of items.
+        if someContainer.count != anotherContainer.count {
+            return false
+        }
+        
+        // Check each pair of items to see if they are equivalent.
+        for i in 0..<someContainer.count {
+            if someContainer[i] != anotherContainer[i] {
+                return false
+            }
+        }
+        
+        // All items match, so return true.
+        return true
+}
+```
+
+- C1 必须遵循 Container 协议（写作 `C1: Container` ）；
+- C2 也必须遵循 Container 协议（写作 `C2: Container` ）；
+- C1 的 ItemType 必须和 C2 的 ItemType 相同（写作 `C1.ItemType == C2.ItemType` ）；
+- C1 的 ItemType 必须遵循 Equatable 协议（写作 `C1.ItemType: Equatable` ）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
