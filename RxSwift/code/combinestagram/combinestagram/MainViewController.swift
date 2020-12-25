@@ -53,6 +53,16 @@ class MainViewController: UIViewController {
       self?.updateUI(photos: photos)
     }).disposed(by: bag)
     
+    
+    getRepo("ReactiveX/RxSwift")
+      .subscribe(onSuccess: { json in
+        print("JSON: ", json)
+      },
+      onError: { error in
+        print("Error: ", error)
+      })
+      .disposed(by: bag)
+    
   }
   
   @IBAction func actionClear() {
@@ -63,15 +73,15 @@ class MainViewController: UIViewController {
     
     guard let image = imagePreview.image else { return }
     
-//    PhotoWriter.save(image)
-//      .asSingle()
-//      .subscribe { [weak self] id in
-//        self?.showMessage("Saved with id: \(id)")
-//        self?.actionClear()
-//
-//      } onError: { [weak self] error in
-//        self?.showMessage("Error", description:error.localizedDescription)
-//      }.disposed(by: bag)
+    //    PhotoWriter.save(image)
+    //      .asSingle()
+    //      .subscribe { [weak self] id in
+    //        self?.showMessage("Saved with id: \(id)")
+    //        self?.actionClear()
+    //
+    //      } onError: { [weak self] error in
+    //        self?.showMessage("Error", description:error.localizedDescription)
+    //      }.disposed(by: bag)
     
     PhotoWriter.save(image).subscribe { [weak self] id in
       self?.showMessage("Saved with id: \(id)")
@@ -79,14 +89,14 @@ class MainViewController: UIViewController {
     } onError: { [weak self] error in
       self?.showMessage("Error", description:error.localizedDescription)
     }.disposed(by: bag)
-
-
+    
+    
     
   }
   
   @IBAction func actionAdd() {
-//    let newImages = images.value + [UIImage(named: "IMG_1907.jpg")!]
-//    images.accept(newImages)
+    //    let newImages = images.value + [UIImage(named: "IMG_1907.jpg")!]
+    //    images.accept(newImages)
     
     let photosViewController = storyboard!.instantiateViewController(withIdentifier: "PhotosViewController") as! PhotosViewController
     navigationController!.pushViewController(photosViewController, animated: true)
@@ -103,9 +113,9 @@ class MainViewController: UIViewController {
   }
   
   func showMessage(_ title: String, description: String? = nil) {
-//    let alert = UIAlertController(title: title, message: description, preferredStyle: .alert)
-//    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: { [weak self] _ in self?.dismiss(animated: true, completion: nil)}))
-//    present(alert, animated: true, completion: nil)
+    //    let alert = UIAlertController(title: title, message: description, preferredStyle: .alert)
+    //    alert.addAction(UIAlertAction(title: "Close", style: .default, handler: { [weak self] _ in self?.dismiss(animated: true, completion: nil)}))
+    //    present(alert, animated: true, completion: nil)
     
     alert(title: title, text: description).subscribe().disposed(by: bag)
     
@@ -118,5 +128,50 @@ class MainViewController: UIViewController {
     itemAdd.isEnabled = photos.count < 6
     title = photos.count > 0 ? "\(photos.count) photos" :"Collage"
   }
+  
+  
+}
+
+extension MainViewController {
+  
+  //测试single
+  
+  enum DataError: Error {
+    case cantParseJSON
+  }
+  
+  
+  func getRepo(_ repo: String) -> Single<[String : Any]> {
+    
+    return Single.create { single -> Disposable in
+      
+      let url = URL(string: "https://api.github.com/repos/\(repo)")!
+      let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+        
+        if let error = error {
+          single(.error(error))
+          return
+        }
+        
+        guard let data = data,
+              let json = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves),
+              let result = json as? [String : Any] else {
+          single(.error(DataError.cantParseJSON))
+          return
+        }
+        
+        single(.success(result))
+        
+      }
+      
+      task.resume()
+      
+      
+      return Disposables.create { task.cancel() }
+      
+    }
+    
+  }
+  
   
 }
