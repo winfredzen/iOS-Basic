@@ -6,7 +6,7 @@
 
 **1.ignoreElements()**
 
-ignoreElements会忽略掉所有的`Next`事件，允许stop事件通过，例如`completed` 或者 error 事件
+ignoreElements会忽略掉所有的`Next`事件，允许stop事件通过，例如`completed` 或者 `error` 事件
 
 ![017](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/017.png)
 
@@ -321,21 +321,134 @@ subject.onNext("3")
 
 
 
+## Distinct 
+
+`distinctUntilChanged` 会阻止重复的数据通过，如下图所示：
+
+![028](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/028.png)
+
+```swift
+let diposeBag = DisposeBag()
+Observable.of("A", "A", "B", "B", "A")
+    .distinctUntilChanged()
+    .subscribe(onNext: {
+        print($0)
+    })
+    .disposed(by: diposeBag)
+```
+
+输出结果为：
+
+```swift
+A
+B
+A
+```
+
+上面的例子中的element是`String`，遵循`Equatable`协议
+
+你也可以使用`distinctUntilChanged(_:)`，提供自定义的逻辑
+
+![029](https://github.com/winfredzen/iOS-Basic/blob/master/RxSwift/images/029.png)
+
+如下的例子：
+
+```swift
+let diposeBag = DisposeBag()
+let formatter = NumberFormatter()
+formatter.numberStyle = .spellOut
+Observable<NSNumber>.of(10, 110, 20, 200, 210, 310)
+    .distinctUntilChanged {  a, b -> Bool in
+        guard let aWords = formatter.string(from: a)?.components(separatedBy: " "),
+              let bWords = formatter.string(from: b)?.components(separatedBy: " ") else {
+            return false
+        }
+        var containsMatch = false
+        
+        for aWord in aWords where bWords.contains(aWord) {
+            containsMatch = true
+            break
+        }
+        return containsMatch
+    }
+    .subscribe(onNext:{
+        print($0)
+    })
+    .disposed(by: diposeBag)
+```
+
+输出结果为：
+
+```swift
+10
+20
+200
+```
 
 
 
+## Demo
 
+1.如下的拨打号码的例子：
 
+```swift
 
+        let disposeBag = DisposeBag()
 
+        let contacts = [
+          "603-555-1212": "Florent",
+          "212-555-1212": "Junior",
+          "408-555-1212": "Marin",
+          "617-555-1212": "Scott"
+        ]
 
+        func phoneNumber(from inputs:[Int]) -> String {
+            var phone = inputs.map(String.init).joined()
+            phone.insert("-", at: phone.index(phone.startIndex, offsetBy: 3))
+            phone.insert("-", at: phone.index(phone.startIndex, offsetBy: 7))
+            return phone
+        }
 
+        let input = PublishSubject<Int>()
 
+        input.skipWhile({ $0 == 0 })
+            .filter({ $0 < 10 })
+            .take(10)
+            .toArray()
+            .subscribe(onSuccess: {
+                let phone = phoneNumber(from: $0)
+                if let contact = contacts[phone] {
+                  print("Dialing \(contact) (\(phone))...")
+                } else {
+                  print("Contact not found")
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        
+        input.onNext(0)
+        input.onNext(603)
+        
+        input.onNext(2)
+        input.onNext(1)
+        
+        // Confirm that 7 results in "Contact not found", and then change to 2 and confirm that Junior is found
+        input.onNext(2)
+        
+        "5551212".forEach {
+          if let number = (Int("\($0)")) {
+            input.onNext(number)
+          }
+        }
+        
+        input.onNext(9)
+```
 
+输出结果为：
 
-
-
-
+```swift
+Dialing Junior (212-555-1212)...
+```
 
 
 
