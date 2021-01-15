@@ -4,6 +4,15 @@
 
 + [Language Interoperability](https://developer.apple.com/documentation/swift#2984801)
 
+
+
+`Swift`和`Objective-C`相互调用的问题，可以参考：
+
++ [Swift](https://developer.apple.com/documentation/swift#2984801)
++ [How do I call Objective-C code from Swift?](https://stackoverflow.com/questions/24002369/how-do-i-call-objective-c-code-from-swift)
+
+
+
 ## Swift项目中导入Objective-C
 
 新建一个Swift项目，尝试拖动OC文件到项目中，但是并不弹出"**Would you like to configure an Objective-C bridging header?**"
