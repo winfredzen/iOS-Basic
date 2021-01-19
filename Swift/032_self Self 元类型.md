@@ -149,3 +149,50 @@ let intMetatype: Int.Type = Int.self
 
 > `.self` 取到的是静态的元类型，声明的时候是什么类型就是什么类型。`type(of:)` 取的是运行时候的元类型，也就是这个实例 的类型
 
+
+
+## Protocol
+
+`P.Type` vs. `P.Protocol`
+
+参考：
+
++ [Why can't I pass a Protocol.Type to a generic T.Type parameter?](https://stackoverflow.com/questions/45234233/why-cant-i-pass-a-protocol-type-to-a-generic-t-type-parameter)
+
+> There are two kinds of protocol metatypes. For some protocol `P`, and a conforming type `C`:
+>
+> - A `P.Protocol` describes the type of a protocol itself (the only value it can hold is `P.self`).
+> - A `P.Type` describes a concrete type that conforms to the protocol. It can hold a value of `C.self`, but *not* `P.self` because [protocols don't conform to themselves](https://stackoverflow.com/a/43408193/2976878) (although one exception to this rule is `Any`, as `Any` is the [top type](https://en.wikipedia.org/wiki/Top_type), so any metatype value can be typed as `Any.Type`; including `Any.self`).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
