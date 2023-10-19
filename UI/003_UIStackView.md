@@ -82,7 +82,7 @@
 
 >1.**Equal Spacing** vs  **Equal Centering**
 >
->![029](./images/029.png)
+>![030](./images/030.png)
 >
 >2.当view的大小有调整时，应该调整哪个View呢？
 >
