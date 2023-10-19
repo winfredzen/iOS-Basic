@@ -80,13 +80,13 @@
 
 + [iOS: Introducing Stack Views Programmatically](https://uynguyen.github.io/2020/07/18/iOS-Introducing-Stack-Views/)
 
->1.**Equal Spacing** vs  **Equal Centering**
->
->![030](./images/030.png)
->
->2.当view的大小有调整时，应该调整哪个View呢？
->
->> So the question is, what criteria will it base on to choose the view to resize? **Content Hugging Priority (CHP)** will be. To determine which view will be stretched, the stack view will rely on CHP for evaluation, the lower its priority, the more likely it is to be chosen. If all the views have the same CHP, the first one will be picked.
+1.**Equal Spacing** vs  **Equal Centering**
+
+![030](./images/030.png)
+
+2.当view的大小有调整时，应该调整哪个View呢？
+
+>So the question is, what criteria will it base on to choose the view to resize? **Content Hugging Priority (CHP)** will be. To determine which view will be stretched, the stack view will rely on CHP for evaluation, the lower its priority, the more likely it is to be chosen. If all the views have the same CHP, the first one will be picked.
 
 
 
