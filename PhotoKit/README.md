@@ -52,6 +52,18 @@ class PHAsset : PHObject
 
 
 
+## 使用
+
+可参考：
+
++ [Browsing and Modifying Photo Albums](https://developer.apple.com/documentation/photokit/browsing_and_modifying_photo_albums)
+
+其示例中的代码很有参考意义，下载地址[download](https://docs-assets.developer.apple.com/published/ea323a0aa7/BrowsingAndModifyingPhotoAlbums.zip)
+
+
+
+
+
 
 
 

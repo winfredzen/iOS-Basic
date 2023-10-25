@@ -165,6 +165,7 @@ class AlbumCollectionViewController: UICollectionViewController {
       NSSortDescriptor(key: "creationDate", ascending: false)
     ]
     
+    // 获取的所有的图片，PHFetchResult<PHAsset>类型
     allPhotos = PHAsset.fetchAssets(with: allPhotosOptions)
     
     smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .albumRegular, options: nil)
