@@ -22,6 +22,13 @@
             format : (frmt), ## __VA_ARGS__]        
 ```
 
+> **打印log非常有用的宏**
+>
+> + `__PRETTY_FUNCTION__` or `__FUNCTION__`
+> + `__LINE__`
+> + `__FILE__`
+> + `##__VA_ARGS__`
+
 
 
 最终会，创建`DDLogMessage`对象，然后加入到queue中，如下：
@@ -58,8 +65,6 @@
     }
 }
 ```
-
-
 
 
 
