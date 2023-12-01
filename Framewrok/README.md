@@ -80,21 +80,43 @@ b.在Framework中添加功能
 
 
 
+## 导出Framework给其它App使用
+
+1.创建测试应用，**TestApp**
+
+2.选择**HelloLoggingFramework**， 并`build`
+
+![010](./images/010.png)
+
+原文中，会在**Products**文件夹中**HelloLoggingFramework.framework**
+
+![011](./images/011.png)
 
 
 
+但是在新版的Xcode中，已没有这个文件夹了
+
+可通过**Product -> Show Build Folder in Finder**，打开对应的目录：
+
+![012](./images/012.png)
 
 
 
+此时直接将**HelloLoggingFramework.framework**拖动到**TestApp**中，导入并运行模块的话，会报错，如下：
 
+![013](./images/013.png)
 
+提示：
 
+```
+dyld[31994]: Library not loaded: @rpath/HelloLoggingFramework.framework/HelloLoggingFramework
+```
 
+> If you see this error below, it’s because your **dynamic framework** needs to be **embedded** in your app.
 
+修改方法是，将如下的地方修改为`Embed&Sign`
 
-
-
-
+![014](./images/014.png)
 
 
 
