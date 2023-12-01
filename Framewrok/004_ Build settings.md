@@ -52,14 +52,38 @@ BUILD_DIR = /Users/wangzhen/Library/Developer/Xcode/DerivedData/HelloDemoApp-fjj
 
 
 
+### EFFECTIVE_PLATFORM_NAME
+
+当Target为真机时，其为
+
+```sh
+EFFECTIVE_PLATFORM_NAME = -iphoneos
+```
+
+为模拟器时：
+
+```sh
+EFFECTIVE_PLATFORM_NAME = -iphonesimulator
+```
+
+
+
+
+
 ### CONFIGURATION_BUILD_DIR
 
 **每个配置的构建产品路径 (CONFIGURATION_BUILD_DIR)**
 在给定配置的构建过程中将放置构建产品的基本路径。 默认情况下，它设置`$(BUILD_DIR)/$(CONFIGURATION)`
 
+```shell
+CONFIGURATION_BUILD_DIR = /Users/xxxxx/Library/Developer/Xcode/DerivedData/HelloDemoApp-fjjfpfkjvjlyxwczgdebpsvrshdy/Build/Products/Debug-iphoneos
+```
 
+可见：
 
-
+```sh
+$(CONFIGURATION_BUILD_DIR) = $(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
+```
 
 
 
