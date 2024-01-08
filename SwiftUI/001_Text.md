@@ -138,25 +138,72 @@ struct ContentView: View {
 
 ![006](./images/006.png)
 
+默认情况下是围绕中心点旋转。如果需要围绕一个特定点旋转，如下：
+
+```swift
+.rotationEffect(.degrees(30), anchor: UnitPoint(x: 0, y: 0))
+```
+
+![007](./images/007.png)
+
+
+
+使用`rotation3DEffect` 来进行3D旋转
+
+```swift
+.rotation3DEffect(.degrees(60), axis: (x: 1.0, y: 0, z: 0))
+```
+
+![008](./images/008.png)
 
 
 
 
 
+还可以通过如下的代码，设置阴影效果：
+
+```swift
+.shadow(color: .gray, radius: 2, x: 0, y: 15)
+```
+
+![009](./images/009.png)
 
 
 
 
 
+## 自定义字体
+
+1.先将自定义字体拖到项目中
+
+![010](./images/010.png)
+
+2.在info中注册
+
+![011](./images/011.png)
+
+3.使用
+
+```swift
+.font(.custom("Nunito", size: 25))
+```
+
+![012](./images/012.png)
 
 
 
+## 显示Markdown
 
+SwiftUI支持渲染Markdown
 
+如：
 
+```swift
+        Text("**This is how you bold a text**. *This is how you make text italic.* You can [click this link](https://www.appcoda.com) to go to appcoda.com")
+        .font(.title)
+```
 
-
-
+![013](./images/013.png)
 
 
 

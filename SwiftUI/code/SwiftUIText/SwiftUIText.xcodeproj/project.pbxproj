@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D789BC1D2B4BCF490040BF37 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D789BC1C2B4BCF490040BF37 /* Nunito-Regular.ttf */; };
 		D7BD602F2B481BA50022FB8B /* SwiftUITextApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BD602E2B481BA50022FB8B /* SwiftUITextApp.swift */; };
 		D7BD60312B481BA50022FB8B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7BD60302B481BA50022FB8B /* ContentView.swift */; };
 		D7BD60332B481BA70022FB8B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7BD60322B481BA70022FB8B /* Assets.xcassets */; };
@@ -34,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D789BC1C2B4BCF490040BF37 /* Nunito-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Nunito-Regular.ttf"; sourceTree = "<group>"; };
+		D789BC1E2B4BCF920040BF37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D7BD602B2B481BA50022FB8B /* SwiftUIText.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUIText.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7BD602E2B481BA50022FB8B /* SwiftUITextApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUITextApp.swift; sourceTree = "<group>"; };
 		D7BD60302B481BA50022FB8B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -94,6 +97,8 @@
 		D7BD602D2B481BA50022FB8B /* SwiftUIText */ = {
 			isa = PBXGroup;
 			children = (
+				D789BC1E2B4BCF920040BF37 /* Info.plist */,
+				D789BC1C2B4BCF490040BF37 /* Nunito-Regular.ttf */,
 				D7BD602E2B481BA50022FB8B /* SwiftUITextApp.swift */,
 				D7BD60302B481BA50022FB8B /* ContentView.swift */,
 				D7BD60322B481BA70022FB8B /* Assets.xcassets */,
@@ -231,6 +236,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D789BC1D2B4BCF490040BF37 /* Nunito-Regular.ttf in Resources */,
 				D7BD60362B481BA70022FB8B /* Preview Assets.xcassets in Resources */,
 				D7BD60332B481BA70022FB8B /* Assets.xcassets in Resources */,
 			);
@@ -425,6 +431,7 @@
 				DEVELOPMENT_TEAM = W595DU2C8B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftUIText/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -454,6 +461,7 @@
 				DEVELOPMENT_TEAM = W595DU2C8B;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftUIText/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
