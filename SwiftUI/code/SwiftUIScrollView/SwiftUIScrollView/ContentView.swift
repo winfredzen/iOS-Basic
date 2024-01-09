@@ -54,14 +54,14 @@ struct ContentView: View {
                         CardView(image: "macos-programming", category: "macOS", heading: "Building a Simple Editing App", author: "Gabriel Theodoropoulos")
                         CardView(image: "flutter-app", category: "Flutter", heading: "Building a Complex Layout with Flutter", author: "Lawrence Tan")
                         CardView(image: "natural-language-api", category: "iOS", heading: "What's New in Natural Language API", author: "Sai Kambampati")
-                    }
+                    } // 通过Group，统一设置width
                     .frame(width: 300)
                 }
             }
             
             Spacer()
         }
-        
+//        
 
         
     }
