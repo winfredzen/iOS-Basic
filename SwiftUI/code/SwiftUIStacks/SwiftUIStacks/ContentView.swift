@@ -42,6 +42,7 @@ struct ContentView: View {
                 
             }
             
+            // 作用是将整个view上移
             Spacer()
             
         }
@@ -55,6 +56,7 @@ struct ContentView: View {
 struct HeaderView: View {
     var body: some View {
         HStack {
+            // 默认是居中对齐，这里修改了对齐方式，还指定了间距
             VStack(alignment: .leading, spacing: 2) {
                 Text("Choose")
                     .font(.system(.largeTitle, design: .rounded))
@@ -64,6 +66,7 @@ struct HeaderView: View {
                     .fontWeight(.black)
             }
             
+            // 作用是将上面的view移动到左侧
             Spacer()
         }
         .padding()
@@ -99,9 +102,10 @@ struct PricingView: View {
                 .font(.headline)
                 .foregroundColor(textColor)
         }
-        .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 100)
+        // 这里要保证VStack的宽度一致
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 100)
         .padding(40)
         .background(bgColor)
-        .cornerRadius(10)
+        .cornerRadius(10) // 圆角
     }
 }
