@@ -11,8 +11,8 @@
 #endif
 
 #import "CocoapodsFramework.h"
+#import "WZBase.h"
 #import "WZTest.h"
-#import "XQBase.h"
 
 FOUNDATION_EXPORT double CocoapodsFrameworkVersionNumber;
 FOUNDATION_EXPORT const unsigned char CocoapodsFrameworkVersionString[];

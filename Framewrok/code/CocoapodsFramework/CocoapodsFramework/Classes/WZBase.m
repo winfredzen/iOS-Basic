@@ -5,9 +5,9 @@
 //  Created by 王振 on 2024/2/6.
 //
 
-#import "XQBase.h"
+#import "WZBase.h"
 
-@implementation XQBase
+@implementation WZBase
 
 + (NSInteger)addWithA:(NSInteger)a b:(NSInteger)b {
     return a + b;

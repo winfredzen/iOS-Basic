@@ -9,6 +9,6 @@
 #define CocoapodsFramework_h
 
 
-#import "XQBase.h"
+#import "WZBase.h"
 
 #endif /* CocoapodsFramework_h */

@@ -23,7 +23,7 @@
 	// Do any additional setup after loading the view, typically from a nib.
     
 
-    NSInteger result = [XQBase addWithA:1 b:2];
+    NSInteger result = [WZBase addWithA:1 b:2];
     NSLog(@"result = %ld", result);
 
     

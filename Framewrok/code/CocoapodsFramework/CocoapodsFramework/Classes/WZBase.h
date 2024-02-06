@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface XQBase : NSObject
+@interface WZBase : NSObject
 
 + (NSInteger)addWithA:(NSInteger)a b:(NSInteger)b;
 
