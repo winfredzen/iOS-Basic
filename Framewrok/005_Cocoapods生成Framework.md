@@ -46,6 +46,52 @@
 
 
 
+### mach-o文件
+
+可使用如下的项目来查看mach-o文件
+
++ [MachOView](https://github.com/gdbinit/MachOView)
+
+
+
+## 静态库
+
+参考：
+
++ [使用cocoapods插件打包静态库——适用于项目依赖私有库、开源库，私有库又依赖静态库等复杂场景](https://yangjie2.github.io/2018/08/07/%E4%BD%BF%E7%94%A8cocoapods%E6%8F%92%E4%BB%B6%E6%89%93%E5%8C%85%E9%9D%99%E6%80%81%E5%BA%93%E2%80%94%E2%80%94%E9%80%82%E7%94%A8%E4%BA%8E%E9%A1%B9%E7%9B%AE%E4%BE%9D%E8%B5%96%E7%A7%81%E6%9C%89%E5%BA%93%E3%80%81%E5%BC%80%E6%BA%90%E5%BA%93%EF%BC%8C%E7%A7%81%E6%9C%89%E5%BA%93%E5%8F%88%E4%BE%9D%E8%B5%96%E9%9D%99%E6%80%81%E5%BA%93%E7%AD%89%E5%A4%8D%E6%9D%82%E5%9C%BA%E6%99%AF/)
+
+
+
+使用[Cocoapods-package](https://github.com/CocoaPods/cocoapods-packager)来打包静态库，**不过我自己尝试是failed**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
