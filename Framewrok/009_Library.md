@@ -24,21 +24,39 @@
 
 
 
+**创建C++ Library**
+
+![038](./images/038.png)
+
+
+
+**创建Objective-C 库**
+
+![039](./images/039.png)
+
+
+
+## 创建静态库
+
+1.File-> New -> Project -> Static Library
+
+![040](./images/040.png)
 
 
 
 
 
+2.选择Mach-o Type为Static Library
+
+![041](./images/041.png)
 
 
 
+3.Skip install -> NO
 
+为啥这样做？想要的distribute in release mode，使用archive。如果设置为yes的话，在archive时Library不会被copy
 
-
-
-
-
-
+![042](./images/042.png)
 
 
 
