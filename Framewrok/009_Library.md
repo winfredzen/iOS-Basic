@@ -102,7 +102,47 @@ ar -xv /Users/wangzhen/Desktop/CStaticLibrary\ 2024-02-08\ 13-49-33/Products/usr
 
 
 
+
+
 ## Link链接
+
+**1.LInk C Libaray in Objc-C Project**
+
+
+
+![047](./images/047.png)
+
+
+
+**2.Link C Library in Swift Project**
+
+![048](./images/048.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
