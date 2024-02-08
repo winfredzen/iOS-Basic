@@ -99,6 +99,110 @@ brew install xcbeautify
 
 
 
+`DERIVED_DATA_PATH`应该指的是构建成功时相关的缓存文件路径
+
+最主要的还是用到了`xcodebuild`
+
+
+
+生成的Product如下：
+
+![050](./images/050.png)
+
+
+
+通过`nm`命令打印symbols of a binary，`nm <binary path>`
+
+![051](./images/051.png)
+
+
+
+## 使用Library
+
+在一个swift工程中使用上面创建的C Library，先做一些设置
+
+先看下这个整个项目的目录
+
+![052](./images/052.png)
+
+
+
+**1.Header Search Paths**
+
+![053](./images/053.png)
+
+
+
+在Bridge Header中导入头文件`\#include "CStaticLibrary.h"`，此时Build就不会报错了
+
+![054](./images/054.png)
+
+
+
+此时如果直接调用库中的函数，则fail，如下：
+
+![055](./images/055.png)
+
+显示Link失败
+
+![056](./images/056.png)
+
+
+
+**2.Libaray Search Paths**
+
+设置Libaray Search Paths，如下：
+
+![057](./images/057.png)
+
+此时如果build，还是一样的报错
+
+
+
+**注意**
+
+由于上面生成的是x86_64架构下的库，但本人电脑是M2，是arm架构的，所以，会有如下的出错：
+
+![058](./images/058.png)
+
+
+
+修改sh文件中的架构，重新生成
+
+
+
+
+
+**3.Other Linker Flag**
+
+在Other Linker Flag中设置为`-lCStaticLibrary`
+
+> 库名称为`libCStaticLibrary`，去掉前面的`lib`，添加`-l`
+
+![059](./images/059.png)
+
+
+
+> 为什么有这个`-l`？
+>
+> 在网上查了下，没找到具体的说明：
+>
+> + [linker-flags](https://releases.llvm.org/14.0.0/tools/clang/docs/ClangCommandLineReference.html#linker-flags)
+>
+> 如在[c++ linker flag](https://juejin.cn/s/c%2B%2B%20linker%20flag)中的描述：`-l<库名>`：指定链接器需要链接的库名。例如，`-lm`表示链接`math`库。
+
+
+
+
+
+
+
+至此就OK了
+
+
+
+
+
 
 
 
