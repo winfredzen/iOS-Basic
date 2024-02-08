@@ -60,15 +60,23 @@
 
 
 
+4.将`BUILD_LIBRARY_FOR_DISTRIBUTION`设置为yes。（针对Swift开发的库）
+
+其作用：
+
+> 确保您的库是为分发而构建的。 对于 Swift，这可以支持库的演变和模块接口文件的生成。
 
 
 
 
 
+5`.Product->Archive`
 
+选择Distribute Content
 
+![043](./images/043.png)
 
-
+![044](./images/044.png)
 
 
 
