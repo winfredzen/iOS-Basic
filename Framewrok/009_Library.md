@@ -80,6 +80,54 @@
 
 
 
+导出文件如下：
+
+![045](./images/045.png)
+
+
+
+**6.Shell工具的使用**
+
+`ar -xv <library path>`从静态库中抽取mach-o
+
+如：
+
+```shell
+ar -xv /Users/wangzhen/Desktop/CStaticLibrary\ 2024-02-08\ 13-49-33/Products/usr/local/lib/libCStaticLibrary.a
+```
+
+效果如下：
+
+![046](./images/046.png)
+
+
+
+## Link链接
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
